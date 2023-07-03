@@ -46,6 +46,8 @@ void prepare_move(Individual * id);
  * */
 void predict_move(Populations * pops);
 
+void eat_move(Populations * populations);
+
 void execute_move (Populations * populations );
 
 void mutation (Brain brain);
