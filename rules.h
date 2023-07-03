@@ -24,7 +24,12 @@ typedef struct {
 
 typedef union {
 	struct {
-		Info prey, predator, ally;
+		union {
+			struct {
+				Info prey, predator, ally;
+			};
+			Info infos[3];
+		};
 		Dir action;
 		int priority;
 	};
@@ -59,6 +64,6 @@ void rand_rule (Rule * rule);
  * @brief modify a brain to randomize it
  * @param [in] brain a pointer to the brain
  * */
-void rand_brain (Brain brain)
+void rand_brain (Brain brain);
 
 #endif //ZZ1GAME_RULES_H
