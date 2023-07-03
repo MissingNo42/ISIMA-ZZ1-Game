@@ -26,4 +26,8 @@ typedef struct {
 	Species species;
 } Population;
 
+void mutation (Brain brain);
+
+void hybridization (Brain parent1, Brain parent2,Brain child);
+
 #endif //ZZ1GAME_POPULATION_H

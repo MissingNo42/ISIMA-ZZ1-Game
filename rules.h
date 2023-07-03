@@ -33,4 +33,6 @@ typedef union {
 
 typedef Rule Brain[P];
 
+void rand_rule (Rule * rule);
+
 #endif //ZZ1GAME_RULES_H
