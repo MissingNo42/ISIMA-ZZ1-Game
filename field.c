@@ -41,20 +41,20 @@ void printField(int ** field){
 }
 
 // param select : 0 = prey, 1 = predator, 2 = ally
-void nearestPrey(Individual * indiv, Population popPrey, int select){
+void nearestPPA(Individual * indiv, Population * popPPA, int select){
     int iMin = 0;
-    float distMin = sqrt(pow(indiv->x - popPrey.individuals[0].x, 2) + pow(indiv->y - popPrey.individuals[0].y, 2));
+    float distMin = sqrt(pow(indiv->x - popPPA->individuals[0].x, 2) + pow(indiv->y - popPPA->individuals[0].y, 2));
 
     for(int i = 1; i < IndividualPerPopulation; i++){
-        float distTmp = sqrt(pow(indiv->x - popPrey.individuals[i].x, 2) + pow(indiv->y - popPrey.individuals[i].y, 2));
+        float distTmp = sqrt(pow(indiv->x - popPPA->individuals[i].x, 2) + pow(indiv->y - popPPA->individuals[i].y, 2));
         if(distTmp < distMin){
             iMin = i;
             distMin = distTmp;
         }
     }
 
-    int xDiff = indiv->x - popPrey.individuals[iMin].x,
-    yDiff = indiv->y - popPrey.individuals[iMin].y;
+    int xDiff = indiv->x - popPPA->individuals[iMin].x,
+    yDiff = indiv->y - popPPA->individuals[iMin].y;
 
     if (xDiff + yDiff > 0) {
         if (xDiff - yDiff >= 0) indiv->status.infos[select].dir = W;
@@ -71,6 +71,16 @@ void nearestPrey(Individual * indiv, Population popPrey, int select){
     if(distMin < PERCENTNEAR * sqrt(2) * SIZEMAP) indiv->status.infos[select].dist = NEAR;
     else if(distMin < PERCENTMEDIUM * sqrt(2) * SIZEMAP) indiv->status.infos[select].dist = MEDIUM;
     else indiv->status.infos[select].dist = AWAY;
+}
+
+void fillStatusPops(Populations * pops){
+    for(int k = 0; k < 3; k++){
+        for(int i = 0; i < IndividualPerPopulation; i++){
+            nearestPPA(&pops[k]->individuals[i], &pops[(k+1)%3], 0);
+            nearestPPA(&pops[k]->individuals[i], &pops[(k+2)%3], 1);
+            nearestPPA(&pops[k]->individuals[i], &pops[k], 2);
+        }
+    }
 }
 
 int main(){
@@ -90,11 +100,11 @@ int main(){
     field[4][13] = 2;
     field[12][5] = 2;
 
-    Individual indiv = {.x = 8, .y = 4};
-    field[8][4] = 1;
+    Individual indiv = {.x = 5, .y = 0};
+    field[5][0] = 1;
 
     printf("%d, %d\n", indiv.status.prey.dir, indiv.status.prey.dist);
-    nearestPrey(&indiv, popPrey);
+    nearestPPA(&indiv, popPrey, 0);
     printf("%d, %d\n", indiv.status.prey.dir, indiv.status.prey.dist);
 
     printField(field);
