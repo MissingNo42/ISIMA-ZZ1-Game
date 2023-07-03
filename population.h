@@ -17,7 +17,7 @@ typedef enum {
 
 typedef struct {
 	Rule status;
-	int x, y, action;
+	int x, y, action, alive;
 } Individual;
 
 typedef struct {
@@ -32,6 +32,8 @@ typedef union {
 	};
 	Population pops[3];
 } Populations;
+
+void execute_move (Populations * populations );
 
 void mutation (Brain brain);
 
