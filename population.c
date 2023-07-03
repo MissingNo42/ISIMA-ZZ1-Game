@@ -11,10 +11,36 @@
 #include "population.h"
 #include "rules.h"
 
+/**
+ * @brief prepare the action: check environment collision and pre-perform the move in id->nx/ny
+ * @param [in,out] id the individual to prepare the action
+ * */
 void prepare_move(Individual * id) {
-
+	id->nx = id->x;
+	id->ny = id->y;
+	
+	if (id->action == JOKER) id->action = rand() % 4;
+	switch (id->action) {
+		case N:
+			if (id->y - 1 < 0) id->ny = id->y - 1;
+			break;
+		case E:
+			if (id->x + 1 > SIZEMAP) id->nx = id->x + 1;
+			break;
+		case S:
+			if (id->y + 1 > SIZEMAP) id->ny = id->y + 1;
+			break;
+		case W:
+			if (id->x - 1 < 0) id->nx = id->x - 1;
+			break;
+		default: break;
+	}
 }
 
+/**
+ * @brief choose an action for all individuals and prepare its execution
+ * @param [in, out] pops the populations set
+ * */
 void predict_move(Populations * pops) {
 	
 	for (int p = 0; p < 3; ++p) {
@@ -22,38 +48,18 @@ void predict_move(Populations * pops) {
 		
 		for (int i = 0; i < IndividualPerPopulation; i++) {
 			Individual * id = &pop->individuals[i];
-			int ch = choice_rule(&id->status, *pop->brain);
-			id->action = (ch == -1) ? JOKER : (*pop->brain)[ch].action;
-			prepare_move(id);
+			
+			if (id->alive) {
+				int ch = choice_rule(&id->status, *pop->brain);
+				id->action = (ch == -1) ? JOKER : (*pop->brain)[ch].action;
+				prepare_move(id);
+			}
 		}
 	}
 }
 
-void execute_move (Populations * populations ){
-    for (int pop = 0; pop < 3; pop++) {
-        for (int i = 0; i < IndividualPerPopulation; i++) {
-            Individual  * id = &(populations->pops[pop].individuals[i]);
-            if (id->alive) {
-                if (id->action == JOKER) {
-                    id->action = rand() % 4;
-                }
-                switch (id->action){
-                    case N:
-                        if (id->y - 1 < 0) id->y -=1;
-                    case E:
-                        if (id->x + 1 > SIZEMAP) id->x +=1;
-                    case S:
-                        if (id->y + 1 > SIZEMAP) id->y +=1;
-                    case W:
-                        if (id->x - 1 < 0) id->x -=1;
 
-                }
-            }
-        }
-    }
-}
-
-void mutation (Brain  brain) {
+void mutation(Brain brain) {
 	int i = rand() % P;
 	int j = rand() % 8;
 	int k = rand();
