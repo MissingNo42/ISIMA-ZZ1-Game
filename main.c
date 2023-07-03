@@ -37,6 +37,7 @@ void sdl_exit(char n){
 }
 
 
+#ifndef TESTING
 int main(int argc, char ** argv) {
 	(void) argc;
 	(void) argv;
@@ -153,3 +154,4 @@ int main(int argc, char ** argv) {
 	sdl_exit(3);
 	return 0;
 }
+#endif
