@@ -1,70 +1,103 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 
-#include "rules.h"
+#include "population.h"
 
-void freeField(int ** field, int size){
-    for(int i = 0; i < size; i++){
-        free(field[i]);
+#define SIZEMAP 15
+#define PERCENTNEAR 0.2
+#define PERCENTMEDIUM 0.5
+
+void freeField(int ** field){
+    for(int i = 0; i < SIZEMAP; i++){
+        if(field[i]) free(field[i]);
     }
     free(field);
 }
 
-int ** createField(int size){
-    int ** field = malloc(sizeof(int *) * size);
+int ** createField(){
+    int ** field = malloc(sizeof(int *) * SIZEMAP);
     if(field) {
-        for (int i = 0; i < size; i++) {
-            field[i] = calloc(sizeof(int), size);
-            if(!field[i]) freeField(field, i - 1);
+        for (int i = 0; i < SIZEMAP; i++) {
+            field[i] = calloc(sizeof(int), SIZEMAP);
+            if(!field[i]) freeField(field);
         }
     }
     return field;
 }
 
-void printField(int ** field, int size){
-    for(int i = 0; i < size; i++){
-        for(int j = 0; j < size; j++) printf("----");
+void printField(int ** field){
+    for(int i = 0; i < SIZEMAP; i++){
+        for(int j = 0; j < SIZEMAP; j++) printf("----");
         printf("-\n|");
-        for(int j = 0; j < size; j++){
-            if(field[i][j]) printf(" %d |", field[i][j]);
+        for(int j = 0; j < SIZEMAP; j++){
+            if(field[j][i]) printf(" %d |", field[j][i]);
             else printf("   |");
         }
         printf("\n");
     }
-    for(int i = 0; i < size; i++) printf("----");
+    for(int i = 0; i < SIZEMAP; i++) printf("----");
     printf("-\n");
 }
 
-void nearestPrey(int ** field, Individual indiv, Population popPrey){
-    int color = field[indiv.i][indiv.j];
-    indiv.prey.dir;
-    indiv.prey.dist;
-    for(int k = 0; k < size; k++){
-        for(int i = -k; i < k; i++){
-            for(int j = -k; j < k; j++){
-                if((i != -k || i != k) && (j == -k || j == k)) {
-                    if (x + i > 0 && x + i < size && y + i > 0 && y + i < size &&
-                        field[x + i][y + j] == (color + 1) % 3) {
-                        if (i + j > 0) {
-                            if (i - j > 0) prey.dir = N;
-                            else prey.dir = W;
-                        } else if (i + j < 0) {
-                            if (i - j >= 0) prey.dir = E;
-                            else prey.dir = S;
-                        } else {
-                            if (i - j > 0) prey.dir = N;
-                            else if (i - j < 0) prey.dir = S;
-                        }
-                    }
-                }
-            }
+// param select : 0 = prey, 1 = predator, 2 = ally
+void nearestPrey(Individual * indiv, Population popPrey, int select){
+    int iMin = 0;
+    float distMin = sqrt(pow(indiv->x - popPrey.individuals[0].x, 2) + pow(indiv->y - popPrey.individuals[0].y, 2));
+
+    for(int i = 1; i < IndividualPerPopulation; i++){
+        float distTmp = sqrt(pow(indiv->x - popPrey.individuals[i].x, 2) + pow(indiv->y - popPrey.individuals[i].y, 2));
+        if(distTmp < distMin){
+            iMin = i;
+            distMin = distTmp;
         }
     }
+
+    int xDiff = indiv->x - popPrey.individuals[iMin].x,
+    yDiff = indiv->y - popPrey.individuals[iMin].y;
+
+    if (xDiff + yDiff > 0) {
+        if (xDiff - yDiff >= 0) indiv->status.infos[select].dir = W;
+        else indiv->status.infos[select].dir = N;
+    } else if (xDiff + yDiff < 0) {
+        if (xDiff - yDiff > 0) indiv->status.infos[select].dir = S;
+        else indiv->status.infos[select].dir = E;
+    } else {
+        if (xDiff - yDiff > 0) indiv->status.infos[select].dir = S;
+        else if (xDiff - yDiff < 0) indiv->status.infos[select].dir = N;
+        else indiv->status.infos[select].dir = JOKER;
+    }
+
+    if(distMin < PERCENTNEAR * sqrt(2) * SIZEMAP) indiv->status.infos[select].dist = NEAR;
+    else if(distMin < PERCENTMEDIUM * sqrt(2) * SIZEMAP) indiv->status.infos[select].dist = MEDIUM;
+    else indiv->status.infos[select].dist = AWAY;
 }
 
 int main(){
-    int size = 20;
-    int ** field = createField(size);
-    printField(field, size);
+    int ** field = createField();
+
+    Population popPrey = {.individuals = {
+            {.x = 0, .y = 0},
+            {.x = 0, .y = SIZEMAP - 1},
+            {.x = SIZEMAP - 1, .y = 0},
+            {.x = 4, .y = 13},
+            {.x = 12, .y = 5},
+            }, NULL, GREEN};
+
+    field[0][0] = 2;
+    field[0][SIZEMAP - 1] = 2;
+    field[SIZEMAP - 1][0] = 2;
+    field[4][13] = 2;
+    field[12][5] = 2;
+
+    Individual indiv = {.x = 8, .y = 4};
+    field[8][4] = 1;
+
+    printf("%d, %d\n", indiv.status.prey.dir, indiv.status.prey.dist);
+    nearestPrey(&indiv, popPrey);
+    printf("%d, %d\n", indiv.status.prey.dir, indiv.status.prey.dist);
+
+    printField(field);
+    freeField(field);
     return 0;
 }
