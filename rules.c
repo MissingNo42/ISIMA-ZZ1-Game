@@ -3,3 +3,12 @@
 //
 
 #include "rules.h"
+
+
+/**
+ * @brief
+ * */
+int match(Rule * status, Rule * rule) {
+	int r = 1;
+	
+}
