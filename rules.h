@@ -7,6 +7,7 @@
 
 #define P 10
 #define MAX_PRIORITY 5
+#define ProbaExp 2
 
 typedef enum {
 	JOKER = -1, N, E, S, W
@@ -21,10 +22,13 @@ typedef struct {
 	Dist dist;
 } Info;
 
-typedef struct {
-	Info prey, predator, ally;
-	Dir action;
-	int priority;
+typedef union {
+	struct {
+		Info prey, predator, ally;
+		Dir action;
+		int priority;
+	};
+	int raw[8];
 } Rule;
 
 typedef Rule Brain[P];
