@@ -19,7 +19,6 @@ void predict_move(Populations * pops) {
 	
 	for (int p = 0; p < 3; ++p) {
 		Population * pop = &pops->pops[p];
-		
 		for (int i = 0; i < IndividualPerPopulation; i++) {
 			Individual * id = &pop->individuals[i];
 			int ch = choice_rule(&id->status, *pop->brain);
@@ -29,25 +28,29 @@ void predict_move(Populations * pops) {
 	}
 }
 
+void eat_move(Populations * populations){
+    for (int pop = 0; pop < 3; pop++) {
+        for (int i = 0; i < IndividualPerPopulation; i++) {
+            Individual  * soi = &(populations->pops[pop].individuals[i]);
+            if (soi->alive) {
+                for (int j = 0; j<IndividualPerPopulation; j++ ){
+                    Individual  * proie = &(populations->pops[(pop+1) % 3].individuals[j]);
+                    if ( (proie->nx == soi->nx && proie->ny == soi->ny)
+                          ||  ((proie->x == soi->nx && proie->y == soi->ny) && (proie->nx == soi->x && proie->ny == soi->y)) ){
+                        proie->alive = 0;
+                }
+            }
+        }
+    }
+}
+
 void execute_move (Populations * populations ){
     for (int pop = 0; pop < 3; pop++) {
         for (int i = 0; i < IndividualPerPopulation; i++) {
             Individual  * id = &(populations->pops[pop].individuals[i]);
             if (id->alive) {
-                if (id->action == JOKER) {
-                    id->action = rand() % 4;
-                }
-                switch (id->action){
-                    case N:
-                        if (id->y - 1 < 0) id->y -=1;
-                    case E:
-                        if (id->x + 1 > SIZEMAP) id->x +=1;
-                    case S:
-                        if (id->y + 1 > SIZEMAP) id->y +=1;
-                    case W:
-                        if (id->x - 1 < 0) id->x -=1;
-
-                }
+                id->x = id->nx;
+                id->y = id->ny;
             }
         }
     }

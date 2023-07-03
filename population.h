@@ -17,7 +17,8 @@ typedef enum {
 
 typedef struct {
 	Rule status;
-	int x, y, action, alive;
+	int x, y, nx, ny, alive;
+    Dir action;
 } Individual;
 
 typedef struct {
