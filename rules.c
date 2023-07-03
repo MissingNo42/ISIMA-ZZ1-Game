@@ -57,6 +57,10 @@ int choice_rule(Rule * status, Brain brain){
 	return last;
 }
 
+/**
+ * @brief modify a rule to randomize it
+ * @param [in] rule a pointer to the rule
+ * */
 void rand_rule (Rule * rule){
     rule->raw[0] = rand() % 5 - 1;
     rule->raw[1] = rand() % 4 - 1;
@@ -66,6 +70,16 @@ void rand_rule (Rule * rule){
     rule->raw[5] = rand() % 4 - 1;
     rule->raw[6] = rand() % 4;
     rule->raw[7] = rand() % (MAX_PRIORITY + 1);
+}
+
+/**
+ * @brief modify a brain to randomize it
+ * @param [in] brain a pointer to the brain
+ * */
+void rand_brain (Brain brain){
+    for (int i=0;i<P;i++){
+        rand_rule(&brain[i]);
+    }
 }
 
 
