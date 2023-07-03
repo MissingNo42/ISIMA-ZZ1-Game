@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-
+#include "rules.h"
 
 void freeField(int ** field, int size){
     for(int i = 0; i < size; i++){
@@ -33,6 +33,33 @@ void printField(int ** field, int size){
     }
     for(int i = 0; i < size; i++) printf("----");
     printf("-\n");
+}
+
+void nearestPrey(int ** field, Individual indiv, Population popPrey){
+    int color = field[indiv.i][indiv.j];
+    indiv.prey.dir;
+    indiv.prey.dist;
+    for(int k = 0; k < size; k++){
+        for(int i = -k; i < k; i++){
+            for(int j = -k; j < k; j++){
+                if((i != -k || i != k) && (j == -k || j == k)) {
+                    if (x + i > 0 && x + i < size && y + i > 0 && y + i < size &&
+                        field[x + i][y + j] == (color + 1) % 3) {
+                        if (i + j > 0) {
+                            if (i - j > 0) prey.dir = N;
+                            else prey.dir = W;
+                        } else if (i + j < 0) {
+                            if (i - j >= 0) prey.dir = E;
+                            else prey.dir = S;
+                        } else {
+                            if (i - j > 0) prey.dir = N;
+                            else if (i - j < 0) prey.dir = S;
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
 
 int main(){
