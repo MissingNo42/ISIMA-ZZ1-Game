@@ -33,6 +33,15 @@ typedef union {
 
 typedef Rule Brain[P];
 
+/**
+ * @brief modify a rule to randomize it
+ * @param [in] rule a pointer to the rule
+ * */
 void rand_rule (Rule * rule);
 
+/**
+ * @brief modify a brain to randomize it
+ * @param [in] brain a pointer to the brain
+ * */
+void rand_brain (Brain brain)
 #endif //ZZ1GAME_RULES_H
