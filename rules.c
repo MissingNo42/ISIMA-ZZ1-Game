@@ -48,3 +48,14 @@ int choice_rule(Rule * status, Brain brain){
 	}
 	return last;
 }
+
+void rand_rule (Rule * rule){
+    rule->raw[0] = rand() % 5 - 1;
+    rule->raw[1] = rand() % 4 - 1;
+    rule->raw[2] = rand() % 5 - 1;
+    rule->raw[3] = rand() % 4 - 1;
+    rule->raw[4] = rand() % 5 - 1;
+    rule->raw[5] = rand() % 4 - 1;
+    rule->raw[6] = rand() % 4;
+    rule->raw[7] = rand() % (MAX_PRIORITY + 1);
+}

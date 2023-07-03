@@ -8,8 +8,6 @@
 #include "rules.h"
 
 
-
-
 void mutation (Brain  brain){
     int i = rand() % P;
     int j = rand() % 8;
