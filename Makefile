@@ -1,8 +1,9 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -Ofast
+CFLAGS = -Wall -Wextra -g
+RCFLAGS = -Wall -Wextra -Ofast
 LDFLAGS = $(sdl2-config --cflags --libs) -lSDL2_image -lSDL2_ttf -lSDL2_gfx -lm -lSDL2 -lpthread
 
-SRC = $(wildcard *.c opti/*.c)
+SRC = $(wildcard *.c)
 
 OBJ=$(addprefix build/,$(SRC:.c=.o))
 DEP=$(addprefix build/,$(SRC:.c=.d))
@@ -13,6 +14,12 @@ all: $(OBJ)
 build/%.o: %.c
 	@mkdir -p build
 	$(CC) $(CFLAGS) -o $@ -c $<
+
+release: $(SRC)
+	$(CC) $(SRC) -o main $(RCFLAGS) $(LDFLAGS)
+
+debug: $(SRC)
+	$(CC) $(SRC) -o main -DTESTING=1 $(CFLAGS) $(LDFLAGS)
 
 -include $(DEP)
 
