@@ -18,6 +18,30 @@ void predict_move(Population * pop){
 	}
 }
 
+void execute_move (Populations * populations ){
+    for (int pop = 0; pop < 3; pop++) {
+        for (int i = 0; i < IndividualPerPopulation; i++) {
+            Individual  * id = &(populations->pops[pop].individuals[i]);
+            if (id->alive) {
+                if (id->action == JOKER) {
+                    id->action = rand() % 4;
+                }
+                switch (id->action){
+                    case N:
+                        if (id->y - 1 < 0) id->y -=1;
+                    case E:
+                        if (id->x + 1 > SIZEMAP) id->x +=1;
+                    case S:
+                        if (id->y + 1 > SIZEMAP) id->y +=1;
+                    case W:
+                        if (id->x - 1 < 0) id->x -=1;
+
+                }
+            }
+        }
+    }
+}
+
 void mutation (Brain  brain){
     int i = rand() % P;
     int j = rand() % 8;
@@ -104,7 +128,6 @@ int save_brain(Brain brain, int level, Species species) {
 	} else r = 0;
 	return r;
 }
-
 
 /**
  * @brief load the given brain from ./brains/<level>.<species>
