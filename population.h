@@ -18,12 +18,12 @@ typedef enum {
 typedef struct {
 	Rule status;
 	int x, y, action;
-	Species species;
 } Individual;
 
 typedef struct {
 	Individual individuals[IndividualPerPopulation];
 	Brain * brain;
+	Species species;
 } Population;
 
 #endif //ZZ1GAME_POPULATION_H
