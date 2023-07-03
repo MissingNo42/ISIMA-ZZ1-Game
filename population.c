@@ -11,6 +11,12 @@
 #include "population.h"
 #include "rules.h"
 
+void predict_move(Population * pop){
+	for (int i = 0; i < IndividualPerPopulation; i++){
+		int ch = choice_rule(&pop->individuals[i].status, *pop->brain);
+		pop->individuals[i].action = (ch == -1) ? JOKER: (*pop->brain)[ch].action;
+	}
+}
 
 void mutation (Brain  brain){
     int i = rand() % P;

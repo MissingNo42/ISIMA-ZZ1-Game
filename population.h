@@ -26,6 +26,13 @@ typedef struct {
 	Species species;
 } Population;
 
+typedef union {
+	struct {
+		Population r, g, b;
+	};
+	Population pops[3];
+} Populations;
+
 void mutation (Brain brain);
 
 void hybridization (Brain parent1, Brain parent2,Brain child);
