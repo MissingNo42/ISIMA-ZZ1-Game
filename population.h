@@ -18,7 +18,7 @@ typedef enum {
 typedef struct {
 	Rule status;
 	int x, y, nx, ny, alive;
-    Dir action;
+	Dir action;
 } Individual;
 
 typedef struct {
@@ -33,6 +33,18 @@ typedef union {
 	};
 	Population pops[3];
 } Populations;
+
+/**
+ * @brief prepare the action: check environment collision and pre-perform the move in id->nx/ny
+ * @param [in,out] id the individual to prepare the action
+ * */
+void prepare_move(Individual * id);
+
+/**
+ * @brief choose an action for all individuals and prepare its execution
+ * @param [in, out] pops the populations set
+ * */
+void predict_move(Populations * pops);
 
 void execute_move (Populations * populations );
 
