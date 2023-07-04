@@ -32,12 +32,12 @@ int match(Rule * status, Rule * rule) {
  * @param [in] brain the brain associated to the individual
  * @return the rule to execute or -1 if none
  * */
-int choice_rule(Rule * status, Brain brain){
+int choice_rule(Rule * status, Brain * brain){
 	float probaN = 0, probaD = 0;
 	int matched[P];
 	for (int i = 0; i < P; i++) {
-		matched[i] = match(status, brain + i);
-		if (matched[i]) probaD += powf(brain[i].priority + 1, ProbaExp);
+		matched[i] = match(status, brain->rules + i);
+		if (matched[i]) probaD += powf(brain->rules[i].priority + 1, ProbaExp);
 	}
 	int select = rand();
 
@@ -45,7 +45,7 @@ int choice_rule(Rule * status, Brain brain){
 	for (int i = 0; i < P; i++) {
 		if (matched[i]) {
 			last = i;
-			probaN += powf(brain[i].priority + 1, ProbaExp);
+			probaN += powf(brain->rules[i].priority + 1, ProbaExp);
 			if (select * probaD <= probaN * (float)RAND_MAX) return i;
 		}
 	}
@@ -71,8 +71,8 @@ void rand_rule (Rule * rule){
  * @brief modify a brain to randomize it
  * @param [in] brain a pointer to the brain
  * */
-void rand_brain (Brain brain){
+void rand_brain (Brain * brain){
     for (int i=0;i<P;i++){
-        rand_rule(&brain[i]);
+        rand_rule(&brain->rules[i]);
     }
 }
