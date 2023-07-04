@@ -7,6 +7,7 @@
 #include <sys/stat.h>
 #include <dirent.h>
 #include <string.h>
+#include <math.h>
 
 #include "population.h"
 #include "rules.h"
@@ -59,18 +60,18 @@ void predict_move(Populations * pops) {
 }
 
 void eat_move(Populations * populations) {
-	
+
     for (int pop = 0; pop < 3; pop++) {
-		
+
         for (int i = 0; i < IndividualPerPopulation; i++) {
 			Population *self_pop = &populations->pops[pop];
             Individual *self = &(self_pop->individuals[i]);
-			
+
             if (self->alive) {
                 for (int j = 0; j < IndividualPerPopulation; j++) {
 					Population *prey_pop = &populations->pops[(pop + 1) % 3];
 		            Individual *prey = &(prey_pop->individuals[j]);
-					
+
                     if (prey->alive && ((prey->nx == self->nx && prey->ny == self->ny)
                         || ((prey->x == self->nx && prey->y == self->ny) &&
                             (prey->nx == self->x && prey->ny == self->y)))) {
@@ -102,6 +103,13 @@ void move(Populations * pops){
     execute_move(pops);
 }
 
+void eval (Populations * pops, int ind){
+    Population * pop = &pops->pops[ind];
+    pop->brain->eval = (powf(pop->state.alives, 2)
+                        +  powf(IndividualPerPopulation - pop->state.targets, 1.5)
+                        + (pop->state.end_state * IndividualPerPopulation)
+                        )/sqrt(pops->iteration);
+}
 
 /**
  * @brief check if the game is terminated and compute result if needed
@@ -112,7 +120,7 @@ void move(Populations * pops){
 int is_terminated(Populations * pops){
 	pops->iteration++;
 	int r = 0;
-	
+
 	for (int p = 0; p < 3; ++p) {
 		Population * pop = &pops->pops[p];
 		if (!pop->state.alives) {
@@ -122,7 +130,7 @@ int is_terminated(Populations * pops){
 			*e = (*e != None) ? Kamikaze: Win;
 		}
 	}
-	
+
 	return r;
 }
 
@@ -164,7 +172,8 @@ void mutation(Brain * brain) {
 			if (d == 0) brain->rules[i].action = -1;
 			else brain->rules[i].action = (brain->rules[i].action + d + 4) % 4;
 			break;
-		case 7: brain->rules[i].priority = (brain->rules[i].priority + d + MAX_PRIORITY) % MAX_PRIORITY;
+		case 7:
+            brain->rules[i].priority = (brain->rules[i].priority + d + MAX_PRIORITY) % MAX_PRIORITY;
 			break;
 	}
 }
@@ -197,7 +206,7 @@ void hybridization(Brain * parent1, Brain * parent2, Brain * child) {
  * @param [in] species the species associate to the brain
  * @return 1 if saved, 0 otherwise
  * */
-int save_brain(Brain * brain, int level, Species species) {
+int save_brain(Brain brain, int level, Species species) {
 	char str[42];
 	int r = 1;
 	
@@ -219,7 +228,7 @@ int save_brain(Brain * brain, int level, Species species) {
  * @param [in] species the species associate to the brain
  * @return 1 if loaded, 0 otherwise
  * */
-int load_brain(Brain * brain, int level, Species species) {
+int load_brain(Brain brain, int level, Species species) {
 	char str[42];
 	int r = 1;
 	
