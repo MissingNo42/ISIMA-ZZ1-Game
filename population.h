@@ -110,6 +110,8 @@ void mutation_one(Brains * brains, int L);
 
 void mutation_all (Brains * brains, int* list_ind);
 
+void change_path_random(int * list);
+
 void hybridization (Brain * parent1, Brain * parent2,Brain * child);
 
 /**

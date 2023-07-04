@@ -204,8 +204,21 @@ void mutation_one(Brains * brains, int L) {
 }
 
 void mutation_all (Brains * brains, int* list_ind){
-
+    change_path_random(list_ind);
+    for (int k=0; k<IndividualPerPopulation*8; k++){
+        mutation_one(brains,list_ind[k]);
+    }
 }
+
+void change_path_random(int * list){
+    for (int k = 8*IndividualPerPopulation ; k>0; k--){
+        int i = rand() % k;
+        int tmp = list[k];
+        list[k] = list[i];
+        list[i] = tmp;
+    }
+}
+
 
 void hybridization(Brain * parent1, Brain * parent2, Brain * child) {
 	int rul = rand() % P;
