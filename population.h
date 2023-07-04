@@ -18,8 +18,8 @@ typedef enum {
 typedef enum {
 	None = 0,
 	Win = 1,
-	Lose = 2,
-	Kamikaze = 3
+	Lose = -1,
+	Kamikaze = 2
 } EndState;
 
 typedef struct {
