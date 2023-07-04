@@ -10,6 +10,7 @@
 
 #include "population.h"
 #include "rules.h"
+#include "field.h"
 
 /**
  * @brief prepare the action: check environment collision and pre-perform the move in id->nx/ny

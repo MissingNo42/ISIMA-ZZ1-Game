@@ -5,7 +5,7 @@
 #include "field.h"
 #include "population.h"
 
-float DISTMAXFIELD;
+float DISTMAXFIELD = 1.4142 * SIZEMAP;
 
 void freeField(int ** field){
     for(int i = 0; i < SIZEMAP; i++){
