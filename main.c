@@ -98,32 +98,37 @@ int main(int argc, char ** argv) {
         sdl_exit(2);
     }*/
 
+    Brain b[3] = {{.eval = 0}, {.eval = 0}, {.eval = 0}};
+
+    rand_brain(b + 0);
+    rand_brain(b + 1);
+    rand_brain(b + 2);
 
     Population popRed = {.individuals = {
-            {.x = 0, .y = SIZEMAP - 1},
-            {.x = 2, .y = SIZEMAP - 1},
-            {.x = 4, .y = SIZEMAP - 1},
-            {.x = 1, .y = SIZEMAP - 2},
-            {.x = 6, .y = SIZEMAP - 1},
-    }, NULL, RED};
+            {.x = 0, .y = SIZEMAP - 1, .alive = 1},
+            {.x = 2, .y = SIZEMAP - 1, .alive = 1},
+            {.x = 4, .y = SIZEMAP - 1, .alive = 1},
+            {.x = 1, .y = SIZEMAP - 2, .alive = 1},
+            {.x = 6, .y = SIZEMAP - 1, .alive = 1},
+    }, b+ 0, RED, .state = {.end_state = None, .alives = IndividualPerPopulation, .targets = IndividualPerPopulation}};
 
     Population popGreen = {.individuals = {
-            {.x = SIZEMAP - 1, .y = SIZEMAP - 1},
-            {.x = SIZEMAP - 3, .y = SIZEMAP - 1},
-            {.x = SIZEMAP - 5, .y = SIZEMAP - 1},
-            {.x = SIZEMAP - 2, .y = SIZEMAP - 2},
-            {.x = SIZEMAP - 4, .y = SIZEMAP - 2},
-    }, NULL, GREEN};
+            {.x = SIZEMAP - 1, .y = SIZEMAP - 1, .alive = 1},
+            {.x = SIZEMAP - 3, .y = SIZEMAP - 1, .alive = 1},
+            {.x = SIZEMAP - 5, .y = SIZEMAP - 1, .alive = 1},
+            {.x = SIZEMAP - 2, .y = SIZEMAP - 2, .alive = 1},
+            {.x = SIZEMAP - 4, .y = SIZEMAP - 2, .alive = 1},
+    }, b+1, GREEN, .state = {.end_state = None, .alives = IndividualPerPopulation, .targets = IndividualPerPopulation}};
 
     Population popBlue = {.individuals = {
-            {.x = 10, .y = 0},
-            {.x = 10, .y = 1},
-            {.x = 12, .y = 1},
-            {.x = 9, .y = 2},
-            {.x = 11, .y = 2},
-    }, NULL, BLUE};
+            {.x = 10, .y = 0, .alive = 1},
+            {.x = 10, .y = 1, .alive = 1},
+            {.x = 12, .y = 1, .alive = 1},
+            {.x = 9, .y = 2, .alive = 1},
+            {.x = 11, .y = 2, .alive = 1},
+    }, b+2, BLUE, .state = {.end_state = None, .alives = IndividualPerPopulation, .targets = IndividualPerPopulation}};
 
-    Populations pops = {{popRed, popGreen, popBlue}};
+    Populations pops = {.pops = {popRed, popGreen, popBlue}, .iteration = 0};
 
     vitesse = 10;
 	
@@ -131,7 +136,9 @@ int main(int argc, char ** argv) {
 	paused = SDL_FALSE,      // Booléen pour dire que le programme est en pause
 	event_utile = SDL_FALSE; // Booléen pour savoir si on a trouvé un event traité
 	SDL_Event event;         // Evènement à traiter
-	
+
+    predict_move(&pops);
+
 	while (run) {
 		event_utile = SDL_FALSE;
 		
@@ -145,6 +152,12 @@ int main(int argc, char ** argv) {
 				}
 				case SDL_KEYDOWN:
 					switch(event.key.keysym.sym){
+                        case SDLK_KP_1:
+                            vitesse = 3;
+                            break;
+                        case SDLK_KP_2:
+                            vitesse = 1;
+                            break;
 						case SDLK_p:
 						case SDLK_SPACE:
 							paused=paused?SDL_FALSE:SDL_TRUE;
@@ -166,6 +179,12 @@ int main(int argc, char ** argv) {
 					break;
 				case SDL_KEYUP:
 					switch(event.key.keysym.sym){
+                        case SDLK_KP_1:
+                            vitesse = 10;
+                            break;
+                        case SDLK_KP_2:
+                            vitesse = 10;
+                            break;
 						case SDLK_LEFT: break;
 						case SDLK_RIGHT: break;
 						case SDLK_UP: break;
@@ -179,11 +198,18 @@ int main(int argc, char ** argv) {
 		if (!paused) {
 
             iterAnim ++;
-            if(iterAnim >= vitesse){
+            if(iterAnim > vitesse){
                 iterAnim = 0;
-                iter++;
-                printf("iter : %d\n", iter);
+
+                eat_move(&pops);
+                execute_move(&pops);
+
+                predict_move(&pops);
+
+                printf(">> iter %d\n", pops.iteration);
+                if(is_terminated(&pops)) run=SDL_FALSE;
             }
+
 
             draw(renderer, &pops);
 			SDL_RenderPresent(renderer);

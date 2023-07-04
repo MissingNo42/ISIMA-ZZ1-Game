@@ -11,7 +11,7 @@ extern int originX, originY;
 
 extern int sizeCaseGrid;
 
-extern int iterAnim, iter, vitesse;
+extern int iterAnim, vitesse;
 
 void setup(SDL_DisplayMode dmode);
 

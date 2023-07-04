@@ -23,13 +23,13 @@ void prepare_move(Individual * id) { // possible de rajouter si 2 ally vont au m
 	
 	if (id->action == JOKER) id->action = rand() % 4;
 	switch (id->action) {
-		case N: if (id->y - 1 > 0) id->ny = id->y - 1;
+		case N: if (id->y - 1 >= 0) id->ny = id->y - 1;
 			break;
 		case E: if (id->x + 1 < SIZEMAP) id->nx = id->x + 1;
 			break;
 		case S: if (id->y + 1 < SIZEMAP) id->ny = id->y + 1;
 			break;
-		case W: if (id->x - 1 > 0) id->nx = id->x - 1;
+		case W: if (id->x - 1 >= 0) id->nx = id->x - 1;
 			break;
 		default: break;
 	}

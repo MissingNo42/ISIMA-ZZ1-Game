@@ -11,7 +11,7 @@ int originX, originY;
 
 int sizeCaseGrid;
 
-int iterAnim, iter, vitesse;
+int iterAnim, vitesse;
 
 void setup(SDL_DisplayMode dmode){
     WIDTH = dmode.w;
@@ -24,7 +24,6 @@ void setup(SDL_DisplayMode dmode){
     sizeCaseGrid = (HEIGHT - (SIZEMAP - 1) * 2) / SIZEMAP;
 
     iterAnim = 0;
-    iter = 0;
 }
 
 void drawGrid(SDL_Renderer * renderer){
@@ -47,11 +46,14 @@ void drawPops(SDL_Renderer * renderer, Populations * pops){
         else if(pops->pops[k].species == GREEN) SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
         else SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
         for (int i = 0; i < IndividualPerPopulation; i++) {
-            int x = pops->pops[k].individuals[i].x;
-            int y = pops->pops[k].individuals[i].y;
+            if(pops->pops[k].individuals[i].alive) {
+                int x = pops->pops[k].individuals[i].x;
+                int y = pops->pops[k].individuals[i].y;
 
-            SDL_Rect indiv = {originX + x * (sizeCaseGrid + 2), originY + y * (sizeCaseGrid + 2), sizeCaseGrid, sizeCaseGrid};
-            SDL_RenderFillRect(renderer, &indiv);
+                SDL_Rect indiv = {originX + x * (sizeCaseGrid + 2), originY + y * (sizeCaseGrid + 2), sizeCaseGrid,
+                                  sizeCaseGrid};
+                SDL_RenderFillRect(renderer, &indiv);
+            }
         }
     }
 }
@@ -62,11 +64,20 @@ void drawMouv(SDL_Renderer * renderer, Populations * pops){
         else if(pops->pops[k].species == GREEN) SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
         else SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
         for (int i = 0; i < IndividualPerPopulation; i++) {
-            int xDiff = (pops->pops[k].individuals[i].nx - pops->pops[k].individuals[i].x) * (sizeCaseGrid + 2) / vitesse;
-            int yDiff = (pops->pops[k].individuals[i].ny - pops->pops[k].individuals[i].y) * (sizeCaseGrid + 2) / vitesse;
+            if(pops->pops[k].individuals[i].alive) {
+                int xDiff = (pops->pops[k].individuals[i].nx - pops->pops[k].individuals[i].x) * (sizeCaseGrid + 2) /
+                            vitesse;
+                int yDiff = (pops->pops[k].individuals[i].ny - pops->pops[k].individuals[i].y) * (sizeCaseGrid + 2) /
+                            vitesse;
 
-            SDL_Rect indiv = {originX + iterAnim * xDiff, originX + iterAnim * yDiff, sizeCaseGrid, sizeCaseGrid};
-            SDL_RenderFillRect(renderer, &indiv);
+                printf("nx= %d, x = %d\n", pops->pops[k].individuals[i].nx, pops->pops[k].individuals[i].x);
+                printf("    ny= %d, y = %d\n", pops->pops[k].individuals[i].ny, pops->pops[k].individuals[i].y);
+
+                SDL_Rect indiv = {originX + pops->pops[k].individuals[i].x * (sizeCaseGrid + 2) + iterAnim * xDiff,
+                                  originY + pops->pops[k].individuals[i].y * (sizeCaseGrid + 2) + iterAnim * yDiff,
+                                  sizeCaseGrid, sizeCaseGrid};
+                SDL_RenderFillRect(renderer, &indiv);
+            }
         }
     }
 }
