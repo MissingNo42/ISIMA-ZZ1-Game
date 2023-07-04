@@ -125,6 +125,7 @@ int main(int argc, char ** argv) {
 
     Populations pops = {{popRed, popGreen, popBlue}};
 
+    vitesse = 10;
 	
 	SDL_bool run = SDL_TRUE, // Booléen pour dire que le programme doit continuer
 	paused = SDL_FALSE,      // Booléen pour dire que le programme est en pause
