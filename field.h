@@ -16,5 +16,6 @@ void fillMatrixFromPops(int ** field, Populations * pops);
 void nearestPPA(int indexIndiv, Populations * pops, int k, int select);
 void fillStatusPops(Populations * pops);
 void printStatus(Populations * pops, Species color, int IndiceIndiv);
+void cleanMatrixFromPops(int ** field, Populations * pops);
 
 #endif //ZZ1GAME_FIELD_H

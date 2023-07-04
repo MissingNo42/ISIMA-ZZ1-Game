@@ -39,6 +39,16 @@ void printField(int ** field){
     printf("-\n");
 }
 
+void cleanMatrixFromPops(int ** field, Populations * pops){
+    for(int k = 0; k < 3; k++){
+        for(int i = 0; i < IndividualPerPopulation; i++){
+            int x = pops->pops[k].individuals[i].x;
+            int y = pops->pops[k].individuals[i].y;
+            field[x][y] = 0;
+        }
+    }
+}
+
 void fillMatrixFromPops(int ** field, Populations * pops){
     for(int k = 0; k < 3; k++){
         for(int i = 0; i < IndividualPerPopulation; i++){
