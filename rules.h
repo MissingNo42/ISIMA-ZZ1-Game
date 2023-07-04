@@ -5,7 +5,7 @@
 #ifndef ZZ1GAME_RULES_H
 #define ZZ1GAME_RULES_H
 
-#define P 10
+#define P 16
 #define MAX_PRIORITY 5
 #define ProbaExp 2
 
