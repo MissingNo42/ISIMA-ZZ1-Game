@@ -31,8 +31,8 @@ typedef struct {
 /**
  * @struct State
  * @brief a state for a population
- * @var State::victims
- * the number of opponents killed
+ * @var State::targets
+ * the number of remaining opponents
  * @var State::alives
  * the number of dead
  * @var State::end_state
@@ -76,9 +76,9 @@ void execute_move (Populations * populations );
 
 void move(Populations * pops);
 
-void mutation (Brain brain);
+void mutation (Brain * brain);
 
-void hybridization (Brain parent1, Brain parent2,Brain child);
+void hybridization (Brain * parent1, Brain * parent2,Brain * child);
 
 /**
  * @brief save the given brain to ./brains/<level>.<species>
@@ -87,7 +87,7 @@ void hybridization (Brain parent1, Brain parent2,Brain child);
  * @param [in] species the species associate to the brain
  * @return 1 if saved, 0 otherwise
  * */
-int save_brain(Brain brain, int level, Species species);
+int save_brain(Brain * brain, int level, Species species);
 
 /**
  * @brief load the given brain from ./brains/<level>.<species>
@@ -96,7 +96,7 @@ int save_brain(Brain brain, int level, Species species);
  * @param [in] species the species associate to the brain
  * @return 1 if loaded, 0 otherwise
  * */
-int load_brain(Brain brain, int level, Species species);
+int load_brain(Brain * brain, int level, Species species);
 
 /**
  * @brief get the last level of the saved brains of the specified species

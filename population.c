@@ -59,16 +59,24 @@ void predict_move(Populations * pops) {
 }
 
 void eat_move(Populations * populations) {
+	
     for (int pop = 0; pop < 3; pop++) {
+		
         for (int i = 0; i < IndividualPerPopulation; i++) {
-            Individual *soi = &(populations->pops[pop].individuals[i]);
-            if (soi->alive) {
+			Population *self_pop = &populations->pops[pop];
+            Individual *self = &(self_pop->individuals[i]);
+			
+            if (self->alive) {
                 for (int j = 0; j < IndividualPerPopulation; j++) {
-                    Individual *proie = &(populations->pops[(pop + 1) % 3].individuals[j]);
-                    if ((proie->nx == soi->nx && proie->ny == soi->ny)
-                        || ((proie->x == soi->nx && proie->y == soi->ny) &&
-                            (proie->nx == soi->x && proie->ny == soi->y))) {
-                        proie->alive = 0;
+					Population *prey_pop = &populations->pops[(pop + 1) % 3];
+		            Individual *prey = &(prey_pop->individuals[j]);
+					
+                    if (prey->alive && ((prey->nx == self->nx && prey->ny == self->ny)
+                        || ((prey->x == self->nx && prey->y == self->ny) &&
+                            (prey->nx == self->x && prey->ny == self->y)))) {
+						self_pop->state.targets--;
+						prey_pop->state.alives--;
+                        prey->alive = 0;
                     }
                 }
             }
@@ -76,7 +84,7 @@ void eat_move(Populations * populations) {
     }
 }
 
-void execute_move (Populations * populations ){
+void execute_move (Populations * populations){
     for (int pop = 0; pop < 3; pop++) {
         for (int i = 0; i < IndividualPerPopulation; i++) {
             Individual  * id = &(populations->pops[pop].individuals[i]);
@@ -94,7 +102,29 @@ void move(Populations * pops){
     execute_move(pops);
 }
 
-void eval ()
+
+/**
+ * @brief check if the game is terminated and compute result if needed
+ * @param [in] pops the population set
+ * @param [in, out] states the current state
+ * @return 0 if the game continue, 1 if terminated and return the result
+ * */
+int is_terminated(Populations * pops){
+	pops->iteration++;
+	int r = 0;
+	
+	for (int p = 0; p < 3; ++p) {
+		Population * pop = &pops->pops[p];
+		if (!pop->state.alives) {
+			r = 1;
+			pop->state.end_state = Lose;
+			EndState * e = &pops->pops[(p + 2) % 3].state.end_state;
+			*e = (*e != None) ? Kamikaze: Win;
+		}
+	}
+	
+	return r;
+}
 
 void mutation(Brain * brain) {
 	int i = rand() % P;
@@ -134,7 +164,7 @@ void mutation(Brain * brain) {
 			if (d == 0) brain->rules[i].action = -1;
 			else brain->rules[i].action = (brain->rules[i].action + d + 4) % 4;
 			break;
-		case 7:brain->rules[i].priority = (brain->rules[i].priority + d + MAX_PRIORITY) % MAX_PRIORITY;
+		case 7: brain->rules[i].priority = (brain->rules[i].priority + d + MAX_PRIORITY) % MAX_PRIORITY;
 			break;
 	}
 }
@@ -144,18 +174,18 @@ void hybridization(Brain * parent1, Brain * parent2, Brain * child) {
 	int arg = rand() % 8;
 	for (int i = 0; i < rul; i++) {
 		for (int j = 0; j < 8; j++) {
-			child[i].raw[j] = parent1->rules[i].raw[j];
+			child->rules[i].raw[j] = parent1->rules[i].raw[j];
 		}
 	}
 	for (int j = 0; j < arg; j++) {
-		child[rul].raw[j] = parent1->rules[rul].raw[j];
+		child->rules[rul].raw[j] = parent1->rules[rul].raw[j];
 	}
 	for (int j = arg + 1; j < 8; j++) {
-		child[rul].raw[j] = parent2->rules[rul].raw[j];
+		child->rules[rul].raw[j] = parent2->rules[rul].raw[j];
 	}
 	for (int i = rul + 1; i < P; i++) {
 		for (int j = 0; j < 8; j++) {
-			child[i].raw[j] = parent2->rules[i].raw[j];
+			child->rules[i].raw[j] = parent2->rules[i].raw[j];
 		}
 	}
 }
@@ -167,7 +197,7 @@ void hybridization(Brain * parent1, Brain * parent2, Brain * child) {
  * @param [in] species the species associate to the brain
  * @return 1 if saved, 0 otherwise
  * */
-int save_brain(Brain brain, int level, Species species) {
+int save_brain(Brain * brain, int level, Species species) {
 	char str[42];
 	int r = 1;
 	
@@ -189,7 +219,7 @@ int save_brain(Brain brain, int level, Species species) {
  * @param [in] species the species associate to the brain
  * @return 1 if loaded, 0 otherwise
  * */
-int load_brain(Brain brain, int level, Species species) {
+int load_brain(Brain * brain, int level, Species species) {
 	char str[42];
 	int r = 1;
 	
