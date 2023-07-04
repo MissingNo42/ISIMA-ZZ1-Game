@@ -70,9 +70,6 @@ void drawMouv(SDL_Renderer * renderer, Populations * pops){
                 int yDiff = (pops->pops[k].individuals[i].ny - pops->pops[k].individuals[i].y) * (sizeCaseGrid + 2) /
                             vitesse;
 
-                printf("nx= %d, x = %d\n", pops->pops[k].individuals[i].nx, pops->pops[k].individuals[i].x);
-                printf("    ny= %d, y = %d\n", pops->pops[k].individuals[i].ny, pops->pops[k].individuals[i].y);
-
                 SDL_Rect indiv = {originX + pops->pops[k].individuals[i].x * (sizeCaseGrid + 2) + iterAnim * xDiff,
                                   originY + pops->pops[k].individuals[i].y * (sizeCaseGrid + 2) + iterAnim * yDiff,
                                   sizeCaseGrid, sizeCaseGrid};
