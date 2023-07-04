@@ -206,6 +206,7 @@ void mutation_one(Brains * brains, int L) {
 void mutation_all (Brains * brains, int* list_ind, Species species){
     change_path_random(list_ind);
     for (int k=0; k<IndividualPerPopulation*8; k++){
+        brains->level++;
         //copy brain
         for (int m=0; m< BrainPool; m++){
             copy_brain(brains->brain[0],brains->brain[m]);
@@ -362,4 +363,18 @@ int main(){
 }
 #endif
 
+*/
+
+/*
+#ifdef TESTING
+int main(){
+    Brains brains;
+    int list[8*IndividualPerPopulation];
+    rand_brain( &brains.prey );
+    rand_brain( &brains.predator );
+    rand_brain( &brains.brain );
+    brains.level = 0;
+    mutation_all(&brains, list, 0);
+}
+#endif
 */
