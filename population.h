@@ -69,7 +69,7 @@ typedef struct {
 
 
 typedef struct {
-	Brain brain[BrainPool];
+	Brain *brain[BrainPool];
 	Brain prey, predator;
 	int level; // generation
 	Species species;
@@ -111,6 +111,8 @@ void mutation_one(Brains * brains, int L);
 void mutation_all (Brains * brains, int* list_ind);
 
 void change_path_random(int * list);
+
+void select_best(Brains * brains);
 
 void hybridization (Brain * parent1, Brain * parent2,Brain * child);
 

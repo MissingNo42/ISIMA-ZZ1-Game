@@ -8,7 +8,8 @@
 #define P 16
 #define MAX_PRIORITY 5
 #define ProbaExp 2
-#define BrainPool 16
+#define BrainPool 6
+#define ITE_MAX 500
 
 typedef enum {
 	JOKER = -1, N, E, S, W

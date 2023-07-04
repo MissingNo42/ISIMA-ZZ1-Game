@@ -203,10 +203,43 @@ void mutation_one(Brains * brains, int L) {
     }
 }
 
-void mutation_all (Brains * brains, int* list_ind){
+void mutation_all (Brains * brains, int* list_ind, Species species){
     change_path_random(list_ind);
     for (int k=0; k<IndividualPerPopulation*8; k++){
+        //copy brain
+        for (int m=0; m< BrainPool; m++){
+            copy_brain(brains->brain[0],brains->brain[m]);
+        }
         mutation_one(brains,list_ind[k]);
+                        //simulation
+        //thread pour chaque brain
+        int i=0;
+        while (!is_terminated(&pops) && i<ITE_MAX){
+            move(&pops);
+            fillStatusPops(&pops);
+            i++;
+        }
+                        //evaluation
+        eval(pops, species);
+        //fin threads
+                        //selection
+        select_best(brains);
+    }
+}
+
+void select_best(Brains * brains){
+    int j = 0;
+    float eval = brains->brain[0].eval
+    for (int k = 0; k<BrainPool; k++){
+        if (eval > brains->brain[k].eval){
+            j = k;
+            eval = brains->brain[k].eval;
+        }
+    }
+    if (j){
+        brains * tmp = &brains->brain[j];
+        brains->brain[j] = brains->brain[0];
+        brains->brain[0] = tmp;
     }
 }
 
