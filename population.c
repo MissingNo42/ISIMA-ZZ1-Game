@@ -18,7 +18,7 @@
 void prepare_move(Individual * id) {
 	id->nx = id->x;
 	id->ny = id->y;
-	
+
 	if (id->action == JOKER) id->action = rand() % 4;
 	switch (id->action) {
 		case N:
@@ -48,7 +48,7 @@ void predict_move(Populations * pops) {
 		
 		for (int i = 0; i < IndividualPerPopulation; i++) {
 			Individual * id = &pop->individuals[i];
-			
+
 			if (id->alive) {
 				int ch = choice_rule(&id->status, *pop->brain);
 				id->action = (ch == -1) ? JOKER : (*pop->brain)[ch].action;
@@ -58,6 +58,33 @@ void predict_move(Populations * pops) {
 	}
 }
 
+void eat_move(Populations * populations){
+    for (int pop = 0; pop < 3; pop++) {
+        for (int i = 0; i < IndividualPerPopulation; i++) {
+            Individual  * soi = &(populations->pops[pop].individuals[i]);
+            if (soi->alive) {
+                for (int j = 0; j<IndividualPerPopulation; j++ ){
+                    Individual  * proie = &(populations->pops[(pop+1) % 3].individuals[j]);
+                    if ( (proie->nx == soi->nx && proie->ny == soi->ny)
+                         ||  ((proie->x == soi->nx && proie->y == soi->ny) && (proie->nx == soi->x && proie->ny == soi->y)) ){
+                        proie->alive = 0;
+                    }
+                }
+            }
+        }
+    }
+
+    void execute_move (Populations * populations ){
+        for (int pop = 0; pop < 3; pop++) {
+            for (int i = 0; i < IndividualPerPopulation; i++) {
+                Individual  * id = &(populations->pops[pop].individuals[i]);
+                if (id->alive) {
+                    id->x = id->nx;
+                    id->y = id->ny;
+                }
+            }
+        }
+    }
 
 void mutation(Brain brain) {
 	int i = rand() % P;
