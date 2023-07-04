@@ -69,12 +69,14 @@ void nearestPPA(int indexIndiv, Populations * pops, int k, int select){
     Population * popPPA = &pops->pops[(k + select + 1)%3];
 
     for(int i = 0; i < IndividualPerPopulation; i++){
-        if(select != 2 || i != indexIndiv) {
-            float distTmp = sqrt(
-                    pow(indiv->x - popPPA->individuals[i].x, 2) + pow(indiv->y - popPPA->individuals[i].y, 2));
-            if (distTmp < distMin) {
-                iMin = i;
-                distMin = distTmp;
+        if(popPPA->individuals[i].alive) {
+            if (select != 2 || i != indexIndiv) {
+                float distTmp = sqrt(
+                        pow(indiv->x - popPPA->individuals[i].x, 2) + pow(indiv->y - popPPA->individuals[i].y, 2));
+                if (distTmp < distMin) {
+                    iMin = i;
+                    distMin = distTmp;
+                }
             }
         }
     }
