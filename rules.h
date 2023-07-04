@@ -36,7 +36,10 @@ typedef union {
 	int raw[8];
 } Rule;
 
-typedef Rule Brain[P];
+typedef struct {
+	Rule rules[P];
+	float eval;
+} Brain;
 
 /**
  * @brief check if a status match the given rule
