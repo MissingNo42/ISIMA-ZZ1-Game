@@ -15,16 +15,39 @@ typedef enum {
 	BLUE = 3,
 } Species;
 
+typedef enum {
+	None = 0,
+	Win = 1,
+	Lose = 2,
+	Kamikaze = 3
+} EndState;
+
 typedef struct {
 	Rule status;
 	int x, y, nx, ny, alive;
 	Dir action;
 } Individual;
 
+/**
+ * @struct State
+ * @brief a state for a population
+ * @var State::victims
+ * the number of opponents killed
+ * @var State::alives
+ * the number of dead
+ * @var State::end_state
+ * the state of the population at the end
+ * */
+typedef struct {
+	int targets, alives;
+	EndState end_state;
+} State;
+
 typedef struct {
 	Individual individuals[IndividualPerPopulation];
 	Brain * brain;
 	Species species;
+	State state;
 } Population;
 
 typedef union {
@@ -32,6 +55,7 @@ typedef union {
 		Population r, g, b;
 	};
 	Population pops[3];
+	int iteration;
 } Populations;
 
 /**
