@@ -5,7 +5,7 @@
 #ifndef ZZ1GAME_RULES_H
 #define ZZ1GAME_RULES_H
 
-#define P 10
+#define P 16
 #define MAX_PRIORITY 5
 #define ProbaExp 2
 
@@ -36,7 +36,10 @@ typedef union {
 	int raw[8];
 } Rule;
 
-typedef Rule Brain[P];
+typedef struct {
+	Rule rules[P];
+	float eval;
+} Brain;
 
 /**
  * @brief check if a status match the given rule
@@ -52,7 +55,7 @@ int match(Rule * status, Rule * rule);
  * @param [in] brain the brain associated to the individual
  * @return the rule to execute or -1 if none
  * */
-int choice_rule(Rule * status, Brain brain);
+int choice_rule(Rule * status, Brain * brain);
 
 /**
  * @brief modify a rule to randomize it
@@ -64,6 +67,6 @@ void rand_rule (Rule * rule);
  * @brief modify a brain to randomize it
  * @param [in] brain a pointer to the brain
  * */
-void rand_brain (Brain brain);
+void rand_brain (Brain * brain);
 
 #endif //ZZ1GAME_RULES_H

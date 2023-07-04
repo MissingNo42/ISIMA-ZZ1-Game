@@ -17,13 +17,12 @@ void printField(int ** field);
 
 void fillMatrixFromPops(int ** field, Populations * pops);
 
-// param select : 0 = prey, 1 = predator, 2 = ally
 void nearestPPA(int indexIndiv, Populations * pops, int k, int select);
 
 void fillStatusPops(Populations * pops);
 
-//Ne pas regardez, c'est une horreur
 void printStatus(Populations * pops, Species color, int IndiceIndiv);
 
+void cleanMatrixFromPops(int ** field, Populations * pops);
 
 #endif //ZZ1GAME_FIELD_H

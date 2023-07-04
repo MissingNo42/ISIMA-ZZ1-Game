@@ -5,7 +5,7 @@
 #include "field.h"
 #include "population.h"
 
-float DISTMAXFIELD;
+float DISTMAXFIELD = 1.4142 * SIZEMAP;
 
 void freeField(int ** field){
     for(int i = 0; i < SIZEMAP; i++){
@@ -39,12 +39,24 @@ void printField(int ** field){
     printf("-\n");
 }
 
-void fillMatrixFromPops(int ** field, Populations * pops){
+void cleanMatrixFromPops(int ** field, Populations * pops){
     for(int k = 0; k < 3; k++){
         for(int i = 0; i < IndividualPerPopulation; i++){
             int x = pops->pops[k].individuals[i].x;
             int y = pops->pops[k].individuals[i].y;
-            field[x][y] = pops->pops[k].species;
+            field[x][y] = 0;
+        }
+    }
+}
+
+void fillMatrixFromPops(int ** field, Populations * pops){
+    for(int k = 0; k < 3; k++){
+        for(int i = 0; i < IndividualPerPopulation; i++){
+			if (pops->pops[k].individuals[i].alive) {
+				int x = pops->pops[k].individuals[i].x;
+				int y = pops->pops[k].individuals[i].y;
+				field[x][y] = pops->pops[k].species;
+			}
         }
     }
 }
@@ -119,35 +131,42 @@ void printStatus(Populations * pops, Species color, int IndiceIndiv){
     );
 }
 
-int main2(){
+#ifdef TESTING
+int main(){
     int ** field = createField();
     DISTMAXFIELD = sqrt(2) * SIZEMAP;
 
+	Brain b[3] = {{.eval = 0}, {.eval = 0}, {.eval = 0}};
+
+	rand_brain(b + 0);
+	rand_brain(b + 1);
+	rand_brain(b + 2);
+
     Population popRed = {.individuals = {
-            {.x = 0, .y = SIZEMAP - 1},
-            {.x = 2, .y = SIZEMAP - 1},
-            {.x = 4, .y = SIZEMAP - 1},
-            {.x = 1, .y = SIZEMAP - 2},
-            {.x = 6, .y = SIZEMAP - 1},
-            }, NULL, RED};
+            {.x = 0, .y = SIZEMAP - 1, .alive = 1},
+            {.x = 2, .y = SIZEMAP - 1, .alive = 1},
+            {.x = 4, .y = SIZEMAP - 1, .alive = 1},
+            {.x = 1, .y = SIZEMAP - 2, .alive = 1},
+            {.x = 6, .y = SIZEMAP - 1, .alive = 1},
+            }, b+ 0, RED, .state = {.end_state = None, .alives = IndividualPerPopulation, .targets = IndividualPerPopulation}};
 
     Population popGreen = {.individuals = {
-            {.x = SIZEMAP - 1, .y = SIZEMAP - 1},
-            {.x = SIZEMAP - 3, .y = SIZEMAP - 1},
-            {.x = SIZEMAP - 5, .y = SIZEMAP - 1},
-            {.x = SIZEMAP - 2, .y = SIZEMAP - 2},
-            {.x = SIZEMAP - 4, .y = SIZEMAP - 2},
-    }, NULL, GREEN};
+            {.x = SIZEMAP - 1, .y = SIZEMAP - 1, .alive = 1},
+            {.x = SIZEMAP - 3, .y = SIZEMAP - 1, .alive = 1},
+            {.x = SIZEMAP - 5, .y = SIZEMAP - 1, .alive = 1},
+            {.x = SIZEMAP - 2, .y = SIZEMAP - 2, .alive = 1},
+            {.x = SIZEMAP - 4, .y = SIZEMAP - 2, .alive = 1},
+    }, b+1, GREEN, .state = {.end_state = None, .alives = IndividualPerPopulation, .targets = IndividualPerPopulation}};
 
     Population popBlue = {.individuals = {
-            {.x = 10, .y = 0},
-            {.x = 10, .y = 1},
-            {.x = 12, .y = 1},
-            {.x = 9, .y = 2},
-            {.x = 11, .y = 2},
-    }, NULL, BLUE};
+            {.x = 10, .y = 0, .alive = 1},
+            {.x = 10, .y = 1, .alive = 1},
+            {.x = 12, .y = 1, .alive = 1},
+            {.x = 9, .y = 2, .alive = 1},
+            {.x = 11, .y = 2, .alive = 1},
+    }, b+2, BLUE, .state = {.end_state = None, .alives = IndividualPerPopulation, .targets = IndividualPerPopulation}};
 
-    Populations pops = {{popRed, popGreen, popBlue}};
+    Populations pops = {.pops = {popRed, popGreen, popBlue}, .iteration = 0};
 
     fillMatrixFromPops(field, &pops);
 
@@ -157,6 +176,17 @@ int main2(){
     printStatus(&pops, BLUE, 0);
 
     printField(field);
+	for (int i = 0; !is_terminated(&pops); i++){
+		cleanMatrixFromPops(field, &pops);
+		move(&pops);
+		printf(">> Terminated: %d : %d\n", is_terminated(&pops), i);
+
+	    fillMatrixFromPops(field, &pops);
+
+	    fillStatusPops(&pops);
+	    printField(field);
+	}
     freeField(field);
     return 0;
 }
+#endif
