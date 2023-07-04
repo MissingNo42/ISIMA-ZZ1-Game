@@ -16,6 +16,13 @@ typedef enum {
 } Species;
 
 typedef enum {
+	ZoneN,
+	ZoneSE,
+	ZoneSW,
+	Dispatch,
+} Locator;
+
+typedef enum {
 	None = 0,
 	Win = 1,
 	Lose = -1,
@@ -59,6 +66,15 @@ typedef struct {
 	};
 	int iteration;
 } Populations;
+
+
+typedef struct {
+	Brain brain[BrainPool];
+	Brain prey, predator;
+	int level; // generation
+	Species species;
+} Brains;
+
 
 /**
  * @brief prepare the action: check environment collision and pre-perform the move in id->nx/ny
