@@ -11,7 +11,7 @@ int originX, originY;
 
 int sizeCaseGrid;
 
-int iterAnim, vitesse;
+int iterAnim, iter, vitesse;
 
 void setup(SDL_DisplayMode dmode){
     WIDTH = dmode.w;
@@ -24,6 +24,7 @@ void setup(SDL_DisplayMode dmode){
     sizeCaseGrid = (HEIGHT - (SIZEMAP - 1) * 2) / SIZEMAP;
 
     iterAnim = 0;
+    iter = 0;
 }
 
 void drawGrid(SDL_Renderer * renderer){
@@ -76,6 +77,6 @@ void draw(SDL_Renderer * renderer, Populations * pops){
 
     drawGrid(renderer);
 
-    if(iterAnim == -1) drawPops(renderer, pops);
+    if(iterAnim == 0) drawPops(renderer, pops);
     else drawMouv(renderer, pops);
 }

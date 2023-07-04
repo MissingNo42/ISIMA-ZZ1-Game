@@ -177,6 +177,14 @@ int main(int argc, char ** argv) {
 		}
 		
 		if (!paused) {
+
+            iterAnim ++;
+            if(iterAnim >= vitesse){
+                iterAnim = 0;
+                iter++;
+                printf("iter : %d\n", iter);
+            }
+
             draw(renderer, &pops);
 			SDL_RenderPresent(renderer);
 			//SDL_FlushEvents(SDL_KEYDOWN, SDL_KEYUP - 1);
