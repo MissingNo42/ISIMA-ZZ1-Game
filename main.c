@@ -215,20 +215,9 @@ int main(int argc, char ** argv) {
 		}
 
 		//SDL_Delay(10);
-        /*
-        if(end && pops.pops[0].state.end_state == 2){
-            printf("RED KAMIKAZE : Seed = ", seed);
-        } else if(end && pops.pops[1].state.end_state == 2){
-            printf("GREEN KAMIKAZE : Seed = ", seed);
-        } else if(end && pops.pops[2].state.end_state == 2){
-            printf("BLUE KAMIKAZE : Seed = ", seed);
-        } else {
-
-        }
-         */
 	}
 
-    //printf("Nombre itérations : %d\n", pops.iteration);
+    printf("Nombre itérations : %d\n", pops.iteration);
 	sdl_exit(3);
 	return 0;
 }
