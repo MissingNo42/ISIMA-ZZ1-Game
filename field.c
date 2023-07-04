@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <math.h>
 
-#incclude "field.h"
+#include "field.h"
 #include "population.h"
 
 float DISTMAXFIELD;
@@ -50,12 +50,14 @@ void fillMatrixFromPops(int ** field, Populations * pops){
 }
 
 // param select : 0 = prey, 1 = predator, 2 = ally
-void nearestPPA(Individual * indiv, Population * popPPA, int select){
+void nearestPPA(int indexIndiv, Populations * pops, int k, int select){
     int iMin = 0;
     float distMin = DISTMAXFIELD;
+    Individual * indiv = &pops->pops[k].individuals[indexIndiv];
+    Population * popPPA = &pops->pops[(k + select + 1)%3];
 
     for(int i = 0; i < IndividualPerPopulation; i++){
-        if(select != 2 || indiv->x != popPPA->individuals[i].x || indiv->y != popPPA->individuals[i].y) {
+        if(select != 2 || i != indexIndiv) {
             float distTmp = sqrt(
                     pow(indiv->x - popPPA->individuals[i].x, 2) + pow(indiv->y - popPPA->individuals[i].y, 2));
             if (distTmp < distMin) {
@@ -95,16 +97,31 @@ void nearestPPA(Individual * indiv, Population * popPPA, int select){
 void fillStatusPops(Populations * pops){
     for(int k = 0; k < 3; k++){
         for(int i = 0; i < IndividualPerPopulation; i++){
-            nearestPPA(&pops->pops[k].individuals[i], &pops->pops[(k+1)%3], 0);
-            nearestPPA(&pops->pops[k].individuals[i], &pops->pops[(k+2)%3], 1);
-            nearestPPA(&pops->pops[k].individuals[i], &pops->pops[k], 2);
+            nearestPPA(i, pops, k, 0);
+            nearestPPA(i, pops, k, 1);
+            nearestPPA(i, pops, k, 2);
         }
     }
 }
 
+//Ne pas regardez, c'est une horreur
+void printStatus(Populations * pops, Species color, int IndiceIndiv){
+    printf("%s ", (color == RED) ? "Red" : ((color == GREEN) ? "Green" : "Blue"));
+    color --;
+    printf("%d : [%s = direction proie plus proche,\n%s = distance proie plus proche,\n%s = direction predateur plus proche,\n%s = distance predateur plus proche,\n%s = direction allié plus proche,\n%s = distance allié plus proche,\n]\n",
+           IndiceIndiv,
+           (pops->pops[color].individuals[IndiceIndiv].status.prey.dir == -1) ? "JOKER" : ((pops->pops[color].individuals[IndiceIndiv].status.prey.dir == 0) ? "N" : ((pops->pops[color].individuals[IndiceIndiv].status.prey.dir == 1) ? "E" : ((pops->pops[color].individuals[IndiceIndiv].status.prey.dir == 2) ? "S" : "W"))),
+           (pops->pops[color].individuals[IndiceIndiv].status.prey.dist == -1) ? "ANY" : ((pops->pops[color].individuals[IndiceIndiv].status.prey.dist == 0) ? "AWAY" : ((pops->pops[color].individuals[IndiceIndiv].status.prey.dist == 1) ? "MEDIUM" : "NEAR")),
+           (pops->pops[color].individuals[IndiceIndiv].status.predator.dir == -1) ? "JOKER" : ((pops->pops[color].individuals[IndiceIndiv].status.predator.dir == 0) ? "N" : ((pops->pops[color].individuals[IndiceIndiv].status.predator.dir == 1) ? "E" : ((pops->pops[color].individuals[IndiceIndiv].status.predator.dir == 2) ? "S" : "W"))),
+           (pops->pops[color].individuals[IndiceIndiv].status.predator.dist == -1) ? "ANY" : ((pops->pops[color].individuals[IndiceIndiv].status.predator.dist == 0) ? "AWAY" : ((pops->pops[color].individuals[IndiceIndiv].status.predator.dist == 1) ? "MEDIUM" : "NEAR")),
+           (pops->pops[color].individuals[IndiceIndiv].status.ally.dir == -1) ? "JOKER" : ((pops->pops[color].individuals[IndiceIndiv].status.ally.dir == 0) ? "N" : ((pops->pops[color].individuals[IndiceIndiv].status.ally.dir == 1) ? "E" : ((pops->pops[color].individuals[IndiceIndiv].status.ally.dir == 2) ? "S" : "W"))),
+           (pops->pops[color].individuals[IndiceIndiv].status.ally.dist == -1) ? "ANY" : ((pops->pops[color].individuals[IndiceIndiv].status.ally.dist == 0) ? "AWAY" : ((pops->pops[color].individuals[IndiceIndiv].status.ally.dist == 1) ? "MEDIUM" : "NEAR"))
+    );
+}
+
 int main(){
     int ** field = createField();
-    DISTMAXFIELD = sqrt(2) * SIZEMAX;
+    DISTMAXFIELD = sqrt(2) * SIZEMAP;
 
     Population popRed = {.individuals = {
             {.x = 0, .y = SIZEMAP - 1},
@@ -135,18 +152,9 @@ int main(){
     fillMatrixFromPops(field, &pops);
 
     fillStatusPops(&pops);
-    printf("red 5 : [%d, _, %d, _, %d, _]\n", pops.r.individuals[4].status.prey.dir,
-           pops.r.individuals[4].status.predator.dir,
-           pops.r.individuals[4].status.ally.dir
-           );
-    printf("green 1 : [%d, _, %d, _, %d, _]\n", pops.g.individuals[0].status.prey.dir,
-           pops.g.individuals[0].status.predator.dir,
-           pops.g.individuals[0].status.ally.dir
-    );
-    printf("blue 1 : [%d, _, %d, _, %d, _]\n", pops.b.individuals[0].status.prey.dir,
-           pops.b.individuals[0].status.predator.dir,
-           pops.b.individuals[0].status.ally.dir
-    );
+    printStatus(&pops, RED, 4);
+    printStatus(&pops, GREEN, 0);
+    printStatus(&pops, BLUE, 0);
 
     printField(field);
     freeField(field);
