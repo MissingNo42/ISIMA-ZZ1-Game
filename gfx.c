@@ -1,8 +1,9 @@
-#include <SDL2/SDL.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include <SDL2/SDL_ttf.h>
 
 #include "gfx.h"
 
@@ -12,6 +13,9 @@ int originX, originY;
 int sizeCaseGrid;
 
 int iterAnim, vitesse;
+
+int Padding;
+TTF_Font * font = NULL;
 
 void setup(SDL_DisplayMode dmode){
     WIDTH = dmode.w;
@@ -24,6 +28,7 @@ void setup(SDL_DisplayMode dmode){
     sizeCaseGrid = (HEIGHT - (SIZEMAP - 1) * 2) / SIZEMAP;
 
     iterAnim = 0;
+    Padding = HEIGHT / 20;
 }
 
 void drawGrid(SDL_Renderer * renderer){
@@ -79,7 +84,65 @@ void drawMouv(SDL_Renderer * renderer, Populations * pops){
     }
 }
 
-void draw(SDL_Renderer * renderer, Populations * pops){
+//CC romain
+void drawText(SDL_Renderer * renderer, SDL_Rect * pos, SDL_Color * color, const char * const str, ...) {
+    char txt[1024];
+    va_list l;
+    va_start(l, str);
+    vsnprintf(txt, 1024, str, l);
+    va_end(l);
+
+    SDL_Surface * text_surface = TTF_RenderText_Blended(font, txt,
+                                                        color ? *color : (SDL_Color) {255, 255, 255, 255});
+    if (text_surface) {
+        SDL_Texture * text_texture = SDL_CreateTextureFromSurface(renderer, text_surface);
+        SDL_FreeSurface(text_surface);
+        if (text_texture) {
+            SDL_QueryTexture(text_texture, NULL, NULL, &pos->w, &pos->h);
+            SDL_RenderCopy(renderer, text_texture, NULL, pos);
+            SDL_DestroyTexture(text_texture);
+        }
+    }
+}
+
+void drawInfos(SDL_Renderer * renderer, Populations * pops, SDL_bool end){
+    SDL_Color color = {255, 255, 255, 255};
+
+    SDL_Rect dst = {Padding, Padding * 2, 0, 0};
+    drawText(renderer, &dst, &color, "Iteration");
+
+    dst.y += FontSize + Padding;
+    drawText(renderer, &dst, &color, "%d", pops->iteration);
+
+    dst.y += FontSize + Padding * 4;
+    drawText(renderer, &dst, &color, "Vitesse :");
+
+    dst.y += FontSize + Padding;
+    drawText(renderer, &dst, &color, "%s %s %s %s %s",(vitesse <= 20) ? ">" : "",
+                                                    (vitesse <= 10) ? ">" : "",
+                                                    (vitesse <= 5) ? ">" : "",
+                                                    (vitesse <= 3) ? ">" : "",
+                                                    (vitesse <= 1) ? ">" : ""
+             );
+
+    if(end){
+        dst.x = originX + HEIGHT + Padding - 10;
+        dst.y = Padding * 2;
+        drawText(renderer, &dst, &color, "Status :");
+        for(int i = 0; i < 3; i++) {
+            dst.y += FontSize + Padding;
+            drawText(renderer, &dst, &color, "%s : %s",
+                     (pops->pops[i].species == 1) ? "RED" : ((pops->pops[i].species == 2) ? "GREEN" : "BLUE"),
+                     (pops->pops[i].state.end_state == -1) ? "Lose" : ((pops->pops[i].state.end_state == 0) ? "Neutral"
+                                                                                                            : ((pops->pops[i].state.end_state ==
+                                                                                                                1)
+                                                                                                               ? "Win"
+                                                                                                               : "Kamikaze")));
+        }
+    }
+}
+
+void draw(SDL_Renderer * renderer, Populations * pops, SDL_bool end){
     SDL_SetRenderDrawColor(renderer, 50, 50, 50, 255);
     SDL_RenderClear(renderer);
 
@@ -87,4 +150,6 @@ void draw(SDL_Renderer * renderer, Populations * pops){
 
     if(iterAnim == 0) drawPops(renderer, pops);
     else drawMouv(renderer, pops);
+
+    drawInfos(renderer, pops, end);
 }

@@ -3,6 +3,7 @@
 #include <sys/stat.h>
 #include <dirent.h>
 #include <string.h>
+#include <time.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
@@ -14,7 +15,6 @@
 
 SDL_Window * window;
 SDL_Renderer * renderer;
-TTF_Font * font;
 
 SDL_Window * new_window(char * title, int x, int y, int w, int h, Uint32 flags) {
 	SDL_Window * wd = SDL_CreateWindow(title, x, y, w, h, flags);
@@ -47,6 +47,10 @@ void sdl_exit(char n){
 int main(int argc, char ** argv) {
 	(void) argc;
 	(void) argv;
+
+    int seed = time(NULL);
+    srand(seed);
+    printf("seed = %d\n", seed);
 	
 	/* Initialisation de la SDL  + gestion de l'échec possible */
 	if (SDL_Init(SDL_INIT_VIDEO) != 0) {
@@ -63,12 +67,11 @@ int main(int argc, char ** argv) {
 		SDL_Log("Couldn't initialize SDL TTF - %s\n", SDL_GetError());
 		sdl_exit(1);
 	}
-	/*
 	font = TTF_OpenFont("./assets/font.ttf", FontSize);
 	if (!font) {
 		SDL_Log("Couldn't load font - %s\n", SDL_GetError());
 		sdl_exit(2);
-	}*/
+	}
 
 	
 	SDL_DisplayMode dmode;
@@ -130,11 +133,12 @@ int main(int argc, char ** argv) {
 
     Populations pops = {.pops = {popRed, popGreen, popBlue}, .iteration = 0};
 
-    vitesse = 10;
+    vitesse = 20;
 	
 	SDL_bool run = SDL_TRUE, // Booléen pour dire que le programme doit continuer
 	paused = SDL_FALSE,      // Booléen pour dire que le programme est en pause
-	event_utile = SDL_FALSE; // Booléen pour savoir si on a trouvé un event traité
+	event_utile = SDL_FALSE, // Booléen pour savoir si on a trouvé un event traité
+    end = SDL_FALSE;         // Booléen pour savoir si une équipe a gagné
 	SDL_Event event;         // Evènement à traiter
 
     predict_move(&pops);
@@ -152,12 +156,6 @@ int main(int argc, char ** argv) {
 				}
 				case SDL_KEYDOWN:
 					switch(event.key.keysym.sym){
-                        case SDLK_KP_1:
-                            vitesse = 3;
-                            break;
-                        case SDLK_KP_2:
-                            vitesse = 1;
-                            break;
 						case SDLK_p:
 						case SDLK_SPACE:
 							paused=paused?SDL_FALSE:SDL_TRUE;
@@ -169,8 +167,16 @@ int main(int argc, char ** argv) {
 								event_utile=SDL_TRUE;
 								break;
 						case SDLK_LEFT:
+                            if (vitesse == 10) vitesse = 20;
+                            else if (vitesse == 5) vitesse = 10;
+                            else if (vitesse == 3) vitesse = 5;
+                            else if (vitesse == 1) vitesse = 3;
 							break;
 						case SDLK_RIGHT:
+                            if (vitesse == 20) vitesse = 10;
+                            else if (vitesse == 10) vitesse = 5;
+                            else if (vitesse == 5) vitesse = 3;
+                            else if (vitesse == 3) vitesse = 1;
 							break;
 						case SDLK_UP:break;
 						case SDLK_DOWN:break;
@@ -179,12 +185,6 @@ int main(int argc, char ** argv) {
 					break;
 				case SDL_KEYUP:
 					switch(event.key.keysym.sym){
-                        case SDLK_KP_1:
-                            vitesse = 10;
-                            break;
-                        case SDLK_KP_2:
-                            vitesse = 10;
-                            break;
 						case SDLK_LEFT: break;
 						case SDLK_RIGHT: break;
 						case SDLK_UP: break;
@@ -195,7 +195,7 @@ int main(int argc, char ** argv) {
 			}
 		}
 		
-		if (!paused) {
+		if (!paused && !end) {
 
             iterAnim ++;
             if(iterAnim > vitesse){
@@ -206,19 +206,29 @@ int main(int argc, char ** argv) {
 
                 predict_move(&pops);
 
-                printf(">> iter %d\n", pops.iteration);
-                if(is_terminated(&pops)) run=SDL_FALSE;
+                if(is_terminated(&pops)) end = SDL_TRUE;
             }
 
-
-            draw(renderer, &pops);
+            draw(renderer, &pops, end);
 			SDL_RenderPresent(renderer);
 			//SDL_FlushEvents(SDL_KEYDOWN, SDL_KEYUP - 1);
 		}
 
-		SDL_Delay(10);
+		//SDL_Delay(10);
+        /*
+        if(end && pops.pops[0].state.end_state == 2){
+            printf("RED KAMIKAZE : Seed = ", seed);
+        } else if(end && pops.pops[1].state.end_state == 2){
+            printf("GREEN KAMIKAZE : Seed = ", seed);
+        } else if(end && pops.pops[2].state.end_state == 2){
+            printf("BLUE KAMIKAZE : Seed = ", seed);
+        } else {
+
+        }
+         */
 	}
 
+    //printf("Nombre itérations : %d\n", pops.iteration);
 	sdl_exit(3);
 	return 0;
 }
