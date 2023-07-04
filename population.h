@@ -106,9 +106,9 @@ int is_terminated(Populations * pops);
 
 void mutation (Brain * brain);
 
-void mutation_one(Brains * brains, int L);
+int mutation_one(Brains * brains, int L);
 
-void mutation_all (Brains * brains, int* list_ind);
+void mutation_all (Brains * brains, int* list_ind, Species species);
 
 void change_path_random(int * list);
 
@@ -140,5 +140,7 @@ int load_brain(Brain * brain, int level, Species species);
  * @return the last level or -1
  * */
 int get_last_brain(Species species);
+
+Populations * create_pops(Populations * pops, Brain *brain[3]);
 
 #endif //ZZ1GAME_POPULATION_H

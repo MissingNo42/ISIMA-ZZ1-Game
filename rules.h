@@ -8,7 +8,7 @@
 #define P 16
 #define MAX_PRIORITY 5
 #define ProbaExp 2
-#define BrainPool 6
+#define BrainPool 6 //MAX_PRIORITY + 1 pour l'instant
 #define ITE_MAX 500
 
 typedef enum {
@@ -69,7 +69,7 @@ void rand_rule (Rule * rule);
  * @brief modify a brain to randomize it
  * @param [in] brain a pointer to the brain
  * */
-void rand_brain (Brain * brain);
+Brain * rand_brain(Brain * brain);
 
 /**
  * @brief copy the src
