@@ -3,6 +3,7 @@
 //
 #include <math.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "rules.h"
 
@@ -78,4 +79,17 @@ void rand_brain(Brain * brain) {
 		rand_rule(&brain->rules[i]);
 	}
 	brain->rules[P - 1] = (Rule) {.raw = {-1, -1, -1, -1, -1, -1, -1, 1}};
+}
+
+/**
+ * @brief copy the src
+ * @param [in] src the source brain
+ * @param [out] dst the destination brain
+ * @return the destination brain
+ * @note if dst is NULL, dst is alloc
+ * */
+Brain * copy_brain(Brain * src, Brain * dst) {
+	if (!dst) dst = malloc(sizeof (Brain));
+	if (dst) memcpy(dst, src, sizeof(Brain));
+	return dst;
 }

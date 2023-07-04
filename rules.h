@@ -70,4 +70,13 @@ void rand_rule (Rule * rule);
  * */
 void rand_brain (Brain * brain);
 
+/**
+ * @brief copy the src
+ * @param [in] src the source brain
+ * @param [out] dst the destination brain
+ * @return the destination brain
+ * @note if dst is NULL, dst is alloc
+ * */
+Brain * copy_brain(Brain * src, Brain * dst) ;
+
 #endif //ZZ1GAME_RULES_H

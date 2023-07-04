@@ -261,6 +261,12 @@ int get_last_brain(Species species) {
 	}
 	return lvl_max;
 }
+
+void rand_individual(Individual * ind, Locator loc) {
+	ind->alive = 1;
+	ind->x;
+	ind->y;
+}
 /*
 #ifdef TESTING
 int main(){
