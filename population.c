@@ -15,7 +15,7 @@
  * @brief prepare the action: check environment collision and pre-perform the move in id->nx/ny
  * @param [in,out] id the individual to prepare the action
  * */
-void prepare_move(Individual * id) {
+void prepare_move(Individual * id) { // possible de rajouter si 2 ally vont au meme endroit, le 2eme ne bouge pas
 	id->nx = id->x;
 	id->ny = id->y;
 
@@ -58,33 +58,41 @@ void predict_move(Populations * pops) {
 	}
 }
 
-void eat_move(Populations * populations){
+void eat_move(Populations * populations) {
     for (int pop = 0; pop < 3; pop++) {
         for (int i = 0; i < IndividualPerPopulation; i++) {
-            Individual  * soi = &(populations->pops[pop].individuals[i]);
+            Individual *soi = &(populations->pops[pop].individuals[i]);
             if (soi->alive) {
-                for (int j = 0; j<IndividualPerPopulation; j++ ){
-                    Individual  * proie = &(populations->pops[(pop+1) % 3].individuals[j]);
-                    if ( (proie->nx == soi->nx && proie->ny == soi->ny)
-                         ||  ((proie->x == soi->nx && proie->y == soi->ny) && (proie->nx == soi->x && proie->ny == soi->y)) ){
+                for (int j = 0; j < IndividualPerPopulation; j++) {
+                    Individual *proie = &(populations->pops[(pop + 1) % 3].individuals[j]);
+                    if ((proie->nx == soi->nx && proie->ny == soi->ny)
+                        || ((proie->x == soi->nx && proie->y == soi->ny) &&
+                            (proie->nx == soi->x && proie->ny == soi->y))) {
                         proie->alive = 0;
                     }
                 }
             }
         }
     }
+}
 
-    void execute_move (Populations * populations ){
-        for (int pop = 0; pop < 3; pop++) {
-            for (int i = 0; i < IndividualPerPopulation; i++) {
-                Individual  * id = &(populations->pops[pop].individuals[i]);
-                if (id->alive) {
-                    id->x = id->nx;
-                    id->y = id->ny;
-                }
+void execute_move (Populations * populations ){
+    for (int pop = 0; pop < 3; pop++) {
+        for (int i = 0; i < IndividualPerPopulation; i++) {
+            Individual  * id = &(populations->pops[pop].individuals[i]);
+            if (id->alive) {
+                id->x = id->nx;
+                id->y = id->ny;
             }
         }
     }
+}
+
+void move(Populations * pops){
+    predict_move(pops);
+    eat_move(pops);
+    execute_move(pops);
+}
 
 void mutation(Brain brain) {
 	int i = rand() % P;

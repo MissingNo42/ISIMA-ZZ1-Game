@@ -50,6 +50,8 @@ void eat_move(Populations * populations);
 
 void execute_move (Populations * populations );
 
+void move(Populations * pops);
+
 void mutation (Brain brain);
 
 void hybridization (Brain parent1, Brain parent2,Brain child);
