@@ -174,6 +174,39 @@ void mutation(Brain * brain) {
 	}
 }
 
+void mutation_one(Brains * brains, int L) {
+    int j = L % P; i = L / P
+    switch (j) {
+        case 0:
+        case 2:
+        case 4:
+        case 6:
+            for (int k=-1; k<4;k++){
+                brains.brain[k+1].rules[i].raw[j] = k;
+            }
+            break;
+        case 1:
+        case 3:
+        case 5:
+            for (int k=-1; k<3;k++){
+                brains.brain[k+1].rules[i].raw[j] = k;
+            }
+            break;
+        case 7:
+            for (int k=0; k<MAX_PRIORITY;k++){
+                brains.brain[k].rules[i].raw[j] = k;
+            }
+            break;
+        default:
+            k=0;
+            break;
+    }
+}
+
+void mutation_all (Brains * brains, int* list_ind){
+
+}
+
 void hybridization(Brain * parent1, Brain * parent2, Brain * child) {
 	int rul = rand() % P;
 	int arg = rand() % 8;

@@ -106,6 +106,10 @@ int is_terminated(Populations * pops);
 
 void mutation (Brain * brain);
 
+void mutation_one(Brains * brains, int L);
+
+void mutation_all (Brains * brains, int* list_ind);
+
 void hybridization (Brain * parent1, Brain * parent2,Brain * child);
 
 /**
