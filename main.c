@@ -215,8 +215,8 @@ int main(int argc, char ** argv) {
 			SDL_RenderPresent(renderer);
 			//SDL_FlushEvents(SDL_KEYDOWN, SDL_KEYUP - 1);
 		}
-		
-		SDL_Delay(20);
+
+		SDL_Delay(10);
 	}
 
 	sdl_exit(3);
