@@ -50,11 +50,13 @@ typedef struct {
 	State state;
 } Population;
 
-typedef union {
-	struct {
-		Population r, g, b;
+typedef struct {
+	union {
+		struct {
+			Population r, g, b;
+		};
+		Population pops[3];
 	};
-	Population pops[3];
 	int iteration;
 } Populations;
 
@@ -75,6 +77,16 @@ void eat_move(Populations * populations);
 void execute_move (Populations * populations );
 
 void move(Populations * pops);
+
+void eval(Populations * pops, int ind);
+
+/**
+ * @brief check if the game is terminated and compute result if needed
+ * @param [in] pops the population set
+ * @param [in, out] states the current state
+ * @return 0 if the game continue, 1 if terminated and return the result
+ * */
+int is_terminated(Populations * pops);
 
 void mutation (Brain * brain);
 

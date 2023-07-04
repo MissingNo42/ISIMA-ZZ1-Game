@@ -20,20 +20,16 @@
 void prepare_move(Individual * id) { // possible de rajouter si 2 ally vont au meme endroit, le 2eme ne bouge pas
 	id->nx = id->x;
 	id->ny = id->y;
-
+	
 	if (id->action == JOKER) id->action = rand() % 4;
 	switch (id->action) {
-		case N:
-			if (id->y - 1 < 0) id->ny = id->y - 1;
+		case N: if (id->y - 1 < 0) id->ny = id->y - 1;
 			break;
-		case E:
-			if (id->x + 1 > SIZEMAP) id->nx = id->x + 1;
+		case E: if (id->x + 1 > SIZEMAP) id->nx = id->x + 1;
 			break;
-		case S:
-			if (id->y + 1 > SIZEMAP) id->ny = id->y + 1;
+		case S: if (id->y + 1 > SIZEMAP) id->ny = id->y + 1;
 			break;
-		case W:
-			if (id->x - 1 < 0) id->nx = id->x - 1;
+		case W: if (id->x - 1 < 0) id->nx = id->x - 1;
 			break;
 		default: break;
 	}
@@ -50,7 +46,7 @@ void predict_move(Populations * pops) {
 		
 		for (int i = 0; i < IndividualPerPopulation; i++) {
 			Individual * id = &pop->individuals[i];
-
+			
 			if (id->alive) {
 				int ch = choice_rule(&id->status, pop->brain);
 				id->action = (ch == -1) ? JOKER : pop->brain->rules[ch].action;
@@ -61,55 +57,61 @@ void predict_move(Populations * pops) {
 }
 
 void eat_move(Populations * populations) {
-
-    for (int pop = 0; pop < 3; pop++) {
-
-        for (int i = 0; i < IndividualPerPopulation; i++) {
-			Population *self_pop = &populations->pops[pop];
-            Individual *self = &(self_pop->individuals[i]);
-
-            if (self->alive) {
-                for (int j = 0; j < IndividualPerPopulation; j++) {
-					Population *prey_pop = &populations->pops[(pop + 1) % 3];
-		            Individual *prey = &(prey_pop->individuals[j]);
-
-                    if (prey->alive && ((prey->nx == self->nx && prey->ny == self->ny)
-                        || ((prey->x == self->nx && prey->y == self->ny) &&
-                            (prey->nx == self->x && prey->ny == self->y)))) {
+	
+	for (int pop = 0; pop < 3; pop++) {
+		
+		for (int i = 0; i < IndividualPerPopulation; i++) {
+			Population * self_pop = &populations->pops[pop];
+			Individual * self = &(self_pop->individuals[i]);
+			
+			if (self->alive) {
+				for (int j = 0; j < IndividualPerPopulation; j++) {
+					Population * prey_pop = &populations->pops[(pop + 1) % 3];
+					Individual * prey = &(prey_pop->individuals[j]);
+					
+					if (prey->alive && ((prey->nx == self->nx && prey->ny == self->ny)
+					                    || ((prey->x == self->nx && prey->y == self->ny) &&
+					                        (prey->nx == self->x && prey->ny == self->y)))) {
 						self_pop->state.targets--;
 						prey_pop->state.alives--;
-                        prey->alive = 0;
-                    }
-                }
-            }
-        }
-    }
+						prey->alive = 0;
+					}
+				}
+			}
+		}
+	}
 }
 
-void execute_move (Populations * populations){
-    for (int pop = 0; pop < 3; pop++) {
-        for (int i = 0; i < IndividualPerPopulation; i++) {
-            Individual  * id = &(populations->pops[pop].individuals[i]);
-            if (id->alive) {
-                id->x = id->nx;
-                id->y = id->ny;
-            }
-        }
-    }
+void execute_move(Populations * populations) {
+	for (int pop = 0; pop < 3; pop++) {
+		for (int i = 0; i < IndividualPerPopulation; i++) {
+			Individual * id = &(populations->pops[pop].individuals[i]);
+			if (id->alive) {
+				id->x = id->nx;
+				id->y = id->ny;
+			}
+		}
+	}
 }
 
-void move(Populations * pops){
-    predict_move(pops);
-    eat_move(pops);
-    execute_move(pops);
+void move(Populations * pops) {
+	predict_move(pops);
+	eat_move(pops);
+	for (int pop = 0; pop < 3; pop++) for (int i =0; i < IndividualPerPopulation; i++) {
+		Individual * id = &(pops->pops[pop].individuals[i]);
+		if (id->x == id->nx && id->y == id->ny) {
+			printf(">> SAME %d:%d = %d %d\n", pop, i, id->x, id->y);
+		}
+	}
+	execute_move(pops);
 }
 
-void eval (Populations * pops, int ind){
-    Population * pop = &pops->pops[ind];
-    pop->brain->eval = (powf(pop->state.alives, 2)
-                        +  powf(IndividualPerPopulation - pop->state.targets, 1.5)
-                        + (pop->state.end_state * IndividualPerPopulation)
-                        )/sqrt(pops->iteration);
+void eval(Populations * pops, int ind) {
+	Population * pop = &pops->pops[ind];
+	pop->brain->eval = (powf(pop->state.alives, 2)
+	                    + powf(IndividualPerPopulation - pop->state.targets, 1.5)
+	                    + (pop->state.end_state * IndividualPerPopulation)
+	                   ) / sqrt(pops->iteration);
 }
 
 /**
@@ -118,20 +120,20 @@ void eval (Populations * pops, int ind){
  * @param [in, out] states the current state
  * @return 0 if the game continue, 1 if terminated and return the result
  * */
-int is_terminated(Populations * pops){
+int is_terminated(Populations * pops) {
 	pops->iteration++;
 	int r = 0;
-
+	
 	for (int p = 0; p < 3; ++p) {
 		Population * pop = &pops->pops[p];
 		if (!pop->state.alives) {
 			r = 1;
 			pop->state.end_state = Lose;
 			EndState * e = &pops->pops[(p + 2) % 3].state.end_state;
-			*e = (*e != None) ? Kamikaze: Win;
+			*e = (*e != None) ? Kamikaze : Win;
 		}
 	}
-
+	
 	return r;
 }
 
@@ -173,8 +175,7 @@ void mutation(Brain * brain) {
 			if (d == 0) brain->rules[i].action = -1;
 			else brain->rules[i].action = (brain->rules[i].action + d + 4) % 4;
 			break;
-		case 7:
-            brain->rules[i].priority = (brain->rules[i].priority + d + MAX_PRIORITY) % MAX_PRIORITY;
+		case 7:brain->rules[i].priority = (brain->rules[i].priority + d + MAX_PRIORITY) % MAX_PRIORITY;
 			break;
 	}
 }
@@ -207,7 +208,7 @@ void hybridization(Brain * parent1, Brain * parent2, Brain * child) {
  * @param [in] species the species associate to the brain
  * @return 1 if saved, 0 otherwise
  * */
-int save_brain(Brain brain, int level, Species species) {
+int save_brain(Brain * brain, int level, Species species) {
 	char str[42];
 	int r = 1;
 	
@@ -229,7 +230,7 @@ int save_brain(Brain brain, int level, Species species) {
  * @param [in] species the species associate to the brain
  * @return 1 if loaded, 0 otherwise
  * */
-int load_brain(Brain brain, int level, Species species) {
+int load_brain(Brain * brain, int level, Species species) {
 	char str[42];
 	int r = 1;
 	
@@ -266,7 +267,7 @@ int get_last_brain(Species species) {
 	}
 	return lvl_max;
 }
-
+/*
 #ifdef TESTING
 int main(){
 	printf("ZZZZZ\n");
@@ -281,3 +282,5 @@ int main(){
 	printf(">>%d\n", get_last_brain(BLUE));
 }
 #endif
+
+*/
