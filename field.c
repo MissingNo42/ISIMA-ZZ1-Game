@@ -52,10 +52,12 @@ void cleanMatrixFromPops(int ** field, Populations * pops){
 void fillMatrixFromPops(int ** field, Populations * pops){
     for(int k = 0; k < 3; k++){
         for(int i = 0; i < IndividualPerPopulation; i++){
-            int x = pops->pops[k].individuals[i].x;
-            int y = pops->pops[k].individuals[i].y;
-			printf("qqq %d %d\n", x, y);
-            field[x][y] = pops->pops[k].species;
+			if (pops->pops[k].individuals[i].alive) {
+				int x = pops->pops[k].individuals[i].x;
+				int y = pops->pops[k].individuals[i].y;
+				printf("qqq %d %d\n", x, y);
+				field[x][y] = pops->pops[k].species;
+			}
         }
     }
 }
@@ -175,12 +177,16 @@ int main(){
     printStatus(&pops, BLUE, 0);
 
     printField(field);
-	move(&pops);
-	printf(">> Terminated: %d\n", is_terminated(&pops));
-    fillMatrixFromPops(field, &pops);
-
-    fillStatusPops(&pops);
-    printField(field);
+	for (int i = 0; !is_terminated(&pops); i++){
+		cleanMatrixFromPops(field, &pops);
+		move(&pops);
+		printf(">> Terminated: %d : %d\n", is_terminated(&pops), i);
+	
+	    fillMatrixFromPops(field, &pops);
+	
+	    fillStatusPops(&pops);
+	    printField(field);
+	}
     freeField(field);
     return 0;
 }
