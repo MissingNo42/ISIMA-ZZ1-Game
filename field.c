@@ -119,7 +119,7 @@ void printStatus(Populations * pops, Species color, int IndiceIndiv){
     );
 }
 
-int main(){
+int main2(){
     int ** field = createField();
     DISTMAXFIELD = sqrt(2) * SIZEMAP;
 

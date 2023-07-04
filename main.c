@@ -1,8 +1,14 @@
+#include <stdlib.h>
+#include <stdio.h>
+#include <sys/stat.h>
+#include <dirent.h>
+#include <string.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
-#include <stdio.h>
-#include <stdlib.h>
+
+#include "field.h"
+#include "gfx.h"
 
 #define FontSize 50
 
@@ -67,10 +73,10 @@ int main(int argc, char ** argv) {
 	
 	SDL_DisplayMode dmode;
 	SDL_GetCurrentDisplayMode(0, &dmode);
-	
-	
-	int WIDTH = dmode.w, HEIGHT = dmode.h; // taille écran
-	printf("Screen size: %dx%d\n", WIDTH, HEIGHT);
+
+	setup(dmode);
+
+	printf("Screen size: %dx%d\n", WIDTH, HEIGHT);  // taille écran
 	
     window = new_window("Title", 0, 0, WIDTH, HEIGHT, SDL_WINDOW_BORDERLESS | SDL_WINDOW_FULLSCREEN);
     if (!window) {
@@ -91,6 +97,34 @@ int main(int argc, char ** argv) {
         SDL_Log("Echec du chargement de l'image dans la texture: %s\n", SDL_GetError()); // texture de la SDL a échoué
         sdl_exit(2);
     }*/
+
+
+    Population popRed = {.individuals = {
+            {.x = 0, .y = SIZEMAP - 1},
+            {.x = 2, .y = SIZEMAP - 1},
+            {.x = 4, .y = SIZEMAP - 1},
+            {.x = 1, .y = SIZEMAP - 2},
+            {.x = 6, .y = SIZEMAP - 1},
+    }, NULL, RED};
+
+    Population popGreen = {.individuals = {
+            {.x = SIZEMAP - 1, .y = SIZEMAP - 1},
+            {.x = SIZEMAP - 3, .y = SIZEMAP - 1},
+            {.x = SIZEMAP - 5, .y = SIZEMAP - 1},
+            {.x = SIZEMAP - 2, .y = SIZEMAP - 2},
+            {.x = SIZEMAP - 4, .y = SIZEMAP - 2},
+    }, NULL, GREEN};
+
+    Population popBlue = {.individuals = {
+            {.x = 10, .y = 0},
+            {.x = 10, .y = 1},
+            {.x = 12, .y = 1},
+            {.x = 9, .y = 2},
+            {.x = 11, .y = 2},
+    }, NULL, BLUE};
+
+    Populations pops = {{popRed, popGreen, popBlue}};
+
 	
 	SDL_bool run = SDL_TRUE, // Booléen pour dire que le programme doit continuer
 	paused = SDL_FALSE,      // Booléen pour dire que le programme est en pause
@@ -142,8 +176,7 @@ int main(int argc, char ** argv) {
 		}
 		
 		if (!paused) {
-			SDL_SetRenderDrawColor(renderer, 0, 0, 255, 0);
-			SDL_RenderClear(renderer);
+            draw(renderer, &pops);
 			SDL_RenderPresent(renderer);
 			//SDL_FlushEvents(SDL_KEYDOWN, SDL_KEYUP - 1);
 		}
