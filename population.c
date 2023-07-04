@@ -97,12 +97,6 @@ void execute_move(Populations * populations) {
 void move(Populations * pops) {
 	predict_move(pops);
 	eat_move(pops);
-	for (int pop = 0; pop < 3; pop++) for (int i =0; i < IndividualPerPopulation; i++) {
-		Individual * id = &(pops->pops[pop].individuals[i]);
-		if (id->x == id->nx && id->y == id->ny) {
-			printf(">> SAME %d:%d = %d %d\n", pop, i, id->x, id->y);
-		}
-	}
 	execute_move(pops);
 }
 

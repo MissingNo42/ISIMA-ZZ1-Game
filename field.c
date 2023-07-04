@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <time.h>
 
 #include "field.h"
 #include "population.h"
@@ -55,7 +56,6 @@ void fillMatrixFromPops(int ** field, Populations * pops){
 			if (pops->pops[k].individuals[i].alive) {
 				int x = pops->pops[k].individuals[i].x;
 				int y = pops->pops[k].individuals[i].y;
-				printf("qqq %d %d\n", x, y);
 				field[x][y] = pops->pops[k].species;
 			}
         }
@@ -134,6 +134,7 @@ void printStatus(Populations * pops, Species color, int IndiceIndiv){
 
 #ifdef TESTING
 int main(){
+	srand(time(NULL));
     int ** field = createField();
     DISTMAXFIELD = sqrt(2) * SIZEMAP;
 	
@@ -176,7 +177,7 @@ int main(){
     printStatus(&pops, GREEN, 0);
     printStatus(&pops, BLUE, 0);
 
-    printField(field);
+    //printField(field);
 	for (int i = 0; !is_terminated(&pops); i++){
 		cleanMatrixFromPops(field, &pops);
 		move(&pops);
@@ -185,7 +186,7 @@ int main(){
 	    fillMatrixFromPops(field, &pops);
 	
 	    fillStatusPops(&pops);
-	    printField(field);
+	    //printField(field);
 	}
     freeField(field);
     return 0;
