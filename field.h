@@ -1,0 +1,12 @@
+#ifndef ZZ1GAME_FIELD_H
+#define ZZ1GAME_FIELD_H
+
+#define SIZEMAP 15
+#define PERCENTNEAR 0.2
+#define PERCENTMEDIUM 0.5
+
+extern float DISTMAXFIELD;
+
+
+
+#endif //ZZ1GAME_FIELD_H
