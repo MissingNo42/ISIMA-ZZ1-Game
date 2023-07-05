@@ -110,7 +110,7 @@ int mutation_one(Brains * brains, int L);
 
 void mutation_all (Brains * brains, int* list_ind, Species species);
 
-void change_path_random(int * list);
+void change_path_random(int * list, int size);
 
 void select_best(Brains * brains);
 
