@@ -106,7 +106,7 @@ void eval(Populations * pops, int ind) {
 	pop->brain->eval = (powf(pop->state.alives, 2)
 	                    - powf(pop->state.targets, 2)
 	                   ) / sqrt(pops->iteration)
-                       + pop->state.end_state * IndividualPerPopulation;
+                       + pop->state.end_state * IndividualPerPopulation * 2;
 }
 
 /**
@@ -491,7 +491,7 @@ int main(){
 */
 
 
-#ifndef TESTING
+#ifdef TESTING
 int main(){
     int seed = time(NULL);
     srand(seed);

@@ -5,11 +5,11 @@
 #ifndef ZZ1GAME_RULES_H
 #define ZZ1GAME_RULES_H
 
-#define P 16
+#define P 24
 #define MAX_PRIORITY 5
 #define ProbaExp 2
 #define BrainPool 6 //MAX_PRIORITY + 1 pour l'instant
-#define ITE_MAX 500
+#define ITE_MAX 2000
 
 typedef enum {
 	JOKER = -1, N, E, S, W
