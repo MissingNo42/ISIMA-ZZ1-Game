@@ -262,6 +262,7 @@ void mutation_all (Brains * brains, int* list_ind, Species species){
         for (int m=1; m< BrainPool; m++){
             free(brains->brain[m]);
         }
+        printf("\tbrain_num : %d\n",k);
     }
 }
 
@@ -422,7 +423,8 @@ int main(){
 
 #ifdef TESTING
 int main(){
-    srand(time(NULL));
+    int seed = time(NULL);
+    srand(seed);
     Brains * brains = malloc(sizeof(Brains)) ;;
     brains->level = 0;
     brains->species = 1;
@@ -437,12 +439,13 @@ int main(){
         brains->brain[k] = NULL;
     }
     brains->level = 0;
-    for (int evo=0; evo<5; evo++){
+    for (int evo=0; evo<3; evo++){
         mutation_all(brains, list, 1);
+        printf("evo : %d\n",evo);
     }
     free(brains->brain[0]);
     free(brains);
-
+    printf("%d",seed);
 /*    ajouter ailleur pour voir
     int ** field = createField();
     DISTMAXFIELD = sqrt(2) * SIZEMAP;
