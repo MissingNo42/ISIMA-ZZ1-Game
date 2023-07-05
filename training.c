@@ -27,8 +27,8 @@ void glouton1(int color, int level, int iter, int opp){
         brains.brain[k] = copy_brain(brains.brain[0],NULL);
     }
 		
-	for (int evo=1; evo < iter; evo++){
-		printf("iter %d\n", evo);
+	for (int evo = 1 + level; evo <= iter + level; evo++){
+		printf("iter %d (gen %d)\n", evo - level, evo);
         mutation_all(&brains, list, 1);
 		if (opp) {
 			if (evo - opp >= 1) {
@@ -65,7 +65,7 @@ void glouton2(int color, int level, int iter, int opp){
     Species species = brains->species;
 	
 	for (int evo=0; evo<5; evo++){
-        int nb = mutation_two_do(brains);
+        int nb = 0;//mutation_two_do(brains, list);
         printf("\t\tmut2 :");
         for (int num=0; num<nb; num++){
             Brain *brain_list[3];
@@ -113,7 +113,7 @@ int ask(char * str, int limit, ...) {
 	return r;
 }
 
-#ifndef TRAINING
+#ifdef TRAINING
 int main(int argc, char ** argv){
 	
 	int c = 0, a = 0;

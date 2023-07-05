@@ -257,7 +257,8 @@ void mutation_all (Brains * brains, int* list_ind, Species species){
                 fillMatrixFromPops(field, pops);
                 printField(field);
                 freeField(field);
-                */printf("ite: %d, eval: %f, alives: %d,targets: %d\n", pops->iteration, pops->pops[species - 1].brain->eval, pops->pops[species - 1].state.alives, pops->pops[species - 1].state.targets);
+                */
+				//printf("ite: %d, eval: %f, alives: %d,targets: %d\n", pops->iteration, pops->pops[species - 1].brain->eval, pops->pops[species - 1].state.alives, pops->pops[species - 1].state.targets);
                 eval_val += brains->brain[num]->eval;
                 free(pops);
             }
