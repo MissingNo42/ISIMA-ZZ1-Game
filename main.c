@@ -70,7 +70,7 @@ int main(int argc, char ** argv) {
     }
 
     int kami = 1;
-    int seed = 3694;
+    int seed = 38529;
     while(kami) {
         srand(seed);
         printf("seed = %d\n", seed);
@@ -231,7 +231,10 @@ int main(int argc, char ** argv) {
             else if (end && pops.pops[2].state.end_state == 1) printf("BLUE GAGNE\n");
 
             //SDL_Delay(10);
-            if (end && pops.pops[0].state.end_state == 2) {
+            if(end && pops.pops[0].state.end_state == 2 && pops.pops[1].state.end_state == 2 && pops.pops[2].state.end_state == 2){
+                printf("MEGA KAMIKAZE : Seed = %d\n", seed);
+                kami = 0;
+            } else if (end && pops.pops[0].state.end_state == 2) {
                 printf("RED KAMIKAZE : Seed = %d\n", seed);
                 kami = 0;
             } else if (end && pops.pops[1].state.end_state == 2) {
