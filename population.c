@@ -591,7 +591,7 @@ int main(){
 int main(){
     int seed = time(NULL);
     srand(seed);
-    Brains * brains = malloc(sizeof(Brains)) ;;
+    Brains * brains = malloc(sizeof(Brains)) ;
     brains->level = 0;
     brains->species = 1;
     int list[8*P];
