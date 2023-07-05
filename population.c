@@ -134,6 +134,19 @@ int is_terminated(Populations * pops) {
 	return r;
 }
 
+/**
+ * @brief execute a complete simulation
+ * @param [in, out] pops the population to simulate
+ * @return the number of iterations
+ * */
+int simulate(Populations * pops) {
+	do {
+		update_status(pops);
+		move(pops);
+	} while (!is_terminated(pops) && pops->iteration < ITE_MAX);
+	return pops->iteration;
+}
+
 void mutation(Brain * brain) {
 	int i = rand() % P;
 	int j = rand() % 8;
@@ -238,12 +251,7 @@ void mutation_all (Brains * brains, int* list_ind, Species species){
             float eval_val = 0;
             for(int anti_rand = 0; anti_rand<6;anti_rand++) {
                 Populations *pops = create_pops(NULL, brain_list, anti_rand%3);
-                int i = 0;
-                while (!is_terminated(pops) && i < ITE_MAX) {
-                    update_status(pops);
-                    move(pops);
-                    i++;
-                }
+                simulate(pops);
                 eval(pops, species - 1);
                 /*int ** field = createField();
                 DISTMAXFIELD = sqrt(2) * SIZEMAP;
