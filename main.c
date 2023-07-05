@@ -102,42 +102,59 @@ int main(int argc, char ** argv) {
         sdl_exit(2);
     }*/
 
+    Rule r0 = {.raw = {0,2,-1,-1,-1,-1, 0, 5}};
+    Rule r1 = {.raw = {1,2,-1,-1,-1,-1, 1, 5}};
+    Rule r2 = {.raw = {2,2,-1,-1,-1,-1, 2, 5}};
+    Rule r3 = {.raw = {3,2,-1,-1,-1,-1, 3, 5}};
+    Rule r4 = {.raw = {-1,-1,0,2,-1,-1, 2, 5}};
+    Rule r5 = {.raw = {-1,-1,1,2,-1,-1, 3, 5}};
+    Rule r6 = {.raw = {-1,-1,2,2,-1,-1, 0, 5}};
+    Rule r7 = {.raw = {-1,-1,3,2,-1,-1, 1, 5}};
+    Rule r8 = {.raw = {-1,-1,-1,-1,0,2, 0, 4}};
+    Rule r9 = {.raw = {-1,-1,-1,-1,1,2, 1, 4}};
+    Rule r10 = {.raw = {-1,-1,-1,-1,2,2, 2, 4}};
+    Rule r11 = {.raw = {-1,-1,-1,-1,3,2, 3, 4}};
+    Rule r12 = {.raw = {2,-1,-1,-1,-1,-1, 2, 2}};
+    Rule r13 = {.raw = {-1,-1,1,-1,-1,-1, 3, 2}};
+    Rule r14 = {.raw = {-1,-1,-1,-1,2,-1, 2, 2}};
+    Rule r15 = {.raw = {-1,-1,-1,-1,-1,-1, -1, 1}};
+
+    Brain preDef;
+    preDef.rules[0] = r3;
+    preDef.rules[1] = r2;
+    preDef.rules[2] = r1;
+    preDef.rules[3] = r0;
+    preDef.rules[4] = r7;
+    preDef.rules[5] = r6;
+    preDef.rules[6] = r5;
+    preDef.rules[7] = r4;
+    preDef.rules[8] = r11;
+    preDef.rules[9] = r10;
+    preDef.rules[10] = r9;
+    preDef.rules[11] = r8;
+    preDef.rules[12] = r15;
+    preDef.rules[13] = r14;
+    preDef.rules[14] = r13;
+    preDef.rules[15] = r12;
+
+
+    save_brain(&preDef, 1, RED);
+
     Brain b[3] = {{.eval = 0}, {.eval = 0}, {.eval = 0}};
 
-    load_brain(b + 0, 1919, RED);
-    load_brain(b + 1, 1919, RED);
-    load_brain(b + 2, 1919, RED);
-    /*
-    rand_brain(b + 0);
+    //rand_brain(b + 0);
     rand_brain(b + 1);
     rand_brain(b + 2);
-     */
 
-    Population popRed = {.individuals = {
-            {.x = 0, .y = SIZEMAP - 1, .alive = 1},
-            {.x = 2, .y = SIZEMAP - 1, .alive = 1},
-            {.x = 4, .y = SIZEMAP - 1, .alive = 1},
-            {.x = 1, .y = SIZEMAP - 2, .alive = 1},
-            {.x = 6, .y = SIZEMAP - 1, .alive = 1},
-    }, b+ 0, RED, .state = {.end_state = None, .alives = IndividualPerPopulation, .targets = IndividualPerPopulation}};
+    load_brain(b + 0, get_last_brain(RED), RED);
+    //load_brain(b + 1, get_last_brain(RED), RED);
+    //load_brain(b + 2, get_last_brain(RED), RED);
 
-    Population popGreen = {.individuals = {
-            {.x = SIZEMAP - 1, .y = SIZEMAP - 1, .alive = 1},
-            {.x = SIZEMAP - 3, .y = SIZEMAP - 1, .alive = 1},
-            {.x = SIZEMAP - 5, .y = SIZEMAP - 1, .alive = 1},
-            {.x = SIZEMAP - 2, .y = SIZEMAP - 2, .alive = 1},
-            {.x = SIZEMAP - 4, .y = SIZEMAP - 2, .alive = 1},
-    }, b+1, GREEN, .state = {.end_state = None, .alives = IndividualPerPopulation, .targets = IndividualPerPopulation}};
+    Brain *brain[3] = {&b[0], &b[1], &b[2]};
 
-    Population popBlue = {.individuals = {
-            {.x = 10, .y = 0, .alive = 1},
-            {.x = 10, .y = 1, .alive = 1},
-            {.x = 12, .y = 1, .alive = 1},
-            {.x = 9, .y = 2, .alive = 1},
-            {.x = 11, .y = 2, .alive = 1},
-    }, b+2, BLUE, .state = {.end_state = None, .alives = IndividualPerPopulation, .targets = IndividualPerPopulation}};
+    Populations pops;
+    create_pops(&pops, brain, 0);
 
-    Populations pops = {.pops = {popRed, popGreen, popBlue}, .iteration = 0};
 
     vitesse = 10;
 	

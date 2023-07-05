@@ -391,7 +391,7 @@ void rand_individual(Individual * ind, Locator loc) {
 Populations * create_pops(Populations * pops, Brain *brain[3], int decal){
     if (!pops) pops = malloc(sizeof(Populations));
     pops->iteration = 0;
-    int hor_b[3] = {1,13,7}, ver_b[3] = {9,9,4}; // a modif si veut changer position depart
+    int hor_b[3] = {2,12,7}, ver_b[3] = {9,9,4}; // a modif si veut changer position depart
     int hor[3],ver[3];
     for (int i=0; i<3; i++){
         hor[(i+decal)%3] = hor_b[i];
@@ -447,7 +447,7 @@ int main(){
         brains->brain[k] = NULL;
     }
     brains->level = 0;
-    for (int evo=0; evo<15; evo++){
+    for (int evo=0; evo<8; evo++){
         mutation_all(brains, list, 1);
         printf("evo : %d\n",evo);
     }
