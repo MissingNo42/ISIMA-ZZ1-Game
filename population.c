@@ -103,10 +103,9 @@ void move(Populations * pops) {
 
 void eval(Populations * pops, int ind) {
 	Population * pop = &pops->pops[ind];
-	pop->brain->eval = (powf(pop->state.alives, 2)
-	                    - powf(pop->state.targets, 2)
-	                   ) / sqrt(pops->iteration)
-                       + pop->state.end_state * IndividualPerPopulation * 2;
+	pop->brain->eval = (powf((float)pop->state.alives, 2) - powf((float)pop->state.targets, 2)
+	                   ) / sqrtf((float)pops->iteration)
+                       + (float)pop->state.end_state * IndividualPerPopulation * 2;
 }
 
 /**
