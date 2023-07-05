@@ -7,7 +7,7 @@
 #include <stdarg.h>
 
 #include "population.h"
-/*
+
 void glouton1(int color, int level, int iter, int opp){
 	Brains brains;
     brains.level = 0;
@@ -160,4 +160,3 @@ int main(int argc, char ** argv){
 }
 
 #endif
-*/
