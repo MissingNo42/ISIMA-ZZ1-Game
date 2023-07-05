@@ -236,8 +236,8 @@ void mutation_all (Brains * brains, int* list_ind, Species species){
             brain_list[species % 3] = &brains->prey;
             brain_list[(species + 1) % 3] = &brains->predator;
             float eval_val = 0;
-            for(int anti_rand = 0; anti_rand<5;anti_rand++) {
-                Populations *pops = create_pops(NULL, brain_list);
+            for(int anti_rand = 0; anti_rand<6;anti_rand++) {
+                Populations *pops = create_pops(NULL, brain_list, anti_rand%3);
                 int i = 0;
                 while (!is_terminated(pops) && i < ITE_MAX) {
                     update_status(pops);
@@ -388,16 +388,14 @@ void rand_individual(Individual * ind, Locator loc) {
 	ind->y;
 }
 */
-Populations * create_pops(Populations * pops, Brain *brain[3]){
+Populations * create_pops(Populations * pops, Brain *brain[3], int decal){
     if (!pops) pops = malloc(sizeof(Populations));
     pops->iteration = 0;
-    int ind[3] ={0,1,2};
-    change_path_random(ind,3);
     int hor_b[3] = {1,13,7}, ver_b[3] = {9,9,4}; // a modif si veut changer position depart
     int hor[3],ver[3];
     for (int i=0; i<3; i++){
-        hor[ind[i]] = hor_b[i];
-        ver[ind[i]] = ver_b[i];
+        hor[(i+decal)%3] = hor_b[i];
+        ver[(i+decal)%3] = ver_b[i];
     }
 
     for (int i =0; i<3; i++){
