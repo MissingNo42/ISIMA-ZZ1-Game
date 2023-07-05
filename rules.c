@@ -90,3 +90,37 @@ Brain * copy_brain(Brain * src, Brain * dst) {
 	if (dst) memcpy(dst, src, sizeof(Brain));
 	return dst;
 }
+
+#ifdef TESTING
+int main(){
+	Rule s = {.raw={-1, -1, -1, -1, -1, -1}};
+	Rule r = {.raw={-1, -1, -1, -1, -1, -1}};
+	
+	printf("match 1: %d\n", match(&s, &r));
+	
+	s = (Rule){.raw={1,1,1,1,1,1}};
+	r = (Rule){.raw={-1, -1, -1, -1, -1, -1}};
+	printf("match 1: %d\n", match(&s, &r));
+	
+	s = (Rule){.raw={1,1,1,1,1,1}};
+	r = (Rule){.raw={-1, -1, -1, -1, -1, -1}};
+	printf("match 1: %d\n", match(&s, &r));
+	
+	s = (Rule){.raw={-1, 1, 1, 2, -1, 1}};
+	r = (Rule){.raw={-1, 1, 1, 2, -1, 1}};
+	printf("match 1: %d\n", match(&s, &r));
+	
+	s = (Rule){.raw={-1, 0, 1, 2, -1, 1}};
+	r = (Rule){.raw={-1, 1, 1, 2, -1, 1}};
+	printf("match 0: %d\n", match(&s, &r));
+	
+	s = (Rule){.raw={0, 1, 1, 2, -1, 1}};
+	r = (Rule){.raw={-1, 1, 1, 2, -1, 1}};
+	printf("match 1: %d\n", match(&s, &r));
+	
+	s = (Rule){.raw={0, 1, 1, 0, -1, 1}};
+	r = (Rule){.raw={-1, 1, 1, 2, -1, 1}};
+	printf("match 0: %d\n", match(&s, &r));
+	
+}
+#endif
