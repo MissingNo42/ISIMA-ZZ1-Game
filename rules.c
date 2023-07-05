@@ -72,7 +72,7 @@ Brain * rand_brain(Brain * brain) {
         for (int i = 0; i < P - 1; i++) {
             rand_rule(&brain->rules[i]);
         }
-        brain->rules[P - 1] = (Rule) {.raw = {-1, -1, -1, -1, -1, -1, -1, 1}};
+        brain->rules[P - 1] = (Rule) {.raw = {-1, -1, -1, -1, -1, -1, -1, 0}};
 
     }
     return brain;
