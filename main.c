@@ -104,10 +104,14 @@ int main(int argc, char ** argv) {
 
     Brain b[3] = {{.eval = 0}, {.eval = 0}, {.eval = 0}};
 
-    //load_brain(b + 0, get_last_brain(RED), RED);
+    load_brain(b + 0, 1919, RED);
+    load_brain(b + 1, 1919, RED);
+    load_brain(b + 2, 1919, RED);
+    /*
     rand_brain(b + 0);
     rand_brain(b + 1);
     rand_brain(b + 2);
+     */
 
     Population popRed = {.individuals = {
             {.x = 0, .y = SIZEMAP - 1, .alive = 1},
