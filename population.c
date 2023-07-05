@@ -24,13 +24,13 @@ void prepare_move(Individual * id) { // possible de rajouter si 2 ally vont au m
 	
 	if (id->action == JOKER) id->action = rand() % 4;
 	switch (id->action) {
-		case N: if (id->y - 1 > 0) id->ny = id->y - 1;
+		case N: if (id->y - 1 >= 0) id->ny = id->y - 1;
 			break;
 		case E: if (id->x + 1 < SIZEMAP) id->nx = id->x + 1;
 			break;
 		case S: if (id->y + 1 < SIZEMAP) id->ny = id->y + 1;
 			break;
-		case W: if (id->x - 1 > 0) id->nx = id->x - 1;
+		case W: if (id->x - 1 >= 0) id->nx = id->x - 1;
 			break;
 		default: break;
 	}
@@ -132,6 +132,19 @@ int is_terminated(Populations * pops) {
 	}
 	
 	return r;
+}
+
+/**
+ * @brief execute a complete simulation
+ * @param [in, out] pops the population to simulate
+ * @return the number of iterations
+ * */
+int simulate(Populations * pops) {
+	do {
+		update_status(pops);
+		move(pops);
+	} while (!is_terminated(pops) && pops->iteration < ITE_MAX);
+	return pops->iteration;
 }
 
 void mutation(Brain * brain) {
@@ -238,12 +251,7 @@ void mutation_all (Brains * brains, int* list_ind, Species species){
             float eval_val = 0;
             for(int anti_rand = 0; anti_rand<9;anti_rand++) {
                 Populations *pops = create_pops(NULL, brain_list, anti_rand%3);
-                int i = 0;
-                while (!is_terminated(pops) && i < ITE_MAX) {
-                    update_status(pops);
-                    move(pops);
-                    i++;
-                }
+                simulate(pops);
                 eval(pops, species - 1);
                 /*int ** field = createField();
                 DISTMAXFIELD = sqrt(2) * SIZEMAP;

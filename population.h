@@ -104,6 +104,13 @@ void eval(Populations * pops, int ind);
  * */
 int is_terminated(Populations * pops);
 
+/**
+ * @brief execute a complete simulation
+ * @param [in, out] pops the population to simulate
+ * @return the number of iterations
+ * */
+int simulate(Populations * pops);
+
 void mutation (Brain * brain);
 
 int mutation_one(Brains * brains, int L);
