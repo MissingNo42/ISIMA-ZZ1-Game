@@ -519,16 +519,18 @@ Populations * init_grouped_pops(Populations * pops, int offset){
 Populations * create_pops(Populations * pops, Brain *brain[3], int decal){
 	(void) decal;
     if (!pops) pops = malloc(sizeof(Populations));
-    pops->iteration = 0;
-	
-	init_dispatched_pops(pops);
+    if (pops) {
+        pops->iteration = 0;
 
-    for (int i = 0; i<3; i++){
-        pops->pops[i].species = i+1;
-        pops->pops[i].state.targets = IndividualPerPopulation;
-        pops->pops[i].state.alives = IndividualPerPopulation;
-        pops->pops[i].state.end_state = 0;
-        pops->pops[i].brain = brain[i];
+        init_dispatched_pops(pops);
+
+        for (int i = 0; i < 3; i++) {
+            pops->pops[i].species = i + 1;
+            pops->pops[i].state.targets = IndividualPerPopulation;
+            pops->pops[i].state.alives = IndividualPerPopulation;
+            pops->pops[i].state.end_state = 0;
+            pops->pops[i].brain = brain[i];
+        }
     }
     return pops;
 }
