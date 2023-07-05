@@ -49,7 +49,6 @@ int main(int argc, char ** argv) {
 	(void) argv;
 
     int seed = time(NULL);
-    //int seed = 38528;
     srand(seed);
     printf("seed = %d\n", seed);
 	
@@ -82,36 +81,6 @@ int main(int argc, char ** argv) {
 
 	printf("Screen size: %dx%d\n", WIDTH, HEIGHT);  // taille écran
 
-
-    Brain b[3] = {{.eval = 0}, {.eval = 0}, {.eval = 0}};
-
-    for(int i = 0; i < 3; i++) {
-        char * txtMenu[] = {"rouge", "verte", "bleue"};
-        int ask = -1;
-        printf("Choisir l'IA de la population %s :\n[0] Aleatoire\n[1] Cerveau le plus optimisé par glouton mutation 2", txtMenu[i]);
-        while (ask < 0 || ask > 1) {
-            printf("\nChoix : ");
-            scanf("%d", &ask);
-        }
-        if(ask == 0) rand_brain(b + i);
-        else if (ask == 1) load_brain(b + i, get_last_brain(RED), RED);
-
-        ask = -1;
-        printf("Afficher le cerveau ?\n[0] Non\n[1] Oui");
-        while (ask < 0 || ask > 1) {
-            printf("\nChoix : ");
-            scanf("%d", &ask);
-        }
-        if(ask) printBrain(b + i);
-        printf("-------------------------------------\n");
-    }
-
-    Brain *brain[3] = {&b[0], &b[1], &b[2]};
-
-    Populations pops;
-    create_pops(&pops, brain, 0);
-
-
     window = new_window("Simulation", 0, 0, WIDTH, HEIGHT, SDL_WINDOW_BORDERLESS | SDL_WINDOW_FULLSCREEN);
     if (!window) {
         SDL_Log("Error : SDL create window - %s\n", SDL_GetError()); // fenetre de la SDL a échoué
@@ -132,6 +101,10 @@ int main(int argc, char ** argv) {
         sdl_exit(2);
     }*/
 
+    Brain b[3] = {{.eval = 0}, {.eval = 0}, {.eval = 0}};
+
+    Populations pops;
+
     vitesse = 10;
 
     int gameState = 1;      // Etat du jeu : 0 = Jeu, 1 = Menu
@@ -141,9 +114,6 @@ int main(int argc, char ** argv) {
 	event_utile = SDL_FALSE, // Booléen pour savoir si on a trouvé un event traité
     end = SDL_FALSE;         // Booléen pour savoir si une équipe a gagné
 	SDL_Event event;         // Evènement à traiter
-
-    update_status(&pops);
-    predict_move(&pops);
 
 	while (run) {
 		event_utile = SDL_FALSE;
@@ -238,6 +208,23 @@ int main(int argc, char ** argv) {
             if(menu_y >= 3){
                 menu_y = 0;
                 gameState = 0;
+
+                for(int i = 0; i < 3; i++){
+                    if(menu_color[i] == 0) rand_brain(b + i);
+                    else if(menu_color[i] == 1) rand_brain(b + i);
+                    else if(menu_color[i] == 2) load_brain(b + i, get_last_brain(RED), RED);
+                    else if(menu_color[i] == 3) load_brain(b + i, get_last_brain(BLUE), BLUE);
+
+                    printf("Cerveau %s :\n", (!i) ? "rouge" : ((i == 1) ? "vert" : "bleu") );
+                    printBrain(b+i);
+                    printf("------------------------------\n");
+                }
+                Brain *brain[3] = {&b[0], &b[1], &b[2]};
+
+                create_pops(&pops, brain, 0);
+
+                update_status(&pops);
+                predict_move(&pops);
             }
         }
 
