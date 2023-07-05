@@ -123,9 +123,11 @@ int is_terminated(Populations * pops) {
 		Population * pop = &pops->pops[p];
 		if (!pop->state.alives) {
 			r = 1;
-			pop->state.end_state = Lose;
+			
+			pop->state.end_state = (pop->state.end_state == Win) ? Kamikaze: Lose;
+
 			EndState * e = &pops->pops[(p + 2) % 3].state.end_state;
-			*e = (*e != None) ? Kamikaze : Win;
+			*e = (*e == Lose) ? Kamikaze : Win;
 		}
 	}
 	

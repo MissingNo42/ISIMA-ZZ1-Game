@@ -13,8 +13,7 @@ typedef struct {
 	int map[SIZEMAP][SIZEMAP];
 } Field;
 
-void freeField(Field * field);
-int ** createField();
+
 void printField(Field * field);
 void fillMatrixFromPops(Field * field, Populations * pops);
 void nearestPPA(int indexIndiv, Populations * pops, int k, int select);
