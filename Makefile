@@ -21,6 +21,9 @@ release: $(SRC)
 debug: $(SRC)
 	$(CC) $(SRC) -o main -DTESTING=1 $(CFLAGS) $(LDFLAGS)
 
+trainer: $(SRC)
+	$(CC) $(SRC) -o trainer -DTRAINING=1 $(CFLAGS) $(LDFLAGS)
+
 -include $(DEP)
 
 .PHONY: nx run test clean reclean doc
@@ -35,6 +38,10 @@ run:
 test:
 	@printf "###### Test ######\n"
 	valgrind -s --leak-check=full --show-reachable=yes --error-limit=no --track-origins=yes --suppressions=./sdl.sup ./main
+
+testt:
+	@printf "###### Test Trainer ######\n"
+	valgrind -s --leak-check=full --show-reachable=yes --error-limit=no --track-origins=yes --suppressions=./sdl.sup ./trainer
 
 clean:
 	rm -rf build *.o
