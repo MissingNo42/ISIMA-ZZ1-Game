@@ -81,26 +81,6 @@ int main(int argc, char ** argv) {
 	setup(dmode);
 
 	printf("Screen size: %dx%d\n", WIDTH, HEIGHT);  // taille écran
-	
-    window = new_window("Title", 0, 0, WIDTH, HEIGHT, SDL_WINDOW_BORDERLESS | SDL_WINDOW_FULLSCREEN);
-    if (!window) {
-        SDL_Log("Error : SDL create window - %s\n", SDL_GetError()); // fenetre de la SDL a échoué
-        sdl_exit(2);
-    }
-
-    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-    if (!renderer) {
-        SDL_Log("Error : SDL create renderer - %s\n", SDL_GetError()); // renderer de la SDL a échoué
-        sdl_exit(2);
-    }
-	
-	/*
-    texture = IMG_LoadTexture(renderer,"./assets/balls.png");
-    map = IMG_LoadTexture(renderer,"./assets/map.png");
-    if (!texture || !map) {
-        SDL_Log("Echec du chargement de l'image dans la texture: %s\n", SDL_GetError()); // texture de la SDL a échoué
-        sdl_exit(2);
-    }*/
 
     /*
     //Balanced
@@ -164,21 +144,52 @@ int main(int argc, char ** argv) {
 
     Brain b[3] = {{.eval = 0}, {.eval = 0}, {.eval = 0}};
 
-    //rand_brain(b + 0);
-    //rand_brain(b + 1);
-    //rand_brain(b + 2);
+    for(int i = 0; i < 3; i++) {
+        char * txtMenu[] = {"rouge", "verte", "bleue"};
+        int ask = -1;
+        printf("Choisir l'IA de la population %s :\n[0] Aleatoire\n[1] Cerveau le plus optimisé par glouton mutation 2", txtMenu[i]);
+        while (ask < 0 || ask > 1) {
+            printf("\nChoix : ");
+            scanf("%d", &ask);
+        }
+        if(ask == 0) rand_brain(b + i);
+        else if (ask == 1) load_brain(b + i, get_last_brain(RED), RED);
 
-    load_brain(b + 0, get_last_brain(RED), RED);
-    load_brain(b + 1, get_last_brain(RED), RED);
-    load_brain(b + 2, get_last_brain(RED), RED);
-
-    printBrain(b+0);
+        ask = -1;
+        printf("Afficher le cerveau ?\n[0] Non\n[1] Oui");
+        while (ask < 0 || ask > 1) {
+            printf("\nChoix : ");
+            scanf("%d", &ask);
+        }
+        if(ask) printBrain(b + i);
+        printf("-------------------------------------\n");
+    }
 
     Brain *brain[3] = {&b[0], &b[1], &b[2]};
 
     Populations pops;
     create_pops(&pops, brain, 0);
 
+
+    window = new_window("Title", 0, 0, WIDTH, HEIGHT, SDL_WINDOW_BORDERLESS | SDL_WINDOW_FULLSCREEN);
+    if (!window) {
+        SDL_Log("Error : SDL create window - %s\n", SDL_GetError()); // fenetre de la SDL a échoué
+        sdl_exit(2);
+    }
+
+    renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
+    if (!renderer) {
+        SDL_Log("Error : SDL create renderer - %s\n", SDL_GetError()); // renderer de la SDL a échoué
+        sdl_exit(2);
+    }
+
+    /*
+    texture = IMG_LoadTexture(renderer,"./assets/balls.png");
+    map = IMG_LoadTexture(renderer,"./assets/map.png");
+    if (!texture || !map) {
+        SDL_Log("Echec du chargement de l'image dans la texture: %s\n", SDL_GetError()); // texture de la SDL a échoué
+        sdl_exit(2);
+    }*/
 
     vitesse = 10;
 	

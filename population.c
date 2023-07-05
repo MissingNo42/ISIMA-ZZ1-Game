@@ -575,7 +575,7 @@ int main(){
     }
     brains->level = 0;
     Species species = brains->species;
-    for (int evo=0; evo<5; evo++){
+    for (int evo=0; evo<10; evo++){
         int nb = mutation_two(brains);
         printf("\t\tmut2 :");
         for (int num=0; num<nb; num++){
