@@ -39,6 +39,10 @@ test:
 	@printf "###### Test ######\n"
 	valgrind -s --leak-check=full --show-reachable=yes --error-limit=no --track-origins=yes --suppressions=./sdl.sup ./main
 
+testt:
+	@printf "###### Test Trainer ######\n"
+	valgrind -s --leak-check=full --show-reachable=yes --error-limit=no --track-origins=yes --suppressions=./sdl.sup ./trainer
+
 clean:
 	rm -rf build *.o
 
