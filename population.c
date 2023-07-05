@@ -271,8 +271,7 @@ void mutation_all (Brains * brains, int* list_ind, Species species){
     }
 }
 
-int mutation_two(Brains * brains) {
-    int L = rand() % 8 * P;
+int mutation_two(Brains * brains, int  L) {
     int M = L;
     while(M==L) {
         M = rand() % 8 * P;
@@ -334,6 +333,37 @@ int mutation_two(Brains * brains) {
         }
     }
     return nbL*nbM;
+}
+
+void mutation_two_do (Brains * brains, int* list_ind){
+    change_path_random(list_ind, 8*P);
+    int nb = 0;
+    for (int k=0; k<P*8; k++) {
+        brains->level++;
+
+        for (int m = 1; m < BrainPool2; m++) {
+            copy_brain(brains->brain[0], brains->brain[m]);
+        }
+
+        int nb = mutation_two(brains, list_ind[k]);
+        for (int num = 0; num < nb; num++) {
+            Brain *brain_list[3];
+            Species species = brains->species;
+            brain_list[species - 1] = brains->brain[num];
+            brain_list[species % 3] = &brains->prey;
+            brain_list[(species + 1) % 3] = &brains->predator;
+            float eval_val = 0;
+            for (int anti_rand = 0; anti_rand < 9; anti_rand++) {
+                Populations *pops = create_pops(NULL, brain_list, anti_rand % 3);
+                simulate(pops);
+                eval(pops, species - 1);
+                eval_val += brains->brain[num]->eval;
+                free(pops);
+            }
+            brains->brain[num]->eval = eval_val / 9;
+        }
+        select_best(brains, nb);
+    }
 }
 
 void select_best(Brains * brains, int nb){
@@ -578,33 +608,8 @@ int main(){
     brains->level = 0;
     Species species = brains->species;
     for (int evo=0; evo<5; evo++){
-        int nb = mutation_two(brains);
-        printf("\t\tmut2 :");
-        for (int num=0; num<nb; num++){
-            Brain *brain_list[3];
-            brain_list[species - 1] = brains->brain[num];
-            brain_list[species % 3] = &brains->prey;
-            brain_list[(species + 1) % 3] = &brains->predator;
-            float eval_val = 0;
-            for(int anti_rand = 0; anti_rand<9;anti_rand++) {
-                Populations *pops = create_pops(NULL, brain_list, anti_rand%3);
-                simulate(pops);
-                eval(pops, species - 1);
-                /*int ** field = createField();
-                DISTMAXFIELD = sqrt(2) * SIZEMAP;
-                fillMatrixFromPops(field, pops);
-                printField(field);
-                freeField(field);
-                */printf("ite: %d, eval: %f, alives: %d,targets: %d\n", pops->iteration, pops->pops[species - 1].brain->eval, pops->pops[species - 1].state.alives, pops->pops[species - 1].state.targets);
-                eval_val += brains->brain[num]->eval;
-                free(pops);
-            }
-            brains->brain[num]->eval = eval_val / 9;
-            printf("\teval : %f\n", brains->brain[num]->eval);
-        }
-        select_best(brains,nb);
-        printf("\t\tmutall :");
-        mutation_all(brains, list, 1);
+        mutation_two_do(brains, list);
+        //mutation_all(brains, list, 1);
         copy_brain(brains->brain[0], &brains->prey );
         copy_brain(brains->brain[0], &brains->predator );
         save_brain(brains->brain[0], evo, brains->species);
