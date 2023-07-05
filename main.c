@@ -102,6 +102,8 @@ int main(int argc, char ** argv) {
         sdl_exit(2);
     }*/
 
+    /*
+    //Balanced
     Rule r0 = {.raw = {0,2,-1,-1,-1,-1, 0, 5}};
     Rule r1 = {.raw = {1,2,-1,-1,-1,-1, 1, 5}};
     Rule r2 = {.raw = {2,2,-1,-1,-1,-1, 2, 5}};
@@ -110,20 +112,39 @@ int main(int argc, char ** argv) {
     Rule r5 = {.raw = {-1,-1,1,2,-1,-1, 3, 5}};
     Rule r6 = {.raw = {-1,-1,2,2,-1,-1, 0, 5}};
     Rule r7 = {.raw = {-1,-1,3,2,-1,-1, 1, 5}};
-    Rule r8 = {.raw = {-1,-1,-1,-1,0,2, 0, 4}};
-    Rule r9 = {.raw = {-1,-1,-1,-1,1,2, 1, 4}};
-    Rule r10 = {.raw = {-1,-1,-1,-1,2,2, 2, 4}};
-    Rule r11 = {.raw = {-1,-1,-1,-1,3,2, 3, 4}};
-    Rule r12 = {.raw = {2,-1,-1,-1,-1,-1, 2, 2}};
-    Rule r13 = {.raw = {-1,-1,1,-1,-1,-1, 3, 2}};
-    Rule r14 = {.raw = {-1,-1,-1,-1,2,-1, 2, 2}};
-    Rule r15 = {.raw = {-1,-1,-1,-1,-1,-1, -1, 1}};
+    Rule r8 = {.raw = {-1,-1,-1,-1,0,-1, 0, 2}};
+    Rule r9 = {.raw = {-1,-1,-1,-1,1,-1, 1, 2}};
+    Rule r10 = {.raw = {-1,-1,-1,-1,2,-1, 2, 2}};
+    Rule r11 = {.raw = {-1,-1,-1,-1,3,-1, 3, 2}};
+    Rule r12 = {.raw = {0,-1,-1,-1,-1,-1, 0, 0}};
+    Rule r13 = {.raw = {1,-1,-1,-1,-1,-1, 1, 0}};
+    Rule r14 = {.raw = {2,-1,-1,-1,-1,-1, 2, 0}};
+    Rule r15 = {.raw = {3,-1,-1,-1,-1,-1, 3, 0}};
+
+
+    //Defense
+    Rule r0 = {.raw = {0,-1,-1,-1,-1,-1, 0, 5}};
+    Rule r1 = {.raw = {1,-1,-1,-1,-1,-1, 1, 5}};
+    Rule r2 = {.raw = {2,-1,-1,-1,-1,-1, 2, 5}};
+    Rule r3 = {.raw = {3,-1,-1,-1,-1,-1, 3, 5}};
+    Rule r4 = {.raw = {-1,-1,-1,-1,-1,-1, -1, 0}};
+    Rule r5 = {.raw = {-1,-1,-1,-1,-1,-1, -1, 0}};
+    Rule r6 = {.raw = {-1,-1,-1,-1,-1,-1, -1, 0}};
+    Rule r7 = {.raw = {-1,-1,-1,-1,-1,-1, -1, 0}};
+    Rule r8 = {.raw = {-1,-1,-1,-1,-1,-1, -1, 0}};
+    Rule r9 = {.raw = {-1,-1,-1,-1,-1,-1, -1, 0}};
+    Rule r10 = {.raw = {-1,-1,-1,-1,-1,-1, -1, 0}};
+    Rule r11 = {.raw = {-1,-1,-1,-1,-1,-1, -1, 0}};
+    Rule r12 = {.raw = {-1,-1,-1,-1,-1,-1, -1, 0}};
+    Rule r13 = {.raw = {-1,-1,-1,-1,-1,-1, -1, 0}};
+    Rule r14 = {.raw = {-1,-1,-1,-1,-1,-1, -1, 0}};
+    Rule r15 = {.raw = {-1,-1,-1,-1,-1,-1, -1, 0}};
 
     Brain preDef;
-    preDef.rules[0] = r3;
-    preDef.rules[1] = r2;
-    preDef.rules[2] = r1;
-    preDef.rules[3] = r0;
+    preDef.rules[0] = r0;
+    preDef.rules[1] = r1;
+    preDef.rules[2] = r2;
+    preDef.rules[3] = r3;
     preDef.rules[4] = r7;
     preDef.rules[5] = r6;
     preDef.rules[6] = r5;
@@ -139,6 +160,7 @@ int main(int argc, char ** argv) {
 
 
     save_brain(&preDef, 1, RED);
+     */
 
     Brain b[3] = {{.eval = 0}, {.eval = 0}, {.eval = 0}};
 
@@ -164,6 +186,7 @@ int main(int argc, char ** argv) {
     end = SDL_FALSE;         // Booléen pour savoir si une équipe a gagné
 	SDL_Event event;         // Evènement à traiter
 
+    update_status(&pops);
     predict_move(&pops);
 
 	while (run) {
@@ -227,6 +250,7 @@ int main(int argc, char ** argv) {
                 eat_move(&pops);
                 execute_move(&pops);
 
+                update_status(&pops);
                 predict_move(&pops);
 
                 if(is_terminated(&pops)) end = SDL_TRUE;

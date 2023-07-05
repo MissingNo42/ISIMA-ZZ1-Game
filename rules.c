@@ -91,7 +91,7 @@ Brain * copy_brain(Brain * src, Brain * dst) {
 	return dst;
 }
 
-#ifdef TESTING
+#ifndef TESTING
 int main(){
 	Rule s = {.raw={-1, -1, -1, -1, -1, -1}};
 	Rule r = {.raw={-1, -1, -1, -1, -1, -1}};
