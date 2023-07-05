@@ -174,7 +174,7 @@ void printStatus(Populations * pops, Species color, int IndiceIndiv){
            (pops->pops[color].individuals[IndiceIndiv].status.ally.dist == -1) ? "ANY" : ((pops->pops[color].individuals[IndiceIndiv].status.ally.dist == 0) ? "AWAY" : ((pops->pops[color].individuals[IndiceIndiv].status.ally.dist == 1) ? "MEDIUM" : "NEAR"))
     );
 }
-
+/*
 #ifdef TESTING
 int main(){
 	srand(1688482972);
@@ -234,4 +234,4 @@ int main(){
 	}
     return 0;
 }
-#endif
+#endif*/
