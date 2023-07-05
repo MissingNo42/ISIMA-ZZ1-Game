@@ -92,16 +92,16 @@ Brain * copy_brain(Brain * src, Brain * dst) {
 }
 
 void printBrain(Brain * brain){
-    char dir[] = {'*', 'N', 'E', 'S', 'W'}
-    char dist[] = {'*', 'A', 'M', 'N'}
+    char dir[] = {'*', 'N', 'E', 'S', 'W'};
+    char dist[] = {'*', 'A', 'M', 'N'};
     printf("Brain :\n");
     for(int i = 0; i < P; i++) {
         printf("    R%d : [", i);
         for(int j = 0; j < 5; j++) {
-            if(i%2) printf("%c,", dist[brain->rules[i].raw[j]]);
-            else printf("%c,", dir[brain->rules[i].raw[j]]);
+            if(j%2) printf("%c,", dist[brain->rules[i].raw[j]+1]);
+            else printf("%c,", dir[brain->rules[i].raw[j]+1]);
         }
-        printf("%c] -> %c (%d)", dist[brain->rules[i].raw[5]], dir[brain->rules[i].raw[6]], brain->rules[i].raw[7]);
+        printf("%c] -> %c (%d)\n", dist[brain->rules[i].raw[5]+1], dir[brain->rules[i].raw[6]+1], brain->rules[i].raw[7]);
     }
     printf("        Eval = %f\n", brain->eval);
 };

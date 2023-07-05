@@ -165,12 +165,14 @@ int main(int argc, char ** argv) {
     Brain b[3] = {{.eval = 0}, {.eval = 0}, {.eval = 0}};
 
     //rand_brain(b + 0);
-    rand_brain(b + 1);
-    rand_brain(b + 2);
+    //rand_brain(b + 1);
+    //rand_brain(b + 2);
 
     load_brain(b + 0, get_last_brain(RED), RED);
-    //load_brain(b + 1, get_last_brain(RED), RED);
-    //load_brain(b + 2, get_last_brain(RED), RED);
+    load_brain(b + 1, get_last_brain(RED), RED);
+    load_brain(b + 2, get_last_brain(RED), RED);
+
+    printBrain(b+0);
 
     Brain *brain[3] = {&b[0], &b[1], &b[2]};
 

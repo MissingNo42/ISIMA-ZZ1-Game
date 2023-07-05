@@ -455,8 +455,10 @@ int main(){
         brains->brain[k] = NULL;
     }
     brains->level = 0;
-    for (int evo=0; evo<8; evo++){
-        mutation_all(brains, list, 1);
+    for (int evo=0; evo<10; evo++){
+        for(int ev = 0; ev < 5; ev++){
+            mutation_all(brains, list, 1);
+        }
         copy_brain(brains->brain[0], &brains->prey );
         copy_brain(brains->brain[0], &brains->predator );
         printf("evo : %d\n",evo);
