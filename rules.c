@@ -16,18 +16,8 @@
  * @return 1 if the status matches the rule, 0 otherwise
  * */
 int match(Rule * status, Rule * rule) {
-	int r = 1;
-	if (status->ally.dir != JOKER && rule->ally.dir != JOKER) r &= status->ally.dir == rule->ally.dir;
-	if (r && status->ally.dist != ANY && rule->ally.dist != ANY) r &= status->ally.dist == rule->ally.dist;
-	
-	if (r && status->prey.dir != JOKER && rule->prey.dir != JOKER) r &= status->prey.dir == rule->prey.dir;
-	if (r && status->prey.dist != ANY && rule->prey.dist != ANY) r &= status->prey.dist == rule->prey.dist;
-	
-	if (r && status->predator.dir != JOKER && rule->predator.dir != JOKER)
-		r &= status->predator.dir == rule->predator.dir;
-	if (r && status->predator.dist != ANY && rule->predator.dist != ANY)
-		r &= status->predator.dist == rule->predator.dist;
-	return r;
+	for (int x = 0; x < 6; x++) if (status->raw[x] != -1 && rule->raw[x] != -1 && status->raw[x] != rule->raw[x]) return 0;
+	return 1;
 }
 
 /**
@@ -82,7 +72,7 @@ Brain * rand_brain(Brain * brain) {
         for (int i = 0; i < P - 1; i++) {
             rand_rule(&brain->rules[i]);
         }
-        brain->rules[P - 1] = (Rule) {.raw = {-1, -1, -1, -1, -1, -1, -1, 1}};
+        brain->rules[P - 1] = (Rule) {.raw = {-1, -1, -1, -1, -1, -1, -1, 0}};
 
     }
     return brain;
@@ -100,3 +90,37 @@ Brain * copy_brain(Brain * src, Brain * dst) {
 	if (dst) memcpy(dst, src, sizeof(Brain));
 	return dst;
 }
+
+#ifdef TESTING
+int main(){
+	Rule s = {.raw={-1, -1, -1, -1, -1, -1}};
+	Rule r = {.raw={-1, -1, -1, -1, -1, -1}};
+	
+	printf("match 1: %d\n", match(&s, &r));
+	
+	s = (Rule){.raw={1,1,1,1,1,1}};
+	r = (Rule){.raw={-1, -1, -1, -1, -1, -1}};
+	printf("match 1: %d\n", match(&s, &r));
+	
+	s = (Rule){.raw={1,1,1,1,1,1}};
+	r = (Rule){.raw={-1, -1, -1, -1, -1, -1}};
+	printf("match 1: %d\n", match(&s, &r));
+	
+	s = (Rule){.raw={-1, 1, 1, 2, -1, 1}};
+	r = (Rule){.raw={-1, 1, 1, 2, -1, 1}};
+	printf("match 1: %d\n", match(&s, &r));
+	
+	s = (Rule){.raw={-1, 0, 1, 2, -1, 1}};
+	r = (Rule){.raw={-1, 1, 1, 2, -1, 1}};
+	printf("match 0: %d\n", match(&s, &r));
+	
+	s = (Rule){.raw={0, 1, 1, 2, -1, 1}};
+	r = (Rule){.raw={-1, 1, 1, 2, -1, 1}};
+	printf("match 1: %d\n", match(&s, &r));
+	
+	s = (Rule){.raw={0, 1, 1, 0, -1, 1}};
+	r = (Rule){.raw={-1, 1, 1, 2, -1, 1}};
+	printf("match 0: %d\n", match(&s, &r));
+	
+}
+#endif

@@ -88,9 +88,9 @@ void update_status(Populations * pops){
 					if (dplus > 0) info->dir = (dmin >= 0) ? W : N;
 					else if (dplus < 0) info->dir = (dmin > 0) ? S : E;
 					else info->dir = (dmin > 0) ? S : ((dmin < 0) ? N : JOKER);
-
-					if (dm < 2 * PERCENTNEAR * PERCENTNEAR * SIZEMAP * SIZEMAP) info->dist = NEAR;
-					else if (dm < 2 * PERCENTMEDIUM * PERCENTMEDIUM * SIZEMAP * SIZEMAP) info->dist = MEDIUM;
+					
+					if (dm < CELLNEAR * CELLNEAR) info->dist = NEAR; // 2 * PC² * SIZE²
+					else if (dm < CELLMEDIUM * CELLMEDIUM) info->dist = MEDIUM;
 					else info->dist = AWAY;
 				}
 			}

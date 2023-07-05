@@ -134,6 +134,19 @@ int is_terminated(Populations * pops) {
 	return r;
 }
 
+/**
+ * @brief execute a complete simulation
+ * @param [in, out] pops the population to simulate
+ * @return the number of iterations
+ * */
+int simulate(Populations * pops) {
+	do {
+		update_status(pops);
+		move(pops);
+	} while (!is_terminated(pops) && pops->iteration < ITE_MAX);
+	return pops->iteration;
+}
+
 void mutation(Brain * brain) {
 	int i = rand() % P;
 	int j = rand() % 8;
@@ -236,14 +249,9 @@ void mutation_all (Brains * brains, int* list_ind, Species species){
             brain_list[species % 3] = &brains->prey;
             brain_list[(species + 1) % 3] = &brains->predator;
             float eval_val = 0;
-            for(int anti_rand = 0; anti_rand<6;anti_rand++) {
+            for(int anti_rand = 0; anti_rand<9;anti_rand++) {
                 Populations *pops = create_pops(NULL, brain_list, anti_rand%3);
-                int i = 0;
-                while (!is_terminated(pops) && i < ITE_MAX) {
-                    update_status(pops);
-                    move(pops);
-                    i++;
-                }
+                simulate(pops);
                 eval(pops, species - 1);
                 /*int ** field = createField();
                 DISTMAXFIELD = sqrt(2) * SIZEMAP;
@@ -391,7 +399,7 @@ void rand_individual(Individual * ind, Locator loc) {
 Populations * create_pops(Populations * pops, Brain *brain[3], int decal){
     if (!pops) pops = malloc(sizeof(Populations));
     pops->iteration = 0;
-    int hor_b[3] = {2,12,7}, ver_b[3] = {9,9,4}; // a modif si veut changer position depart
+    int hor_b[3] = {SIZEMAP/3, 2*SIZEMAP/3,SIZEMAP/2}, ver_b[3] = {SIZEMAP/3,SIZEMAP/3,2*SIZEMAP}; // a modif si veut changer position depart
     int hor[3],ver[3];
     for (int i=0; i<3; i++){
         hor[(i+decal)%3] = hor_b[i];
@@ -449,11 +457,13 @@ int main(){
     brains->level = 0;
     for (int evo=0; evo<8; evo++){
         mutation_all(brains, list, 1);
+        copy_brain(brains->brain[0], &brains->prey );
+        copy_brain(brains->brain[0], &brains->predator );
         printf("evo : %d\n",evo);
     }
     free(brains->brain[0]);
     free(brains);
-    printf("%d",seed);
+    printf("%d\n",seed);
 /*    ajouter ailleur pour voir
     int ** field = createField();
     DISTMAXFIELD = sqrt(2) * SIZEMAP;
