@@ -141,6 +141,6 @@ int load_brain(Brain * brain, int level, Species species);
  * */
 int get_last_brain(Species species);
 
-Populations * create_pops(Populations * pops, Brain *brain[3]);
+Populations * create_pops(Populations * pops, Brain *brain[3], int decal);
 
 #endif //ZZ1GAME_POPULATION_H
