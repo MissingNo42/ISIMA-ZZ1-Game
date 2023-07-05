@@ -474,15 +474,20 @@ Populations * init_dispatched_pops(Populations * pops){
 			y = rand() % SIZEMAP;
 		} while (field.map[x][y]);
 		
+		if (x > 0) {
+			if (y > 0) field.map[x - 1][y - 1] = 1;
+			if (y + 1 < SIZEMAP) field.map[x - 1][y + 1] = 1;
+			field.map[x - 1][y] = 1;
+		}
+		if (x + 1 < SIZEMAP) {
+			if (y > 0) field.map[x + 1][y - 1] = 1;
+			if (y + 1 < SIZEMAP) field.map[x + 1][y + 1] = 1;
+			field.map[x + 1][y] = 1;
+		}
+		if (y > 0) field.map[x][y - 1] = 1;
+		if (y + 1 < SIZEMAP) field.map[x][y + 1] = 1;
 		field.map[x][y] = 1;
-		field.map[x - 1][y - 1] = 1;
-		field.map[x - 1][y + 1] = 1;
-		field.map[x - 1][y] = 1;
-		field.map[x + 1][y - 1] = 1;
-		field.map[x + 1][y + 1] = 1;
-		field.map[x + 1][y] = 1;
-		field.map[x][y - 1] = 1;
-		field.map[x][y + 1] = 1;
+		
 		ind->x = x;
 		ind->y = y;
 		ind->alive = 1;
