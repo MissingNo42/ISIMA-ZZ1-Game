@@ -104,7 +104,7 @@ void printBrain(Brain * brain){
         printf("%c] -> %c (%d)\n", dist[brain->rules[i].raw[5]+1], dir[brain->rules[i].raw[6]+1], brain->rules[i].raw[7]);
     }
     printf("        Eval = %f\n", brain->eval);
-};
+}
 /*
 #ifdef TESTING
 int main(){
