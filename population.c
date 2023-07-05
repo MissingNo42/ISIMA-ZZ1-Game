@@ -276,11 +276,12 @@ int mutation_two(Brains * brains, int  L) {
     while(M==L) {
         M = rand() % (8 * P);
     }
+    printf("L : %d |M : %d\n",L,M);
     int jL = L % P, iL = L / P;
     int jM = M % P, iM = M / P;
     int nbL = 0, decL = 0;
     int nbM = 0, decM = 0;
-    switch (jL) {
+    switch (iL) {
         case 0:
         case 2:
         case 4:
@@ -302,7 +303,7 @@ int mutation_two(Brains * brains, int  L) {
         default:
             break;
     }
-    switch (jM) {
+    switch (iM) {
         case 0:
         case 2:
         case 4:
@@ -359,8 +360,10 @@ void mutation_two_do (Brains * brains, int* list_ind){
                 free(pops);
             }
             brains->brain[num]->eval = eval_val / 9;
+            printf("eval : %f\n", brains->brain[num]->eval);
         }
         select_best(brains, nb);
+        printf("nb : %d\n",nb);
         printf("eval : %f\n", brains->brain[0]->eval);
     }
 }

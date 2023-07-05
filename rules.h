@@ -81,4 +81,6 @@ Brain * rand_brain(Brain * brain);
  * */
 Brain * copy_brain(Brain * src, Brain * dst) ;
 
+void printBrain(Brain * brain);
+
 #endif //ZZ1GAME_RULES_H
