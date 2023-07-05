@@ -8,7 +8,8 @@
 #define P 24
 #define MAX_PRIORITY 5
 #define ProbaExp 2
-#define BrainPool 6 //MAX_PRIORITY + 1 pour l'instant
+#define BrainPool2 30
+#define BrainPool1 6
 #define ITE_MAX 2000
 
 typedef enum {

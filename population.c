@@ -103,10 +103,9 @@ void move(Populations * pops) {
 
 void eval(Populations * pops, int ind) {
 	Population * pop = &pops->pops[ind];
-	pop->brain->eval = (powf(pop->state.alives, 2)
-	                    - powf(pop->state.targets, 2)
-	                   ) / sqrt(pops->iteration)
-                       + pop->state.end_state * IndividualPerPopulation * 2;
+	pop->brain->eval = (powf((float)pop->state.alives, 2) - powf((float)pop->state.targets, 2)
+	                   ) / sqrtf((float)pops->iteration)
+                       + (float)pop->state.end_state * IndividualPerPopulation * 2;
 }
 
 /**
@@ -236,8 +235,8 @@ void mutation_all (Brains * brains, int* list_ind, Species species){
     for (int k=0; k<P*8; k++){
         brains->level++;
 
-        for (int m=1; m< BrainPool; m++){
-            brains->brain[m] = copy_brain(brains->brain[0],NULL);
+        for (int m=1; m< BrainPool1; m++){
+            copy_brain(brains->brain[0],brains->brain[m]);
         }
 
         nb = mutation_one(brains,list_ind[k]);
@@ -262,24 +261,85 @@ void mutation_all (Brains * brains, int* list_ind, Species species){
                 eval_val += brains->brain[num]->eval;
                 free(pops);
             }
-            brains->brain[num]->eval = eval_val;
+            brains->brain[num]->eval = eval_val / 9;
             printf("\teval : %f\n", brains->brain[num]->eval);
         }
 
         //fin threads
-        select_best(brains);
-        save_brain(brains->brain[0], brains->level, brains->species);
-        for (int m=1; m< BrainPool; m++){
-            free(brains->brain[m]);
-        }
+        select_best(brains, nb);
         printf("\tbrain_num : %d\n",k);
     }
 }
 
-void select_best(Brains * brains){
+int mutation_two(Brains * brains) {
+    int L = rand() % 8 * P;
+    int M = L;
+    while(M==L) {
+        M = rand() % 8 * P;
+    }
+    int iL = L % P, jL = L / P;
+    int iM = M % P, jM = M / P;
+    printf("\tjL,iL : %d,%d\n",jL,iL);
+    printf("\tjM,iM : %d,%d\n",jM,iM);
+    int nbL = 0, decL = 0;
+    int nbM = 0, decM = 0;
+    switch (jL) {
+        case 0:
+        case 2:
+        case 4:
+            nbL = 5;
+            decL = 1;
+            break;
+        case 6:
+            nbL = 4;
+            break;
+        case 1:
+        case 3:
+        case 5:
+            nbL = 4;
+            decL = 1;
+            break;
+        case 7:
+            nbL = MAX_PRIORITY;
+            break;
+        default:
+            break;
+    }
+    switch (jM) {
+        case 0:
+        case 2:
+        case 4:
+            nbM = 5;
+            decM = 1;
+            break;
+        case 6:
+            nbM = 4;
+            break;
+        case 1:
+        case 3:
+        case 5:
+            nbM = 4;
+            decM = 1;
+            break;
+        case 7:
+            nbM = MAX_PRIORITY;
+            break;
+        default:
+            break;
+    }
+    for (int i = 0; i<nbL; i++){
+        for (int j=0; j<nbM; j++){
+            brains->brain[i * nbM + j]->rules[i * nbM + j].raw[i] = j - decM;
+            brains->brain[j * nbL + i]->rules[j * nbL + i].raw[j] = i - decL;
+        }
+    }
+    return nbL*nbM;
+}
+
+void select_best(Brains * brains, int nb){
     int j = 0;
     float eval = brains->brain[0]->eval;
-    for (int k = 1; k<BrainPool; k++){
+    for (int k = 1; k<nb; k++){
         if (eval < brains->brain[k]->eval){
             j = k;
             eval = brains->brain[k]->eval;
@@ -396,25 +456,79 @@ void rand_individual(Individual * ind, Locator loc) {
 	ind->y;
 }
 */
+
+/**
+ * @brief initialize individuals positions to be dispatched and alone in a 3x3 square
+ * @param [out] pops the populations
+ * @return the same populations
+ * */
+Populations * init_dispatched_pops(Populations * pops){
+	Field field = {.map = {{0}}};
+
+	for (int p = 0; p < 3; p++) for (int i = 0; i < IndividualPerPopulation; i++) {
+		Individual * ind = &pops->pops[p].individuals[i];
+		int x, y;
+
+		do {
+			x = rand() % SIZEMAP;
+			y = rand() % SIZEMAP;
+		} while (field.map[x][y]);
+
+		field.map[x][y] = 1;
+		field.map[x - 1][y - 1] = 1;
+		field.map[x - 1][y + 1] = 1;
+		field.map[x - 1][y] = 1;
+		field.map[x + 1][y - 1] = 1;
+		field.map[x + 1][y + 1] = 1;
+		field.map[x + 1][y] = 1;
+		field.map[x][y - 1] = 1;
+		field.map[x][y + 1] = 1;
+		ind->x = x;
+		ind->y = y;
+		ind->alive = 1;
+	}
+
+	return pops;
+}
+
+/**
+ * @brief initialize individuals positions to be grouped
+ * @param [out] pops the populations
+ * @param [in] offset the offset to select the triangle corner
+ * @return the same populations
+ * */
+Populations * init_grouped_pops(Populations * pops, int offset){
+	int hor_b[3] = {SIZEMAP / 3, 2 * SIZEMAP / 3, SIZEMAP / 2},
+	    ver_b[3] = {SIZEMAP / 3, SIZEMAP / 3, 2 * SIZEMAP}; // a modif si veut changer position depart
+    int hor[3],ver[3];
+
+	for (int p = 0; p < 3; p++) {
+        hor[(p + offset) % 3] = hor_b[p];
+        ver[(p + offset) % 3] = ver_b[p];
+		for (int i = 0; i < IndividualPerPopulation; i++) {
+			Individual * ind = &pops->pops[p].individuals[i];
+			ind->x = hor[p] + i - IndividualPerPopulation / 2;
+			ind->y = ver[p] + i % 2;
+			ind->alive = 1;
+		}
+	}
+
+	return pops;
+}
+
 Populations * create_pops(Populations * pops, Brain *brain[3], int decal){
+	(void) decal;
     if (!pops) pops = malloc(sizeof(Populations));
     pops->iteration = 0;
-    int hor_b[3] = {SIZEMAP/3, 2*SIZEMAP/3,SIZEMAP/2}, ver_b[3] = {SIZEMAP/3,SIZEMAP/3,2*SIZEMAP/3}; // a modif si veut changer position depart
-    int hor[3],ver[3];
-    for (int i=0; i<3; i++){
-        hor[(i+decal)%3] = hor_b[i];
-        ver[(i+decal)%3] = ver_b[i];
-    }
 
-    for (int i =0; i<3; i++){
+	init_dispatched_pops(pops);
+
+    for (int i = 0; i<3; i++){
         pops->pops[i].species = i+1;
         pops->pops[i].state.targets = IndividualPerPopulation;
         pops->pops[i].state.alives = IndividualPerPopulation;
         pops->pops[i].state.end_state = 0;
         pops->pops[i].brain = brain[i];
-        for (int j=0; j<IndividualPerPopulation; j++){
-            pops->pops[i].individuals[j]=(Individual) {.x = hor[i]+j-2, .y = ver[i]-j%2, .alive = 1};
-        }
     }
     return pops;
 }
@@ -451,19 +565,47 @@ int main(){
     rand_brain( &brains->prey );
     rand_brain( &brains->predator );
     brains->brain[0] = rand_brain( NULL);
-    for (int k=1; k<P;k++ ){
-        brains->brain[k] = NULL;
+    for (int k=1; k<BrainPool2 ;k++ ){
+        brains->brain[k] = copy_brain(brains->brain[0],NULL);
     }
     brains->level = 0;
-    for (int evo=0; evo<10; evo++){
-        for(int ev = 0; ev < 5; ev++){
-            mutation_all(brains, list, 1);
+    Species species = brains->species;
+    for (int evo=0; evo<5; evo++){
+        int nb = mutation_two(brains);
+        printf("\t\tmut2 :");
+        for (int num=0; num<nb; num++){
+            Brain *brain_list[3];
+            brain_list[species - 1] = brains->brain[num];
+            brain_list[species % 3] = &brains->prey;
+            brain_list[(species + 1) % 3] = &brains->predator;
+            float eval_val = 0;
+            for(int anti_rand = 0; anti_rand<9;anti_rand++) {
+                Populations *pops = create_pops(NULL, brain_list, anti_rand%3);
+                simulate(pops);
+                eval(pops, species - 1);
+                /*int ** field = createField();
+                DISTMAXFIELD = sqrt(2) * SIZEMAP;
+                fillMatrixFromPops(field, pops);
+                printField(field);
+                freeField(field);
+                */printf("ite: %d, eval: %f, alives: %d,targets: %d\n", pops->iteration, pops->pops[species - 1].brain->eval, pops->pops[species - 1].state.alives, pops->pops[species - 1].state.targets);
+                eval_val += brains->brain[num]->eval;
+                free(pops);
+            }
+            brains->brain[num]->eval = eval_val / 9;
+            printf("\teval : %f\n", brains->brain[num]->eval);
         }
+        select_best(brains,nb);
+        printf("\t\tmutall :");
+        mutation_all(brains, list, 1);
         copy_brain(brains->brain[0], &brains->prey );
         copy_brain(brains->brain[0], &brains->predator );
+        save_brain(brains->brain[0], evo, brains->species);
         printf("evo : %d\n",evo);
     }
-    free(brains->brain[0]);
+    for (int m=0; m< BrainPool2; m++){
+        free(brains->brain[m]);
+    }
     free(brains);
     printf("%d\n",seed);
 /*    ajouter ailleur pour voir
