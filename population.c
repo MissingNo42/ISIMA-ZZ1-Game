@@ -75,7 +75,7 @@ void eat_move(Populations * populations) {
 					                        (prey->nx == self->x && prey->ny == self->y)))) {
 						self_pop->state.targets--;
 						prey_pop->state.alives--;
-						prey->alive = 0;
+						prey->alive = 0; //TODO
 					}
 				}
 			}
@@ -216,7 +216,7 @@ int mutation_one(Brains * brains, int L ) {
 }
 
 void mutation_all (Brains * brains, int* list_ind, Species species){
-    change_path_random(list_ind);
+    change_path_random(list_ind, 8*P);
     int nb = 0;
     for (int k=0; k<P*8; k++){
         brains->level++;
@@ -238,8 +238,8 @@ void mutation_all (Brains * brains, int* list_ind, Species species){
                 Populations *pops = create_pops(NULL, brain_list);
                 int i = 0;
                 while (!is_terminated(pops) && i < ITE_MAX) {
+                    update_status(pops);
                     move(pops);
-                    fillStatusPops(pops);
                     i++;
                 }
                 eval(pops, species - 1);
@@ -282,8 +282,8 @@ void select_best(Brains * brains){
     }
 }
 
-void change_path_random(int * list){
-    for (int k = 8*P ; k>0; k--){
+void change_path_random(int * list, int size){
+    for (int k = size ; k>0; k--){
         int i = rand() % k;
         int tmp = list[k-1];
         list[k-1] = list[i];
@@ -389,7 +389,15 @@ void rand_individual(Individual * ind, Locator loc) {
 Populations * create_pops(Populations * pops, Brain *brain[3]){
     if (!pops) pops = malloc(sizeof(Populations));
     pops->iteration = 0;
-    int hor[3] = {7,1,13}, ver[3] = {4,9,9}; // a modif si veut changer position depart
+    int ind[3] ={0,1,2};
+    change_path_random(ind,3);
+    int hor_b[3] = {1,13,7}, ver_b[3] = {9,9,4}; // a modif si veut changer position depart
+    int hor[3],ver[3];
+    for (int i=0; i<3; i++){
+        hor[ind[i]] = hor_b[i];
+        ver[ind[i]] = ver_b[i];
+    }
+
     for (int i =0; i<3; i++){
         pops->pops[i].species = i+1;
         pops->pops[i].state.targets = IndividualPerPopulation;
