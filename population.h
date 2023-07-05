@@ -117,6 +117,8 @@ void mutation_all (Brains * brains, int* list_ind, Species species);
 
 void change_path_random(int * list, int size);
 
+void mutation_two_do (Brains * brains, int* list_ind);
+
 void select_best(Brains * brains, int nb);
 
 void hybridization (Brain * parent1, Brain * parent2,Brain * child);
