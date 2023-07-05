@@ -274,12 +274,10 @@ void mutation_all (Brains * brains, int* list_ind, Species species){
 int mutation_two(Brains * brains, int  L) {
     int M = L;
     while(M==L) {
-        M = rand() % 8 * P;
+        M = rand() % (8 * P);
     }
-    int iL = L % P, jL = L / P;
-    int iM = M % P, jM = M / P;
-    printf("\tjL,iL : %d,%d\n",jL,iL);
-    printf("\tjM,iM : %d,%d\n",jM,iM);
+    int jL = L % P, iL = L / P;
+    int jM = M % P, iM = M / P;
     int nbL = 0, decL = 0;
     int nbM = 0, decM = 0;
     switch (jL) {
@@ -328,8 +326,8 @@ int mutation_two(Brains * brains, int  L) {
     }
     for (int i = 0; i<nbL; i++){
         for (int j=0; j<nbM; j++){
-            brains->brain[i * nbM + j]->rules[i * nbM + j].raw[i] = j - decM;
-            brains->brain[j * nbL + i]->rules[j * nbL + i].raw[j] = i - decL;
+            brains->brain[i+j]->rules[iL].raw[jL] = j - decM;
+            brains->brain[j+i]->rules[iM].raw[jM] = i - decL;
         }
     }
     return nbL*nbM;
@@ -345,7 +343,7 @@ void mutation_two_do (Brains * brains, int* list_ind){
             copy_brain(brains->brain[0], brains->brain[m]);
         }
 
-        int nb = mutation_two(brains, list_ind[k]);
+        nb = mutation_two(brains, list_ind[k]);
         for (int num = 0; num < nb; num++) {
             Brain *brain_list[3];
             Species species = brains->species;
@@ -363,6 +361,7 @@ void mutation_two_do (Brains * brains, int* list_ind){
             brains->brain[num]->eval = eval_val / 9;
         }
         select_best(brains, nb);
+        printf("eval : %f\n", brains->brain[0]->eval);
     }
 }
 
@@ -606,7 +605,6 @@ int main(){
         brains->brain[k] = copy_brain(brains->brain[0],NULL);
     }
     brains->level = 0;
-    Species species = brains->species;
     for (int evo=0; evo<5; evo++){
         mutation_two_do(brains, list);
         //mutation_all(brains, list, 1);
