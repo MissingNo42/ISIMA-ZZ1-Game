@@ -439,7 +439,7 @@ int main(){
         brains->brain[k] = NULL;
     }
     brains->level = 0;
-    for (int evo=0; evo<3; evo++){
+    for (int evo=0; evo<5; evo++){
         mutation_all(brains, list, 1);
         printf("evo : %d\n",evo);
     }
