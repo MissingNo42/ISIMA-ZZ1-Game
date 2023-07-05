@@ -16,6 +16,13 @@ typedef enum {
 } Species;
 
 typedef enum {
+	ZoneN,
+	ZoneSE,
+	ZoneSW,
+	Dispatch,
+} Locator;
+
+typedef enum {
 	None = 0,
 	Win = 1,
 	Lose = -1,
@@ -60,6 +67,15 @@ typedef struct {
 	int iteration;
 } Populations;
 
+
+typedef struct {
+	Brain *brain[BrainPool];
+	Brain prey, predator;
+	int level; // generation
+	Species species;
+} Brains;
+
+
 /**
  * @brief prepare the action: check environment collision and pre-perform the move in id->nx/ny
  * @param [in,out] id the individual to prepare the action
@@ -90,6 +106,14 @@ int is_terminated(Populations * pops);
 
 void mutation (Brain * brain);
 
+int mutation_one(Brains * brains, int L);
+
+void mutation_all (Brains * brains, int* list_ind, Species species);
+
+void change_path_random(int * list);
+
+void select_best(Brains * brains);
+
 void hybridization (Brain * parent1, Brain * parent2,Brain * child);
 
 /**
@@ -116,5 +140,7 @@ int load_brain(Brain * brain, int level, Species species);
  * @return the last level or -1
  * */
 int get_last_brain(Species species);
+
+Populations * create_pops(Populations * pops, Brain *brain[3]);
 
 #endif //ZZ1GAME_POPULATION_H

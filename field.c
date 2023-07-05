@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <time.h>
 
 #include "field.h"
 #include "population.h"
@@ -135,6 +136,7 @@ void printStatus(Populations * pops, Species color, int IndiceIndiv){
 
 #ifdef TESTING
 int main2(){
+    srand(time(NULL));
     int ** field = createField();
     DISTMAXFIELD = sqrt(2) * SIZEMAP;
 

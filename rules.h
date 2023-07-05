@@ -8,6 +8,8 @@
 #define P 16
 #define MAX_PRIORITY 5
 #define ProbaExp 2
+#define BrainPool 6 //MAX_PRIORITY + 1 pour l'instant
+#define ITE_MAX 500
 
 typedef enum {
 	JOKER = -1, N, E, S, W
@@ -67,6 +69,15 @@ void rand_rule (Rule * rule);
  * @brief modify a brain to randomize it
  * @param [in] brain a pointer to the brain
  * */
-void rand_brain (Brain * brain);
+Brain * rand_brain(Brain * brain);
+
+/**
+ * @brief copy the src
+ * @param [in] src the source brain
+ * @param [out] dst the destination brain
+ * @return the destination brain
+ * @note if dst is NULL, dst is alloc
+ * */
+Brain * copy_brain(Brain * src, Brain * dst) ;
 
 #endif //ZZ1GAME_RULES_H
