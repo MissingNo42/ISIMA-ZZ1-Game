@@ -90,7 +90,7 @@ Brain * copy_brain(Brain * src, Brain * dst) {
 	if (dst) memcpy(dst, src, sizeof(Brain));
 	return dst;
 }
-
+/*
 #ifdef TESTING
 int main(){
 	Rule s = {.raw={-1, -1, -1, -1, -1, -1}};
@@ -124,3 +124,4 @@ int main(){
 	
 }
 #endif
+*/
