@@ -396,25 +396,79 @@ void rand_individual(Individual * ind, Locator loc) {
 	ind->y;
 }
 */
+
+/**
+ * @brief initialize individuals positions to be dispatched and alone in a 3x3 square
+ * @param [out] pops the populations
+ * @return the same populations
+ * */
+Populations * init_dispatched_pops(Populations * pops){
+	Field field = {.map = {{0}}};
+	
+	for (int p = 0; p < 3; p++) for (int i = 0; i < IndividualPerPopulation; i++) {
+		Individual * ind = &pops->pops[p].individuals[i];
+		int x, y;
+		
+		do {
+			x = rand() % SIZEMAP;
+			y = rand() % SIZEMAP;
+		} while (field.map[x][y]);
+		
+		field.map[x][y] = 1;
+		field.map[x - 1][y - 1] = 1;
+		field.map[x - 1][y + 1] = 1;
+		field.map[x - 1][y] = 1;
+		field.map[x + 1][y - 1] = 1;
+		field.map[x + 1][y + 1] = 1;
+		field.map[x + 1][y] = 1;
+		field.map[x][y - 1] = 1;
+		field.map[x][y + 1] = 1;
+		ind->x = x;
+		ind->y = y;
+		ind->alive = 1;
+	}
+	
+	return pops;
+}
+
+/**
+ * @brief initialize individuals positions to be grouped
+ * @param [out] pops the populations
+ * @param [in] offset the offset to select the triangle corner
+ * @return the same populations
+ * */
+Populations * init_grouped_pops(Populations * pops, int offset){
+	int hor_b[3] = {SIZEMAP / 3, 2 * SIZEMAP / 3, SIZEMAP / 2},
+	    ver_b[3] = {SIZEMAP / 3, SIZEMAP / 3, 2 * SIZEMAP}; // a modif si veut changer position depart
+    int hor[3],ver[3];
+	
+	for (int p = 0; p < 3; p++) {
+        hor[(p + offset) % 3] = hor_b[p];
+        ver[(p + offset) % 3] = ver_b[p];
+		for (int i = 0; i < IndividualPerPopulation; i++) {
+			Individual * ind = &pops->pops[p].individuals[i];
+			ind->x = hor[p] + i - IndividualPerPopulation / 2;
+			ind->y = ver[p] + i % 2;
+			ind->alive = 1;
+		}
+	}
+	
+	return pops;
+}
+
 Populations * create_pops(Populations * pops, Brain *brain[3], int decal){
+	(void) decal;
     if (!pops) pops = malloc(sizeof(Populations));
     pops->iteration = 0;
-    int hor_b[3] = {SIZEMAP/3, 2*SIZEMAP/3,SIZEMAP/2}, ver_b[3] = {SIZEMAP/3,SIZEMAP/3,2*SIZEMAP}; // a modif si veut changer position depart
-    int hor[3],ver[3];
-    for (int i=0; i<3; i++){
-        hor[(i+decal)%3] = hor_b[i];
-        ver[(i+decal)%3] = ver_b[i];
-    }
+	
+	init_dispatched_pops(pops);
 
-    for (int i =0; i<3; i++){
+    for (int i = 0; i<3; i++){
         pops->pops[i].species = i+1;
         pops->pops[i].state.targets = IndividualPerPopulation;
         pops->pops[i].state.alives = IndividualPerPopulation;
         pops->pops[i].state.end_state = 0;
         pops->pops[i].brain = brain[i];
-        for (int j=0; j<IndividualPerPopulation; j++){
-            pops->pops[i].individuals[j]=(Individual) {.x = hor[i]+j-2, .y = ver[i]-j%2, .alive = 1};
-        }
     }
     return pops;
 }

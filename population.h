@@ -16,9 +16,7 @@ typedef enum {
 } Species;
 
 typedef enum {
-	ZoneN,
-	ZoneSE,
-	ZoneSW,
+	Grouped,
 	Dispatch,
 } Locator;
 
@@ -147,6 +145,21 @@ int load_brain(Brain * brain, int level, Species species);
  * @return the last level or -1
  * */
 int get_last_brain(Species species);
+
+/**
+ * @brief initialize individuals positions to be dispatched and alone in a 3x3 square
+ * @param [out] pops the populations
+ * @return the same populations
+ * */
+Populations * init_dispatched_pops(Populations * pops);
+
+/**
+ * @brief initialize individuals positions to be grouped
+ * @param [out] pops the populations
+ * @param [in] offset the offset to select the triangle corner
+ * @return the same populations
+ * */
+Populations * init_grouped_pops(Populations * pops, int offset);
 
 Populations * create_pops(Populations * pops, Brain *brain[3], int decal);
 
