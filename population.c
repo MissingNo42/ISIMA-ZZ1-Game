@@ -429,7 +429,7 @@ int main(){
 */
 
 
-#ifdef TESTING
+#ifndef TESTING
 int main(){
     int seed = time(NULL);
     srand(seed);

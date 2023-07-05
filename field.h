@@ -3,9 +3,11 @@
 
 #include "population.h"
 
-#define SIZEMAP 15
+#define SIZEMAP 30
 #define PERCENTNEAR 0.2
 #define PERCENTMEDIUM 0.5
+#define CELLNEAR 2
+#define CELLMEDIUM 5
 
 extern float DISTMAXFIELD;
 
