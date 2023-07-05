@@ -325,10 +325,10 @@ int mutation_two(Brains * brains, int  L) {
         default:
             break;
     }
-    for (int i = 0; i<nbL; i++){
-        for (int j=0; j<nbM; j++){
-            brains->brain[i+j]->rules[iL].raw[jL] = j - decM;
-            brains->brain[j+i]->rules[iM].raw[jM] = i - decL;
+    for (int i = 0; i<nbM; i++){
+        for (int j=0; j<nbL; j++){
+            brains->brain[i+j]->rules[iL].raw[jL] = j - decL;
+            brains->brain[j+i]->rules[iM].raw[jM] = i - decM;
         }
     }
     return nbL*nbM;
@@ -608,7 +608,7 @@ int main(){
         brains->brain[k] = copy_brain(brains->brain[0],NULL);
     }
     brains->level = 0;
-    for (int evo=0; evo<5; evo++){
+    for (int evo=0; evo<1; evo++){
         mutation_two_do(brains, list);
         //mutation_all(brains, list, 1);
         copy_brain(brains->brain[0], &brains->prey );
