@@ -190,23 +190,23 @@ void mutation(Brain * brain) {
 }
 
 int mutation_one(Brains * brains, int L ) {
-    int i = L % P,
-        j = L / P;
+    int i = L % 8,
+        j = L / 8;
     printf("\tj,i,L : %d,%d,%d\n",j,i,L);
     int nb = 0;
-    switch (j) {
+    switch (i) {
         case 0:
         case 2:
         case 4:
             nb = 5;
             for (int k=-1; k<4;k++){
-                brains->brain[k+1]->rules[i].raw[j] = k;
+                brains->brain[k+1]->rules[j].raw[i] = k;
             }
             break;
         case 6:
             nb = 4;
             for (int k=0; k<4;k++){
-                brains->brain[k]->rules[i].raw[j] = k;
+                brains->brain[k]->rules[j].raw[i] = k;
             }
             break;
         case 1:
@@ -214,13 +214,13 @@ int mutation_one(Brains * brains, int L ) {
         case 5:
             nb = 4;
             for (int k=-1; k<3;k++){
-                brains->brain[k+1]->rules[i].raw[j] = k;
+                brains->brain[k+1]->rules[j].raw[i] = k;
             }
             break;
         case 7:
-            nb = MAX_PRIORITY;
-            for (int k=0; k<MAX_PRIORITY;k++){
-                brains->brain[k]->rules[i].raw[j] = k;
+            nb = MAX_PRIORITY + 1;
+            for (int k=0; k<MAX_PRIORITY + 1;k++){
+                brains->brain[k]->rules[j].raw[i] = k;
             }
             break;
         default:
@@ -277,9 +277,9 @@ int mutation_two(Brains * brains, int  L) {
     while(M==L) {
         M = rand() % (8 * P);
     }
-    printf("L : %d |M : %d\n",L,M);
-    int jL = L % P, iL = L / P;
-    int jM = M % P, iM = M / P;
+    int jL = L / 8, iL = L % 8;
+    int jM = M / 8, iM = M % 8;
+    printf("L : %d (%d|%d) |M : %d (%d|%d)\n",L,jL,iL,M,jM,iM);
     int nbL = 0, decL = 0;
     int nbM = 0, decM = 0;
     switch (iL) {
@@ -299,7 +299,7 @@ int mutation_two(Brains * brains, int  L) {
             decL = 1;
             break;
         case 7:
-            nbL = MAX_PRIORITY;
+            nbL = MAX_PRIORITY + 1;
             break;
         default:
             break;
@@ -321,15 +321,15 @@ int mutation_two(Brains * brains, int  L) {
             decM = 1;
             break;
         case 7:
-            nbM = MAX_PRIORITY;
+            nbM = MAX_PRIORITY + 1;
             break;
         default:
             break;
     }
     for (int i = 0; i<nbM; i++){
         for (int j=0; j<nbL; j++){
-            brains->brain[i+j]->rules[iL].raw[jL] = j - decL;
-            brains->brain[j+i]->rules[iM].raw[jM] = i - decM;
+            brains->brain[i*nbL+j]->rules[jL].raw[iL] = j - decL;
+            brains->brain[i*nbL+j]->rules[jM].raw[iM] = i - decM;
         }
     }
     return nbL*nbM;
@@ -593,6 +593,20 @@ int main(){
 
 #ifdef TESTING
 int main(){
+    /*
+    srand(time(NULL));
+    Brains * brains = malloc(sizeof(Brains)) ;
+    brains->level = 0;
+    brains->species = 1;
+    brains->brain[0] = rand_brain( NULL);
+    for (int k=1; k<BrainPool2 ;k++ ){
+        brains->brain[k] = copy_brain(brains->brain[0],NULL);
+    }
+    int x = mutation_two(brains, rand()%(8*P));
+    for (int k=0; k<x ;k++ ){
+        printBrain(brains->brain[k]);
+    }*/
+
     int seed = time(NULL);
     srand(seed);
     Brains * brains = malloc(sizeof(Brains)) ;
