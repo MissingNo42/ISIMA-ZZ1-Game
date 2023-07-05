@@ -252,12 +252,6 @@ void mutation_all (Brains * brains, int* list_ind, Species species){
                 Populations *pops = create_pops(NULL, brain_list, anti_rand%3);
                 simulate(pops);
                 eval(pops, species - 1);
-                /*int ** field = createField();
-                DISTMAXFIELD = sqrt(2) * SIZEMAP;
-                fillMatrixFromPops(field, pops);
-                printField(field);
-                freeField(field);
-                */
 				//printf("ite: %d, eval: %f, alives: %d,targets: %d\n", pops->iteration, pops->pops[species - 1].brain->eval, pops->pops[species - 1].state.alives, pops->pops[species - 1].state.targets);
                 eval_val += brains->brain[num]->eval;
                 free(pops);
