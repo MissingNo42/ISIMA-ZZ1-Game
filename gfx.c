@@ -17,6 +17,8 @@ int iterAnim, vitesse;
 int Padding;
 TTF_Font * font = NULL;
 
+int menu_color[3], menu_y;
+
 void setup(SDL_DisplayMode dmode){
     WIDTH = dmode.w;
     HEIGHT = dmode.h;
@@ -29,6 +31,11 @@ void setup(SDL_DisplayMode dmode){
 
     iterAnim = 0;
     Padding = HEIGHT / 20;
+
+    menu_color[0] = 0;
+    menu_color[1] = 0;
+    menu_color[2] = 0;
+    menu_y = 0;
 }
 
 void drawGrid(SDL_Renderer * renderer){
@@ -37,7 +44,7 @@ void drawGrid(SDL_Renderer * renderer){
     SDL_RenderFillRect(renderer, &terrain);
 
     SDL_SetRenderDrawColor(renderer, 100, 100, 100, 255);
-    for(int i = 0; i < SIZEMAP - 1; i++){
+    for (int i = 0; i < SIZEMAP - 1; i++) {
         SDL_Rect gridV = {originX + sizeCaseGrid + i * (sizeCaseGrid + 2), originY, 2, HEIGHT};
         SDL_RenderFillRect(renderer, &gridV);
         SDL_Rect gridH = {originX, originY + sizeCaseGrid + i * (sizeCaseGrid + 2), HEIGHT, 2};
@@ -152,4 +159,40 @@ void draw(SDL_Renderer * renderer, Populations * pops, SDL_bool end){
     else drawMouv(renderer, pops);
 
     drawInfos(renderer, pops, end);
+}
+
+void drawInfosMenu(SDL_Renderer * renderer){
+    SDL_Color color = {255, 255, 255, 255};
+
+    SDL_Rect dst = {Padding * 2, Padding * 2, 0, 0};
+    drawText(renderer, &dst, &color, "Selection des Populations");
+
+    char * tabText[] = {"Aleatoire", "Glouton Mut 1", "Glouton Mut 2 ", "Genetique"};
+    dst.y += FontSize + Padding;
+
+    for(int i = 0; i < 3; i++){
+        dst.y += (int)(FontSize + Padding * 1.5);
+
+        color = (SDL_Color) {255, 255, 255, 255};
+        if(menu_y == i){
+            dst.x = Padding * 3;
+            drawText(renderer, &dst, &color, ">");
+        }
+        dst.x = Padding * 4;
+
+        for(int j = 0; j < 4; j++){
+            if(j == 1) dst.x += Padding * 6;
+            else if(j > 1) dst.x += Padding * 8;
+            color = (SDL_Color) {255, 255, 255, 255};
+            if(menu_color[i] == j) color = (SDL_Color) {255 * (i == 0), 255 * (i == 1), 255 * (i == 2), 255};
+            drawText(renderer, &dst, &color, "%s", tabText[j]);
+        }
+    }
+}
+
+void drawMenu(SDL_Renderer * renderer){
+    SDL_SetRenderDrawColor(renderer, 100, 100, 100, 255);
+    SDL_RenderClear(renderer);
+
+    drawInfosMenu(renderer);
 }

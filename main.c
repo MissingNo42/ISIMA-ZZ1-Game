@@ -82,65 +82,6 @@ int main(int argc, char ** argv) {
 
 	printf("Screen size: %dx%d\n", WIDTH, HEIGHT);  // taille écran
 
-    /*
-    //Balanced
-    Rule r0 = {.raw = {0,2,-1,-1,-1,-1, 0, 5}};
-    Rule r1 = {.raw = {1,2,-1,-1,-1,-1, 1, 5}};
-    Rule r2 = {.raw = {2,2,-1,-1,-1,-1, 2, 5}};
-    Rule r3 = {.raw = {3,2,-1,-1,-1,-1, 3, 5}};
-    Rule r4 = {.raw = {-1,-1,0,2,-1,-1, 2, 5}};
-    Rule r5 = {.raw = {-1,-1,1,2,-1,-1, 3, 5}};
-    Rule r6 = {.raw = {-1,-1,2,2,-1,-1, 0, 5}};
-    Rule r7 = {.raw = {-1,-1,3,2,-1,-1, 1, 5}};
-    Rule r8 = {.raw = {-1,-1,-1,-1,0,-1, 0, 2}};
-    Rule r9 = {.raw = {-1,-1,-1,-1,1,-1, 1, 2}};
-    Rule r10 = {.raw = {-1,-1,-1,-1,2,-1, 2, 2}};
-    Rule r11 = {.raw = {-1,-1,-1,-1,3,-1, 3, 2}};
-    Rule r12 = {.raw = {0,-1,-1,-1,-1,-1, 0, 0}};
-    Rule r13 = {.raw = {1,-1,-1,-1,-1,-1, 1, 0}};
-    Rule r14 = {.raw = {2,-1,-1,-1,-1,-1, 2, 0}};
-    Rule r15 = {.raw = {3,-1,-1,-1,-1,-1, 3, 0}};
-
-
-    //Defense
-    Rule r0 = {.raw = {0,-1,-1,-1,-1,-1, 0, 5}};
-    Rule r1 = {.raw = {1,-1,-1,-1,-1,-1, 1, 5}};
-    Rule r2 = {.raw = {2,-1,-1,-1,-1,-1, 2, 5}};
-    Rule r3 = {.raw = {3,-1,-1,-1,-1,-1, 3, 5}};
-    Rule r4 = {.raw = {-1,-1,-1,-1,-1,-1, -1, 0}};
-    Rule r5 = {.raw = {-1,-1,-1,-1,-1,-1, -1, 0}};
-    Rule r6 = {.raw = {-1,-1,-1,-1,-1,-1, -1, 0}};
-    Rule r7 = {.raw = {-1,-1,-1,-1,-1,-1, -1, 0}};
-    Rule r8 = {.raw = {-1,-1,-1,-1,-1,-1, -1, 0}};
-    Rule r9 = {.raw = {-1,-1,-1,-1,-1,-1, -1, 0}};
-    Rule r10 = {.raw = {-1,-1,-1,-1,-1,-1, -1, 0}};
-    Rule r11 = {.raw = {-1,-1,-1,-1,-1,-1, -1, 0}};
-    Rule r12 = {.raw = {-1,-1,-1,-1,-1,-1, -1, 0}};
-    Rule r13 = {.raw = {-1,-1,-1,-1,-1,-1, -1, 0}};
-    Rule r14 = {.raw = {-1,-1,-1,-1,-1,-1, -1, 0}};
-    Rule r15 = {.raw = {-1,-1,-1,-1,-1,-1, -1, 0}};
-
-    Brain preDef;
-    preDef.rules[0] = r0;
-    preDef.rules[1] = r1;
-    preDef.rules[2] = r2;
-    preDef.rules[3] = r3;
-    preDef.rules[4] = r7;
-    preDef.rules[5] = r6;
-    preDef.rules[6] = r5;
-    preDef.rules[7] = r4;
-    preDef.rules[8] = r11;
-    preDef.rules[9] = r10;
-    preDef.rules[10] = r9;
-    preDef.rules[11] = r8;
-    preDef.rules[12] = r15;
-    preDef.rules[13] = r14;
-    preDef.rules[14] = r13;
-    preDef.rules[15] = r12;
-
-
-    save_brain(&preDef, 1, RED);
-     */
 
     Brain b[3] = {{.eval = 0}, {.eval = 0}, {.eval = 0}};
 
@@ -171,7 +112,7 @@ int main(int argc, char ** argv) {
     create_pops(&pops, brain, 0);
 
 
-    window = new_window("Title", 0, 0, WIDTH, HEIGHT, SDL_WINDOW_BORDERLESS | SDL_WINDOW_FULLSCREEN);
+    window = new_window("Simulation", 0, 0, WIDTH, HEIGHT, SDL_WINDOW_BORDERLESS | SDL_WINDOW_FULLSCREEN);
     if (!window) {
         SDL_Log("Error : SDL create window - %s\n", SDL_GetError()); // fenetre de la SDL a échoué
         sdl_exit(2);
@@ -192,7 +133,9 @@ int main(int argc, char ** argv) {
     }*/
 
     vitesse = 10;
-	
+
+    int gameState = 1;      // Etat du jeu : 0 = Jeu, 1 = Menu
+
 	SDL_bool run = SDL_TRUE, // Booléen pour dire que le programme doit continuer
 	paused = SDL_FALSE,      // Booléen pour dire que le programme est en pause
 	event_utile = SDL_FALSE, // Booléen pour savoir si on a trouvé un event traité
@@ -217,28 +160,41 @@ int main(int argc, char ** argv) {
 					switch(event.key.keysym.sym){
 						case SDLK_p:
 						case SDLK_SPACE:
-							paused=paused?SDL_FALSE:SDL_TRUE;
-							event_utile=SDL_TRUE;
+							paused = paused ? SDL_FALSE : SDL_TRUE;
+							event_utile = SDL_TRUE;
 							break;
 							case SDLK_ESCAPE:
 						case SDLK_q:
-								run=SDL_FALSE;
-								event_utile=SDL_TRUE;
+								run = SDL_FALSE;
+								event_utile = SDL_TRUE;
 								break;
 						case SDLK_LEFT:
-                            if (vitesse == 10) vitesse = 20;
-                            else if (vitesse == 5) vitesse = 10;
-                            else if (vitesse == 3) vitesse = 5;
-                            else if (vitesse == 1) vitesse = 3;
+                            if(!gameState) {
+                                if (vitesse == 10) vitesse = 20;
+                                else if (vitesse == 5) vitesse = 10;
+                                else if (vitesse == 3) vitesse = 5;
+                                else if (vitesse == 1) vitesse = 3;
+                            } else if(gameState == 1){
+                                if(menu_color[menu_y] > 0) menu_color[menu_y] --;
+                            }
 							break;
 						case SDLK_RIGHT:
-                            if (vitesse == 20) vitesse = 10;
-                            else if (vitesse == 10) vitesse = 5;
-                            else if (vitesse == 5) vitesse = 3;
-                            else if (vitesse == 3) vitesse = 1;
+                            if(!gameState) {
+                                if (vitesse == 20) vitesse = 10;
+                                else if (vitesse == 10) vitesse = 5;
+                                else if (vitesse == 5) vitesse = 3;
+                                else if (vitesse == 3) vitesse = 1;
+                            } else if(gameState == 1){
+                                if(menu_color[menu_y] < 3) menu_color[menu_y] ++;
+                            }
 							break;
 						case SDLK_UP:break;
 						case SDLK_DOWN:break;
+                        case SDLK_RETURN :
+                            if(gameState == 1){
+                                menu_y ++;
+                            }
+                            break;
 						default: break;
 					}
 					break;
@@ -253,26 +209,37 @@ int main(int argc, char ** argv) {
 					break;
 			}
 		}
-		
-		if (!paused && !end) {
 
-            iterAnim ++;
-            if(iterAnim > vitesse){
-                iterAnim = 0;
+        if(!gameState) {
+            if (!paused && !end) {
 
-                eat_move(&pops);
-                execute_move(&pops);
+                iterAnim++;
+                if (iterAnim > vitesse) {
+                    iterAnim = 0;
 
-                update_status(&pops);
-                predict_move(&pops);
+                    eat_move(&pops);
+                    execute_move(&pops);
 
-                if(is_terminated(&pops)) end = SDL_TRUE;
+                    update_status(&pops);
+                    predict_move(&pops);
+
+                    if (is_terminated(&pops)) end = SDL_TRUE;
+                }
+
+                draw(renderer, &pops, end);
+                SDL_RenderPresent(renderer);
+                //SDL_FlushEvents(SDL_KEYDOWN, SDL_KEYUP - 1);
             }
+        } else if(gameState == 1){
 
-            draw(renderer, &pops, end);
-			SDL_RenderPresent(renderer);
-			//SDL_FlushEvents(SDL_KEYDOWN, SDL_KEYUP - 1);
-		}
+            drawMenu(renderer);
+            SDL_RenderPresent(renderer);
+
+            if(menu_y >= 3){
+                menu_y = 0;
+                gameState = 0;
+            }
+        }
 
 		//SDL_Delay(10);
 	}
