@@ -449,11 +449,13 @@ int main(){
     brains->level = 0;
     for (int evo=0; evo<5; evo++){
         mutation_all(brains, list, 1);
+        copy_brain(brains->brain[0], &brains->prey );
+        copy_brain(brains->brain[0], &brains->predator );
         printf("evo : %d\n",evo);
     }
     free(brains->brain[0]);
     free(brains);
-    printf("%d",seed);
+    printf("%d\n",seed);
 /*    ajouter ailleur pour voir
     int ** field = createField();
     DISTMAXFIELD = sqrt(2) * SIZEMAP;
