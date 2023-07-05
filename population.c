@@ -74,7 +74,7 @@ void eat_move(Populations * populations) {
 					                        (prey->nx == self->x && prey->ny == self->y)))) {
 						self_pop->state.targets--;
 						prey_pop->state.alives--;
-						prey->alive = 0;
+						prey->alive = 0; //TODO
 					}
 				}
 			}
