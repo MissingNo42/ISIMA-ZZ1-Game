@@ -7,7 +7,7 @@
 #include <stdarg.h>
 
 #include "population.h"
-/*
+
 void glouton1(int color, int level, int iter, int opp){
 	Brains brains;
     brains.level = 0;
@@ -132,7 +132,7 @@ int main(int argc, char ** argv){
 				int max = get_last_brain(color + 1);
 				int level = ask("\nStarting Level\n0 - New\n1 - Last = %d\nN - existing level 'n'\n\nSelect : ", (max < 0) ? 0: max, max);
 				int iter = ask("\nItereration wanted\nN - 'n' iterations\n\nSelect : ", 9999);
-				int opp = ask("\nOpponent Level\n0 - Random\nN - Use the current training AI : 'level - n'\n\nSelect : ", 10);
+				int opp = ask("\nOpponent Level\n0 - Random\nN - Use the current training AI : 'level - n'\n\nSelect : ", 9999);
 				glouton2(color + 1, level, iter, opp);
 				break;
 			}
@@ -160,4 +160,3 @@ int main(int argc, char ** argv){
 }
 
 #endif
-*/

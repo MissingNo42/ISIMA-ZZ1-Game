@@ -192,7 +192,7 @@ void mutation(Brain * brain) {
 int mutation_one(Brains * brains, int L ) {
     int i = L % P,
         j = L / P;
-    printf("\tj,i,L : %d,%d,%d\n",j,i,L);
+    //printf("\tj,i,L : %d,%d,%d\n",j,i,L);
     int nb = 0;
     switch (j) {
         case 0:
@@ -263,7 +263,7 @@ void mutation_all (Brains * brains, int* list_ind, Species species){
                 free(pops);
             }
             brains->brain[num]->eval = eval_val / 9;
-            printf("\teval : %f\n", brains->brain[num]->eval);
+            //printf("\teval : %f\n", brains->brain[num]->eval);
         }
 
         //fin threads
