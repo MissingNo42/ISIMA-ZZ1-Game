@@ -48,8 +48,8 @@ int main(int argc, char ** argv) {
 	(void) argc;
 	(void) argv;
 
-    //int seed = time(NULL);
-    int seed = 9581;
+    int seed = time(NULL);
+    //int seed = 38528;
     srand(seed);
     printf("seed = %d\n", seed);
 	
