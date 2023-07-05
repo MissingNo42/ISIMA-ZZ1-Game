@@ -104,9 +104,9 @@ void move(Populations * pops) {
 void eval(Populations * pops, int ind) {
 	Population * pop = &pops->pops[ind];
 	pop->brain->eval = (powf(pop->state.alives, 2)
-	                    + powf(IndividualPerPopulation - pop->state.targets, 1.5)
-	                    + (pop->state.end_state * IndividualPerPopulation)
-	                   ) / sqrt(pops->iteration);
+	                    - powf(pop->state.targets, 2)
+	                   ) / sqrt(pops->iteration)
+                       + pop->state.end_state * IndividualPerPopulation;
 }
 
 /**
@@ -178,16 +178,21 @@ void mutation(Brain * brain) {
 int mutation_one(Brains * brains, int L ) {
     int i = L % P,
         j = L / P;
-    printf("\tjL : %d,%d\n",j,L);
+    printf("\tj,i,L : %d,%d,%d\n",j,i,L);
     int nb = 0;
     switch (j) {
         case 0:
         case 2:
         case 4:
-        case 6:
             nb = 5;
             for (int k=-1; k<4;k++){
                 brains->brain[k+1]->rules[i].raw[j] = k;
+            }
+            break;
+        case 6:
+            nb = 4;
+            for (int k=0; k<4;k++){
+                brains->brain[k]->rules[i].raw[j] = k;
             }
             break;
         case 1:
@@ -391,7 +396,7 @@ Populations * create_pops(Populations * pops, Brain *brain[3]){
         pops->pops[i].state.end_state = 0;
         pops->pops[i].brain = brain[i];
         for (int j=0; j<IndividualPerPopulation; j++){
-            pops->pops[i].individuals[j]=(Individual) {.x = hor[i], .y = ver[i], .alive = 1};
+            pops->pops[i].individuals[j]=(Individual) {.x = hor[i]+j-2, .y = ver[i]-j%2, .alive = 1};
         }
     }
     return pops;
@@ -418,7 +423,7 @@ int main(){
 #ifdef TESTING
 int main(){
     srand(time(NULL));
-    Brains * brains = malloc(sizeof(Brains)) ;
+    Brains * brains = malloc(sizeof(Brains)) ;;
     brains->level = 0;
     brains->species = 1;
     int list[8*P];
@@ -432,7 +437,9 @@ int main(){
         brains->brain[k] = NULL;
     }
     brains->level = 0;
-    mutation_all(brains, list, 1);
+    for (int evo=0; evo<5; evo++){
+        mutation_all(brains, list, 1);
+    }
     free(brains->brain[0]);
     free(brains);
 
