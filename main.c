@@ -70,7 +70,7 @@ int main(int argc, char ** argv) {
     }
 
     int kami = 1;
-    int seed = 0;
+    int seed = 3694;
     while(kami) {
         srand(seed);
         printf("seed = %d\n", seed);
