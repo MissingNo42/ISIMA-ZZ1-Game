@@ -423,10 +423,10 @@ void hybridization3(Brain * parent1, Brain * parent2, Brain * parent3, Brain * c
         }
     }
     for (int j = 0; j < arg1; j++) {
-        child->rules[rul1].raw[j] = parent1->rules[rul].raw[j];
+        child->rules[rul1].raw[j] = parent1->rules[rul1].raw[j];
     }
     for (int j = arg1 + 1; j < 8; j++) {
-        child->rules[rul1].raw[j] = parent2->rules[rul].raw[j];
+        child->rules[rul1].raw[j] = parent2->rules[rul1].raw[j];
     }
     for (int i = rul1 + 1; i < rul2; i++) {
         for (int j = 0; j < 8; j++) {
@@ -434,14 +434,14 @@ void hybridization3(Brain * parent1, Brain * parent2, Brain * parent3, Brain * c
         }
     }
     for (int j = 0; j < arg2; j++) {
-        child->rules[rul2].raw[j] = parent1->rules[rul].raw[j];
+        child->rules[rul2].raw[j] = parent2->rules[rul2].raw[j];
     }
     for (int j = arg2 + 1; j < 8; j++) {
-        child->rules[rul2].raw[j] = parent2->rules[rul].raw[j];
+        child->rules[rul2].raw[j] = parent3->rules[rul2].raw[j];
     }
     for (int i = rul2 + 1; i < P; i++) {
         for (int j = 0; j < 8; j++) {
-            child->rules[i].raw[j] = parent2->rules[i].raw[j];
+            child->rules[i].raw[j] = parent3->rules[i].raw[j];
         }
     }
 }

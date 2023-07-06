@@ -121,9 +121,9 @@ void mutation_two_do (Brains * brains, int* list_ind);
 
 void select_best(Brains * brains, int nb);
 
-void hybridization(Brain * parent1, Brain * parent2, Brain * parent3, Brain * child);
+void hybridization(Brain * parent1, Brain * parent2, Brain * child);
 
-void hybridization3(Brain * parent1, Brain * parent2,Brain * child);
+void hybridization3(Brain * parent1, Brain * parent2, Brain * parent3, Brain * child);
 
 /**
  * @brief save the given brain to ./brains/<level>.<species>
