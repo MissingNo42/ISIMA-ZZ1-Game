@@ -412,6 +412,40 @@ void hybridization(Brain * parent1, Brain * parent2, Brain * child) {
 	}
 }
 
+void hybridization3(Brain * parent1, Brain * parent2, Brain * parent3, Brain * child) {
+    int rul1 = rand() % (P - 1);
+    int rul2 = rul1 + (rand() % (P - rul1));
+    int arg1 = rand() % 8;
+    int arg2 = rand() % 8;
+    for (int i = 0; i < rul1; i++) {
+        for (int j = 0; j < 8; j++) {
+            child->rules[i].raw[j] = parent1->rules[i].raw[j];
+        }
+    }
+    for (int j = 0; j < arg1; j++) {
+        child->rules[rul1].raw[j] = parent1->rules[rul].raw[j];
+    }
+    for (int j = arg1 + 1; j < 8; j++) {
+        child->rules[rul1].raw[j] = parent2->rules[rul].raw[j];
+    }
+    for (int i = rul1 + 1; i < rul2; i++) {
+        for (int j = 0; j < 8; j++) {
+            child->rules[i].raw[j] = parent2->rules[i].raw[j];
+        }
+    }
+    for (int j = 0; j < arg2; j++) {
+        child->rules[rul2].raw[j] = parent1->rules[rul].raw[j];
+    }
+    for (int j = arg2 + 1; j < 8; j++) {
+        child->rules[rul2].raw[j] = parent2->rules[rul].raw[j];
+    }
+    for (int i = rul2 + 1; i < P; i++) {
+        for (int j = 0; j < 8; j++) {
+            child->rules[i].raw[j] = parent2->rules[i].raw[j];
+        }
+    }
+}
+
 /**
  * @brief save the given brain to ./brains/<level>.<species>
  * @param [in] brain the brain to save

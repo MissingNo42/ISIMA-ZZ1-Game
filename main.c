@@ -212,9 +212,9 @@ int main(int argc, char ** argv) {
 
                 for(int i = 0; i < 3; i++){
                     if(menu_color[i] == 0) rand_brain(b + i);
-                    else if(menu_color[i] == 1) rand_brain(b + i);
-                    else if(menu_color[i] == 2) load_brain(b + i, get_last_brain(RED), RED);
-                    else if(menu_color[i] == 3) load_brain(b + i, get_last_brain(BLUE), BLUE);
+                    else if(menu_color[i] == 1) load_brain(b + i, get_last_brain(i + 1, 1), i + 1);
+                    else if(menu_color[i] == 2) load_brain(b + i, get_last_brain(i + 1, 2), i + 1);
+                    else if(menu_color[i] == 3) load_brain(b + i, get_last_brain(i + 1, 3), i + 1);
 
                     printf("Cerveau %s :\n", (!i) ? "rouge" : ((i == 1) ? "vert" : "bleu") );
                     printBrain(b+i);
