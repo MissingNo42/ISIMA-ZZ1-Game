@@ -45,7 +45,7 @@ int simu_thread_tr(void * args){
     brain_list[species % 3] = &brains->prey;
     brain_list[(species + 1) % 3] = &brains->predator;
     float eval_val = 0;
-    for(int anti_rand = 0; anti_rand<9;anti_rand++) {
+    for(int anti_rand = 0; anti_rand<40;anti_rand++) {
         Populations *pops = create_pops(NULL, brain_list, anti_rand%3);
         simulate(pops);
         eval(pops, species - 1);
@@ -53,7 +53,7 @@ int simu_thread_tr(void * args){
         eval_val += brains->brain[num]->eval;
         free(pops);
     }
-    brains->brain[num]->eval = eval_val / 9;
+    brains->brain[num]->eval = eval_val / 40;
     //printf("\teval %d : %f\n", num,brains->brain[num]->eval);
 	
 	return 0;

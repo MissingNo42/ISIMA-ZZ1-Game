@@ -167,7 +167,7 @@ void algoG(int color, int iter, int opp){
     Brains_gen brains;
     create_Brains_gen(&brains, color);
     float proba[3];
-    proba_calculate(proba, 300, 3);
+    proba_calculate(proba, 100, 3);
 	
 	Brain Att, Def;
 	printf("Load Att AI : %d", load_brain(&Att, 10000, RED, 0));
