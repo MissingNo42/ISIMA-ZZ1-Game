@@ -16,6 +16,16 @@ typedef struct {
     Species species;
 } Brains_gen;
 
+Brains_gen * create_Brains_gen(Brains_gen * brains, Species species);
+
 void change_brains_order(Brains_gen * brains);
+
+void tournament(Brains_gen  * brains);
+
+void change_brains_order(Brains_gen * brains);
+
+void select_best_gen(Brains_gen * brains, int pos);
+
+void reproduction(Brains_gen * brains);
 
 #endif //ZZ1GAME_GETETIC_H

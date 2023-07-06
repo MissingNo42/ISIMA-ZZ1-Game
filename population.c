@@ -394,6 +394,7 @@ void change_path_random(int * list, int size){
 void hybridization(Brain * parent1, Brain * parent2, Brain * child) {
 	int rul = rand() % P;
 	int arg = rand() % 8;
+    printf("rule = %d, arg = %d\n", rul, arg);
 	for (int i = 0; i < rul; i++) {
 		for (int j = 0; j < 8; j++) {
 			child->rules[i].raw[j] = parent1->rules[i].raw[j];
@@ -402,7 +403,7 @@ void hybridization(Brain * parent1, Brain * parent2, Brain * child) {
 	for (int j = 0; j < arg; j++) {
 		child->rules[rul].raw[j] = parent1->rules[rul].raw[j];
 	}
-	for (int j = arg + 1; j < 8; j++) {
+	for (int j = arg; j < 8; j++) {
 		child->rules[rul].raw[j] = parent2->rules[rul].raw[j];
 	}
 	for (int i = rul + 1; i < P; i++) {
@@ -595,7 +596,7 @@ int main(){
 */
 
 
-#ifdef TESTING
+#ifdef TESTING2
 int main(){
     /*
     srand(time(NULL));
@@ -655,4 +656,3 @@ int main(){
 */
 }
 #endif
-

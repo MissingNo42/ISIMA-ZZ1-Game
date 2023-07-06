@@ -16,24 +16,29 @@
 #include "field.h"
 #include "getetic.h"
 
-Brains_gen * create_Brains_gen(Brains_gen * brains, Species * species){
+Brains_gen * create_Brains_gen(Brains_gen * brains, Species species){
     if(!brains) brains = malloc(sizeof(Brains_gen));
     if(brains){
         brains->species = species;
         brains->level = 0;
 
         for (int i = 0; i < NB_BRAINS_CANDIDATE; i++) {
-            rand_brain(brains->brain[i]);
+            brains->brain[i] = rand_brain(NULL);
         }
     }
     return brains;
 }
 
+
 void tournament(Brains_gen  * brains){
     change_brains_order(brains);
+    for(int i = 70; i < 80; i++){
+        printf("i = %d\n", i);
+        printBrain(brains->brain[i]);
+    }
     rand_brain(&brains->prey);
     rand_brain(&brains->predator);
-    Species  species = brains->species;
+    Species species = brains->species;
     for (int k=0; k<NB_BRAINS_CANDIDATE/NB_BRAINS_COMPETING; k++){
         for (int i=0; i<NB_BRAINS_COMPETING; i++){
             int num = k * NB_BRAINS_COMPETING + i;
@@ -51,7 +56,7 @@ void tournament(Brains_gen  * brains){
                 free(pops);
             }
             brains->brain[num]->eval = eval_val / 9;
-            printf("\teval : %f\n", brains->brain[num]->eval);
+            printf("\teval %d : %f\n", num,brains->brain[num]->eval);
         }
         select_best_gen(brains, k*NB_BRAINS_COMPETING);
     }
@@ -61,6 +66,11 @@ void tournament(Brains_gen  * brains){
         //Brain * tmp = brains->brain[p + k];
         brains->brain[p + k] =  brains->brain[p + k + x];
         //brains->brain[p + k + x] = tmp;
+    }
+    printf("\n\n\n----------------------------------------\n\n\n");
+    for(int i = 14; i < 15; i++){
+        printf("i = %d\n", i);
+        printBrain(brains->brain[i]);
     }
 }
 
@@ -74,7 +84,7 @@ void change_brains_order(Brains_gen * brains){
 }
 
 void select_best_gen(Brains_gen * brains, int pos){
-    int j = 0;
+    int j = pos;
     float eval = brains->brain[pos]->eval;
     for (int k = 1; k<NB_BRAINS_COMPETING; k++){
         if (eval < brains->brain[pos+k]->eval){
@@ -82,40 +92,41 @@ void select_best_gen(Brains_gen * brains, int pos){
             eval = brains->brain[pos+k]->eval;
         }
     }
-    if (j){
-        Brain * tmp = brains->brain[j];
-        brains->brain[j] = brains->brain[pos/NB_BRAINS_COMPETING];
-        brains->brain[pos/NB_BRAINS_COMPETING] = tmp;
-    }
+    Brain * tmp = brains->brain[j];
+    brains->brain[j] = brains->brain[pos/NB_BRAINS_COMPETING];
+    brains->brain[pos/NB_BRAINS_COMPETING] = tmp;
 }
+
 
 void reproduction(Brains_gen * brains){
     int nbSelected = NB_BRAINS_CANDIDATE / NB_BRAINS_COMPETING + NB_BRAINS_RECOVERED;
-    Brain *tabParents[nbSelected];
-    int alreadyChosen[3] = {-1, -1, -1};
+    Brain tabParents[nbSelected];
     for(int i = 0 ; i < nbSelected ; i++){
-        tabParents[i] = brains->brain[i];
+        copy_brain(brains->brain[i], &tabParents[i]);
     }
 
     int currentBrains_gen = 0;
     for(int i = 0 ; i < nbSelected ; i++){
+        int alreadyChosen[3] = {-1, -1, -1};
         for(int j = 0 ; j < NB_BRAINS_CANDIDATE / nbSelected ; j++){
             int k = rand() % nbSelected;
-            while((j >= 0 && k == alreadyChosen[0]) || (j >= 1 && k == alreadyChosen[1]) || (j >= 2 && k == alreadyChosen[2])) {
+            while((j > 0 && k == alreadyChosen[0]) || (j > 1 && k == alreadyChosen[1]) || (j > 2 && k == alreadyChosen[2])) {
                 k = rand() % nbSelected;
             }
-            hybridization(tabParents[i], tabParents[k], brains->brain[currentBrains_gen]);
+            hybridization(&tabParents[i], &tabParents[k], brains->brain[currentBrains_gen]);
             currentBrains_gen ++;
             if(j < 3) alreadyChosen[j] = k;
         }
     }
 }
 
+#ifdef TESTING
 int main(){
     srand( time(NULL) );
 
-    Brains_gen * brains = create_Brains_gen(NULL);
-    printBrain()
+    Brains_gen * brains = create_Brains_gen(NULL, 1);
+    tournament(brains);
 
     return 0;
 }
+#endif
