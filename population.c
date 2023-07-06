@@ -193,7 +193,7 @@ void mutation(Brain * brain) {
 int mutation_one(Brains * brains, int L ) {
     int i = L % 8,
         j = L / 8;
-    printf("\tj,i,L : %d,%d,%d\n",j,i,L);
+    //printf("\tj,i,L : %d,%d,%d\n",j,i,L);
     int nb = 0;
     switch (i) {
         case 0:
@@ -259,12 +259,12 @@ void mutation_all (Brains * brains, int* list_ind, Species species){
                 free(pops);
             }
             brains->brain[num]->eval = eval_val / 9;
-            printf("\teval : %f\n", brains->brain[num]->eval);
+            //printf("\teval : %f\n", brains->brain[num]->eval);
         }
 
         //fin threads
         select_best(brains, nb);
-        printf("\tbrain_num : %d\n",k);
+        //printf("\tbrain_num : %d\n",k);
     }
 }
 
@@ -357,10 +357,10 @@ void mutation_two_do (Brains * brains, int* list_ind){
                 free(pops);
             }
             brains->brain[num]->eval = eval_val / 9;
-            printf("eval : %f\n", brains->brain[num]->eval);
+            //printf("eval : %f\n", brains->brain[num]->eval);
         }
         select_best(brains, nb);
-        printf("nb : %d\n",nb);
+        printf("nb : %d\t",nb);
         printf("eval : %f\n", brains->brain[0]->eval);
     }
 }
@@ -452,8 +452,9 @@ int load_brain(Brain * brain, int level, Species species, TypeAI type) {
 	snprintf(str, 32, "brains/%s.%06d.%s", prefix[type], level, (species == RED) ? "red" : ((species == BLUE) ? "blue" : "green"));
 	
 	FILE * f = fopen(str, "rb");
+	//printf("load>> %p : %s\n", f, str);
 	if (f) {
-		r &= fread(brain, sizeof(Brain), 1, f) == sizeof(Brain);
+		r &= fread(brain, sizeof(Brain), 1, f) == 1;
 		fclose(f);
 	} else r = 0;
 	return r ? level: 0;
@@ -478,7 +479,7 @@ int get_last_brain(Species species, TypeAI type) {
 		while ((dir = readdir(d)) != NULL) {
 			char * ext;
 			if (dir->d_name[1] != prefix[type]) continue;
-			lvl = (int) strtol(dir->d_name, &ext, 10);
+			lvl = (int) strtol(dir->d_name + 3, &ext, 10);
 			if (lvl > lvl_max && strcmp(ext, extw) == 0) lvl_max = lvl; //sscanf(dir->d_name, "%d.%*c", &lvl);
 		}
 		closedir(d);
