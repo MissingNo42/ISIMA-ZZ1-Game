@@ -49,50 +49,42 @@ void glouton1(int color, int level, int iter, int opp){
 }
 
 void glouton2(int color, int level, int iter, int opp){
-	Brains * brains = malloc(sizeof(Brains));
-    brains->level = 0;
-    brains->species = color;
+	Brains brains;
+    brains.level = 0;
+    brains.species = color;
 	int list[8*P];
-    for (int i=0; i<8*P; i++){
-        list[i] = i;
-    }
-    rand_brain( &brains->prey );
-    rand_brain( &brains->predator );
-    brains->brain[0] = rand_brain( NULL);
-    for (int k=1; k<BrainPool2 ;k++ ){
-        brains->brain[k] = copy_brain(brains->brain[0],NULL);
-    }
-    Species species = brains->species;
+    for (int i=0; i<8*P; i++) list[i] = i;
 	
-	for (int evo=0; evo<5; evo++){
-        int nb = 0;//mutation_two_do(brains, list);
-        printf("\t\tmut2 :");
-        for (int num=0; num<nb; num++){
-            Brain *brain_list[3];
-            brain_list[species - 1] = brains->brain[num];
-            brain_list[species % 3] = &brains->prey;
-            brain_list[(species + 1) % 3] = &brains->predator;
-            float eval_val = 0;
-            for(int anti_rand = 0; anti_rand<9;anti_rand++) {
-                Populations *pops = create_pops(NULL, brain_list, anti_rand%3);
-                simulate(pops);
-                eval(pops, species - 1);printf("ite: %d, eval: %f, alives: %d,targets: %d\n", pops->iteration, pops->pops[species - 1].brain->eval, pops->pops[species - 1].state.alives, pops->pops[species - 1].state.targets);
-                eval_val += brains->brain[num]->eval;
-                free(pops);
-            }
-            brains->brain[num]->eval = eval_val / 9;
-            printf("\teval : %f\n", brains->brain[num]->eval);
-        }
-        select_best(brains,nb);
-        printf("\t\tmutall :");
-        mutation_all(brains, list, 1);
-        copy_brain(brains->brain[0], &brains->prey );
-        copy_brain(brains->brain[0], &brains->predator );
-        save_brain(brains->brain[0], evo, brains->species);
+    rand_brain( &brains.prey );
+    rand_brain( &brains.predator );
+	if (level == 0) brains.brain[0] = rand_brain( NULL);
+	else {
+		brains.brain[0] = malloc(sizeof(Brain));
+		if (level == 1) level = get_last_brain(color);
+		load_brain(brains.brain[0], level, color);
+	}
+    for (int k=1; k<BrainPool2 ;k++ ){
+        brains.brain[k] = copy_brain(brains.brain[0],NULL);
+    }
+		
+	for (int evo = 1 + level; evo <= iter + level; evo++){
+		printf("iter %d (gen %d)\n", evo - level, evo);
+        mutation_two_do(&brains, list);
+		if (opp) {
+			if (evo - opp >= 1) {
+				load_brain(&brains.prey, evo - opp, brains.species);
+	            copy_brain(&brains.prey, &brains.predator);
+			}
+		} else {
+			rand_brain( &brains.prey);
+			rand_brain(&brains.predator);
+		}
+        save_brain(brains.brain[0], evo, brains.species);
         printf("evo : %d\n",evo);
     }
+	printf("end\n");
     for (int m=0; m< BrainPool2; m++){
-        free(brains->brain[m]);
+        free(brains.brain[m]);
     }
 }
 
