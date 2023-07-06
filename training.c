@@ -8,6 +8,7 @@
 #include "nrand.h"
 
 #include "population.h"
+#include "getetic.h"
 
 void glouton1(int color, int level, int iter, int opp){
 	Brains brains;
@@ -150,6 +151,7 @@ void glouton2(int color, int level, int iter, int opp){
     }
 }
 
+
 int ask(char * str, int limit, ...) {
 	va_list l;
 	int r = -1;
@@ -160,6 +162,47 @@ int ask(char * str, int limit, ...) {
 	} while (!scanf("%d", &r) || r < 0 || r > limit);
 	return r;
 }
+
+void algoG(int color, int iter, int opp){
+    Brains_gen brains;
+    create_Brains_gen(&brains, color);
+    float proba[3];
+    proba_calculate(proba, 300, 3);
+	
+	Brain Att, Def;
+	printf("Load Att AI : %d", load_brain(&Att, 10000, RED, 0));
+	printf("Load Def AI : %d", load_brain(&Def, 10000, BLUE, 0));
+
+    for(int evo = 1; evo <= iter; evo++){
+		printf("iter %d\n", evo);
+		
+		if (opp > nrand() % 101) {
+			copy_brain(&Att, &brains.prey);
+			copy_brain(&Def, &brains.predator);
+		} else {
+		    rand_brain(&brains.prey);
+		    rand_brain(&brains.predator);
+		}
+
+        Brain * b = tournament(&brains);
+
+        save_brain(b, evo, color, AlgoG);
+
+        reproduction(&brains);
+
+        mutate(&brains, proba, 3);
+    }
+	printf("end\n");
+	
+	ask("\nItereration wanted\nN - 'n' iterations\n\nSelect : ", 9999999);
+	
+	
+    for (int m=0; m< NB_BRAINS_CANDIDATE; m++){
+        free(brains.brain[m]);
+    }
+}
+
+
 
 #ifdef TRAINING
 int main(int argc, char ** argv){
@@ -193,7 +236,10 @@ int main(int argc, char ** argv){
 				break;
 			}
 			case 4: {
-				printf("Algo G - WIP\n");
+				int color = ask("\nSpecies\n0 - Red\n1 - Green\n2 - blue\n\nSelect : ", 2);
+				int iter = ask("\nItereration wanted\nN - 'n' iterations\n\nSelect : ", 9999999);
+				int opp = ask("\nOpponent Type\n0 - Random\nN - Both (N% agressive) \n100 - Full agressive\n\nSelect : ", 100);
+				algoG(color + 1, iter, opp);
 				break;
 			}
 			case 9: {

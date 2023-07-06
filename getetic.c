@@ -14,6 +14,7 @@
 
 #include "field.h"
 #include "getetic.h"
+#include "nrand.h"
 
 Brains_gen * create_Brains_gen(Brains_gen * brains, Species species){
     if(!brains) brains = malloc(sizeof(Brains_gen));
@@ -28,36 +29,63 @@ Brains_gen * create_Brains_gen(Brains_gen * brains, Species species){
     return brains;
 }
 
+typedef struct{
+	Brains_gen * brains;
+	Species species;
+	int num;
+} ThArgsTr;
+
+int simu_thread_tr(void * args){
+	Brains_gen * brains = ((ThArgsTr *)args)->brains;
+	Species species = ((ThArgsTr *)args)->species;
+	int num = ((ThArgsTr *)args)->num;
+
+    Brain *brain_list[3];
+    brain_list[species - 1] = brains->brain[num];
+    brain_list[species % 3] = &brains->prey;
+    brain_list[(species + 1) % 3] = &brains->predator;
+    float eval_val = 0;
+    for(int anti_rand = 0; anti_rand<9;anti_rand++) {
+        Populations *pops = create_pops(NULL, brain_list, anti_rand%3);
+        simulate(pops);
+        eval(pops, species - 1);
+        //printf("ite: %d, eval: %f, alives: %d,targets: %d\n", pops->iteration, pops->pops[species - 1].brain->eval, pops->pops[species - 1].state.alives, pops->pops[species - 1].state.targets);
+        eval_val += brains->brain[num]->eval;
+        free(pops);
+    }
+    brains->brain[num]->eval = eval_val / 9;
+    //printf("\teval %d : %f\n", num,brains->brain[num]->eval);
+	
+	return 0;
+}
 
 Brain * tournament(Brains_gen  * brains){
     change_brains_order(brains);
-    rand_brain(&brains->prey);
-    rand_brain(&brains->predator);
     Species species = brains->species;
+	
     for (int k=0; k<NB_BRAINS_CANDIDATE/NB_BRAINS_COMPETING; k++){
+		
+		thrd_t handlers[NB_BRAINS_COMPETING];
+		ThArgsTr tha[NB_BRAINS_COMPETING];
+		
         for (int i=0; i<NB_BRAINS_COMPETING; i++){
-            int num = k * NB_BRAINS_COMPETING + i;
-            Brain *brain_list[3];
-            brain_list[species - 1] = brains->brain[num];
-            brain_list[species % 3] = &brains->prey;
-            brain_list[(species + 1) % 3] = &brains->predator;
-            float eval_val = 0;
-            for(int anti_rand = 0; anti_rand<9;anti_rand++) {
-                Populations *pops = create_pops(NULL, brain_list, anti_rand%3);
-                simulate(pops);
-                eval(pops, species - 1);
-                //printf("ite: %d, eval: %f, alives: %d,targets: %d\n", pops->iteration, pops->pops[species - 1].brain->eval, pops->pops[species - 1].state.alives, pops->pops[species - 1].state.targets);
-                eval_val += brains->brain[num]->eval;
-                free(pops);
-            }
-            brains->brain[num]->eval = eval_val / 9;
-            //printf("\teval %d : %f\n", num,brains->brain[num]->eval);
+			tha[i].brains = brains;
+			tha[i].species = species;
+			tha[i].num = k * NB_BRAINS_COMPETING + i;
+
+	        if (thrd_success != thrd_create(handlers + i, simu_thread_tr, tha + i)){
+				printf("CRITICAL TH %d\n", i);
+				exit(0);
+			}
         }
+		
+		for (int i=0; i<NB_BRAINS_COMPETING; i++) thrd_join(handlers[i], NULL);
+		
         select_best_gen(brains, k*NB_BRAINS_COMPETING);
     }
     for (int k=0; k < NB_BRAINS_RECOVERED; k++ ){
         int p = NB_BRAINS_CANDIDATE/NB_BRAINS_COMPETING;
-        int x = rand() % (NB_BRAINS_CANDIDATE - p - k);
+        int x = nrand() % (NB_BRAINS_CANDIDATE - p - k);
         //Brain * tmp = brains->brain[p + k];
         brains->brain[p + k] =  brains->brain[p + k + x];
         //brains->brain[p + k + x] = tmp;
@@ -75,7 +103,7 @@ Brain * tournament(Brains_gen  * brains){
 
 void change_brains_order(Brains_gen * brains){
     for (int k = NB_BRAINS_CANDIDATE ; k>0; k--){
-        int i = rand() % k;
+        int i = nrand() % k;
         Brain * tmp = brains->brain[k-1];
         brains->brain[k-1] = brains->brain[i];
         brains->brain[i] = tmp;
@@ -108,9 +136,9 @@ void reproduction(Brains_gen * brains){
     for(int i = 0 ; i < nbSelected ; i++){
         int alreadyChosen[3] = {-1, -1, -1};
         for(int j = 0 ; j < NB_BRAINS_CANDIDATE / nbSelected ; j++){
-            int k = rand() % nbSelected;
+            int k = nrand() % nbSelected;
             while((j > 0 && k == alreadyChosen[0]) || (j > 1 && k == alreadyChosen[1]) || (j > 2 && k == alreadyChosen[2])) {
-                k = rand() % nbSelected;
+                k = nrand() % nbSelected;
             }
             hybridization(&tabParents[i], &tabParents[k], brains->brain[currentBrains_gen]);
             currentBrains_gen++;
@@ -132,7 +160,7 @@ void proba_calculate(float * list, float prob, int nb_max){
 
 void mutate(Brains_gen * brains, float * proba, int nb_max){
     for (int n=0; n<NB_BRAINS_CANDIDATE;n++) {
-        float p = (float) rand() / RAND_MAX;
+        float p = (float) nrand() / RAND_MAX;
         int k = 0;
         while (k < nb_max && p > proba[k]) {
             mutate1(brains->brain[n]);
@@ -142,9 +170,9 @@ void mutate(Brains_gen * brains, float * proba, int nb_max){
 }
 
 void mutate1(Brain * brain) {
-    int ij = rand() % (P*8);
+    int ij = nrand() % (P*8);
     int i = ij / 8, j = ij % 8;
-    int k = rand();
+    int k = nrand();
     int d = 0;
     if (k > 0.1 * RAND_MAX) {
         if (k > 0.55 * RAND_MAX) d = 1;
@@ -205,7 +233,7 @@ void genetic(int color, int level, int iter) {
 
 #ifdef TESTING
 int main(){
-    srand( time(NULL) );
+    snrand( time(NULL) );
 
     genetic(BLUE, 0, 100);
 
