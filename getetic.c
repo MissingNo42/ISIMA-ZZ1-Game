@@ -117,14 +117,14 @@ void proba_calculate(float * list, float prob, int nb_max){
     }
     list[0] = 1/div;
     for (int k=1; k<nb_max; k++){
-        list[k] = list[k-1] + powf(prob,-k);
+        list[k] = list[k-1] + powf(prob,-k)/div;
     }
 }
 
 void mutate(Brains_gen * brains, float * proba, int nb_max){
     for (int n=0; n<NB_BRAINS_CANDIDATE;n++) {
         float p = (float) rand() / RAND_MAX;
-        int k = 0
+        int k = 0;
         while (k < nb_max && p > proba[k]) {
             mutate1(brains->brain[n]);
         }
@@ -134,6 +134,7 @@ void mutate(Brains_gen * brains, float * proba, int nb_max){
 void mutate1(Brain * brain) {
     int ij = rand() % (P*8);
     int i = ij / 8, j = ij % 8;
+    printf("i = %d, j = %d\n", i, j);
     int k = rand();
     int d = 0;
     if (k > 0.1 * RAND_MAX) {
@@ -178,8 +179,10 @@ void mutate1(Brain * brain) {
 int main(){
     srand( time(NULL) );
 
-    Brains_gen * brains = create_Brains_gen(NULL, 1);
-    tournament(brains);
+    float tab[3] = {0};
+    proba_calculate(tab, 100, 3);
+    printf("[%f,%f,%f]\n", tab[0],tab[1],tab[2]);
+
 
     return 0;
 }

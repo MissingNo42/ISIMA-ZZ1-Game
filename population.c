@@ -381,6 +381,7 @@ int simu_thread2(void * args){
     }
     brains->brain[num]->eval = eval_val / 9;
     //printf("eval : %f\n", brains->brain[num]->eval);
+    return 0;
 }
 
 void mutation_two_do (Brains * brains, int* list_ind){
