@@ -6,6 +6,8 @@
 #define ZZ1GAME_GETETIC_H
 
 #define NB_BRAINS_CANDIDATE 80
+#define NB_BRAINS_COMPETING 5
+#define NB_BRAINS_RECOVERED 4
 
 typedef struct {
     Brain *brain[NB_BRAINS_CANDIDATE];
