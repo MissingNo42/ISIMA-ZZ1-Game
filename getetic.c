@@ -11,8 +11,7 @@
 #include <time.h>
 #include <threads.h>
 
-#include "population.h"
-#include "rules.h"
+
 #include "field.h"
 #include "getetic.h"
 

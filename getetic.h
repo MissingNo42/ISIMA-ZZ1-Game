@@ -9,6 +9,9 @@
 #define NB_BRAINS_COMPETING 5
 #define NB_BRAINS_RECOVERED 4
 
+#include "population.h"
+#include "rules.h"
+
 typedef struct {
     Brain *brain[NB_BRAINS_CANDIDATE];
     Brain prey, predator;
