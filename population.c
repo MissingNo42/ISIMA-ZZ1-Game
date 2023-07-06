@@ -509,7 +509,7 @@ void hybridization3(Brain * parent1, Brain * parent2, Brain * parent3, Brain * c
 int save_brain(Brain * brain, int level, Species species, TypeAI type) {
 	char str[42];
 	int r = 1;
-	char * prefix[] = {"??", "g1", "g2", "ag"};
+	char * prefix[] = {"xx", "g1", "g2", "ag"};
 	mkdir("brains", 0744);
 	snprintf(str, 42, "brains/%s.%06d.%s", prefix[type], level, (species == RED) ? "red" : ((species == BLUE) ? "blue" : "green"));
 	
@@ -533,12 +533,12 @@ int load_brain(Brain * brain, int level, Species species, TypeAI type) {
 	if (level == -1) level = get_last_brain(species, type);
 	char str[42];
 	int r = 1;
-	char * prefix[] = {"??", "g1", "g2", "ag"};
+	char * prefix[] = {"xx", "g1", "g2", "ag"};
 	
 	snprintf(str, 32, "brains/%s.%06d.%s", prefix[type], level, (species == RED) ? "red" : ((species == BLUE) ? "blue" : "green"));
 	
 	FILE * f = fopen(str, "rb");
-	printf("load>> %p : %s\n", f, str);
+	//printf("load>> %p : %s\n", f, str);
 	if (f) {
 		r &= fread(brain, sizeof(Brain), 1, f) == 1;
 		fclose(f);
@@ -555,7 +555,7 @@ int load_brain(Brain * brain, int level, Species species, TypeAI type) {
 int get_last_brain(Species species, TypeAI type) {
 	char extw[10];
 	int lvl, lvl_max = -1;
-	char prefix[] = "?12g";
+	char prefix[] = "x12g";
 	
 	DIR * d = opendir("brains");
 	struct dirent * dir;
