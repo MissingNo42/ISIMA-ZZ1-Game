@@ -104,7 +104,7 @@ void reproduction(Brains_gen * brains){
                 k = rand() % nbSelected;
             }
             hybridization(&tabParents[i], &tabParents[k], brains->brain[currentBrains_gen]);
-            currentBrains_gen ++;
+            currentBrains_gen++;
             if(j < 3) alreadyChosen[j] = k;
         }
     }
