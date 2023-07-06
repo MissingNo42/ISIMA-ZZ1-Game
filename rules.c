@@ -106,6 +106,10 @@ void printBrain(Brain * brain){
     }
     printf("        Eval = %f\n", brain->eval);
 }
+
+
+
+
 /*
 #ifdef TESTING
 int main(){
