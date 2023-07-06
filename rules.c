@@ -93,7 +93,7 @@ Brain * copy_brain(Brain * src, Brain * dst) {
 
 void printBrain(Brain * brain){
     char dir[] = {'*', 'N', 'E', 'S', 'W'};
-    char dist[] = {'*', 'A', 'M', 'N'};
+    char dist[] = {'*', 'A', 'M', 'C'};
     printf("Brain :\n");
     for(int i = 0; i < P; i++) {
         printf("    R%d : [", i);
