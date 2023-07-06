@@ -8,7 +8,7 @@
 #define P 24
 #define MAX_PRIORITY 5
 #define ProbaExp 2
-#define BrainPool2 30
+#define BrainPool2 36
 #define BrainPool1 6
 #define ITE_MAX 2000
 
