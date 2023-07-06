@@ -216,7 +216,7 @@ void genetic(int color, int level, int iter) {
     Brains_gen brains;
     create_Brains_gen(&brains, color);
     float proba[3];
-    proba_calculate(proba, 300, 3);
+    proba_calculate(proba, 100, 3);
 
     for(int evo = 0; evo < iter; evo++){
         printf("evo = %d\n", evo);
