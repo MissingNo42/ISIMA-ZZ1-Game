@@ -20,7 +20,7 @@ void tournament(Brains  * brains){
 
 }
 
-void change_brains_order(Brains * brains){
+void change_brains_order(Brains_gen * brains){
     for (int k = NB_BRAINS_CANDIDATE ; k>0; k--){
         int i = rand() % k;
         Brain * tmp = brains->brain[k-1];

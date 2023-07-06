@@ -7,7 +7,12 @@
 
 #define NB_BRAINS_CANDIDATE 80
 
-
+typedef struct {
+    Brain *brain[NB_BRAINS_CANDIDATE];
+    Brain prey, predator;
+    int level; // generation
+    Species species;
+} Brains_gen;
 
 
 
