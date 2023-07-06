@@ -170,9 +170,10 @@ void algoG(int color, int iter, int opp){
     proba_calculate(proba, 100, 3);
 	
 	Brain Att, Def;
-	printf("Load Att AI : %d", load_brain(&Att, 10000, RED, 0));
-	printf("Load Def AI : %d", load_brain(&Def, 10000, BLUE, 0));
+	printf("Load Att AI : %d\n", load_brain(&Att, 10000, RED, 0));
+	printf("Load Def AI : %d\n\n", load_brain(&Def, 10000, BLUE, 0));
 
+	loop:
     for(int evo = 1; evo <= iter; evo++){
 		printf("iter %d\n", evo);
 		
@@ -194,8 +195,8 @@ void algoG(int color, int iter, int opp){
     }
 	printf("end\n");
 	
-	ask("\nItereration wanted\nN - 'n' iterations\n\nSelect : ", 9999999);
-	
+	iter = ask("\nNew itereration wanted\n0 - Exit\nN - 'n' iterations\n\nSelect : ", 9999999);
+	if (iter) goto loop;
 	
     for (int m=0; m< NB_BRAINS_CANDIDATE; m++){
         free(brains.brain[m]);
@@ -210,7 +211,7 @@ int main(int argc, char ** argv){
 	int c = 0, a = 0;
 	long int seed = 0;
 	while (1) {
-		c = ask("Seed = %ld\n\nMENU\n0 - Exit\n1 - Training Glouton-1\n2 - Training Glouton-2\n9 - Set Seed\n\nSelect : ", 9, seed);
+		c = ask("Seed = %ld\n\nMENU\n0 - Exit\n1 - Training Glouton-1\n2 - Training Glouton-2\n3 - Training Genetic\n9 - Set Seed\n\nSelect : ", 9, seed);
 		
 		snrand(seed);
 		switch(c) {
@@ -235,7 +236,7 @@ int main(int argc, char ** argv){
 				glouton2(color + 1, level, iter, opp);
 				break;
 			}
-			case 4: {
+			case 3: {
 				int color = ask("\nSpecies\n0 - Red\n1 - Green\n2 - blue\n\nSelect : ", 2);
 				int iter = ask("\nItereration wanted\nN - 'n' iterations\n\nSelect : ", 9999999);
 				int opp = ask("\nOpponent Type\n0 - Random\nN - Both (N% agressive) \n100 - Full agressive\n\nSelect : ", 100);
