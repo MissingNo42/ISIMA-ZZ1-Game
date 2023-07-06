@@ -617,7 +617,7 @@ int main(){
         brains->brain[k] = copy_brain(brains->brain[0],NULL);
     }
     brains->level = 0;
-    for (int evo=0; evo<1; evo++){
+    for (int evo=0; evo<5; evo++){
         mutation_two_do(brains, list);
         //mutation_all(brains, list, 1);
         copy_brain(brains->brain[0], &brains->prey );
