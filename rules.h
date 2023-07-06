@@ -83,4 +83,6 @@ Brain * copy_brain(Brain * src, Brain * dst) ;
 
 void printBrain(Brain * brain);
 
+Brain * defenseBrain(Brain * brain);
+
 #endif //ZZ1GAME_RULES_H

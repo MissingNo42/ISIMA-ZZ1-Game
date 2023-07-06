@@ -14,6 +14,7 @@
 
 #include "field.h"
 #include "getetic.h"
+#include "nrand.h"
 
 Brains_gen * create_Brains_gen(Brains_gen * brains, Species species){
     if(!brains) brains = malloc(sizeof(Brains_gen));
@@ -57,7 +58,7 @@ Brain * tournament(Brains_gen  * brains){
     }
     for (int k=0; k < NB_BRAINS_RECOVERED; k++ ){
         int p = NB_BRAINS_CANDIDATE/NB_BRAINS_COMPETING;
-        int x = rand() % (NB_BRAINS_CANDIDATE - p - k);
+        int x = nrand() % (NB_BRAINS_CANDIDATE - p - k);
         //Brain * tmp = brains->brain[p + k];
         brains->brain[p + k] =  brains->brain[p + k + x];
         //brains->brain[p + k + x] = tmp;
@@ -75,7 +76,7 @@ Brain * tournament(Brains_gen  * brains){
 
 void change_brains_order(Brains_gen * brains){
     for (int k = NB_BRAINS_CANDIDATE ; k>0; k--){
-        int i = rand() % k;
+        int i = nrand() % k;
         Brain * tmp = brains->brain[k-1];
         brains->brain[k-1] = brains->brain[i];
         brains->brain[i] = tmp;
@@ -108,9 +109,9 @@ void reproduction(Brains_gen * brains){
     for(int i = 0 ; i < nbSelected ; i++){
         int alreadyChosen[3] = {-1, -1, -1};
         for(int j = 0 ; j < NB_BRAINS_CANDIDATE / nbSelected ; j++){
-            int k = rand() % nbSelected;
+            int k = nrand() % nbSelected;
             while((j > 0 && k == alreadyChosen[0]) || (j > 1 && k == alreadyChosen[1]) || (j > 2 && k == alreadyChosen[2])) {
-                k = rand() % nbSelected;
+                k = nrand() % nbSelected;
             }
             hybridization(&tabParents[i], &tabParents[k], brains->brain[currentBrains_gen]);
             currentBrains_gen++;
@@ -132,7 +133,7 @@ void proba_calculate(float * list, float prob, int nb_max){
 
 void mutate(Brains_gen * brains, float * proba, int nb_max){
     for (int n=0; n<NB_BRAINS_CANDIDATE;n++) {
-        float p = (float) rand() / RAND_MAX;
+        float p = (float) nrand() / RAND_MAX;
         int k = 0;
         while (k < nb_max && p > proba[k]) {
             mutate1(brains->brain[n]);
@@ -142,9 +143,9 @@ void mutate(Brains_gen * brains, float * proba, int nb_max){
 }
 
 void mutate1(Brain * brain) {
-    int ij = rand() % (P*8);
+    int ij = nrand() % (P*8);
     int i = ij / 8, j = ij % 8;
-    int k = rand();
+    int k = nrand();
     int d = 0;
     if (k > 0.1 * RAND_MAX) {
         if (k > 0.55 * RAND_MAX) d = 1;
@@ -188,7 +189,7 @@ void genetic(int color, int level, int iter) {
     Brains_gen brains;
     create_Brains_gen(&brains, color);
     float proba[3];
-    proba_calculate(proba, 300, 3);
+    proba_calculate(proba, 100, 3);
 
     for(int evo = 0; evo < iter; evo++){
         printf("evo = %d\n", evo);
@@ -205,9 +206,10 @@ void genetic(int color, int level, int iter) {
 
 #ifdef TESTING
 int main(){
-    srand( time(NULL) );
+    snrand( time(NULL) );
 
-    genetic(BLUE, 0, 100);
+    Brain * b = defenseBrain(NULL);
+    save_brain(b, 10000, BLUE, 0);
 
 
     return 0;

@@ -106,6 +106,65 @@ void printBrain(Brain * brain){
     }
     printf("        Eval = %f\n", brain->eval);
 }
+
+Brain * defenseBrain(Brain * brain){
+    if (!brain) brain = malloc(sizeof(Brain));
+    if (brain) {
+        brain->eval = 0;
+        Rule r0 = {.raw = {-1, -1, 0, -1, -1, -1, 1, 4}};
+        Rule r1 = {.raw = {-1, -1, 0, -1, -1, -1, 2, 5}};
+        Rule r2 = {.raw = {-1, -1, 0, -1, -1, -1, 3, 4}};
+        Rule r3 = {.raw = {-1, -1, 1, -1, -1, -1, 0, 4}};
+        Rule r4 = {.raw = {-1, -1, 1, -1, -1, -1, 2, 5}};
+        Rule r5 = {.raw = {-1, -1, 1, -1, -1, -1, 3, 4}};
+        Rule r6 = {.raw = {-1, -1, 2, -1, -1, -1, 0, 5}};
+        Rule r7 = {.raw = {-1, -1, 2, -1, -1, -1, 1, 4}};
+        Rule r8 = {.raw = {-1, -1, 2, -1, -1, -1, 3, 4}};
+        Rule r9 = {.raw = {-1, -1, 3, -1, -1, -1, 0, 4}};
+        Rule r10 = {.raw = {-1, -1, 3, -1, -1, -1, 1, 5}};
+        Rule r11 = {.raw = {-1, -1, 3, -1, -1, -1, 2, 4}};
+        Rule r12 = {.raw = {-1, -1, -1, -1, 0, 0, 0, 2}};
+        Rule r13 = {.raw = {-1, -1, -1, -1, 1, 0, 1, 2}};
+        Rule r14 = {.raw = {-1, -1, -1, -1, 2, 0, 2, 2}};
+        Rule r15 = {.raw = {-1, -1, -1, -1, 3, 0, 3, 2}};
+        Rule r16 = {.raw = {-1, -1, -1, -1, 0, 2, 2, 2}};
+        Rule r17 = {.raw = {-1, -1, -1, -1, 1, 2, 3, 2}};
+        Rule r18 = {.raw = {-1, -1, -1, -1, 2, 2, 0, 2}};
+        Rule r19 = {.raw = {-1, -1, -1, -1, 3, 2, 1, 2}};
+        Rule r20 = {.raw = {0, 1, -1, -1, -1, -1, 0, 1}};
+        Rule r21 = {.raw = {1, 1, -1, -1, -1, -1, 1, 1}};
+        Rule r22 = {.raw = {2, 1, -1, -1, -1, -1, 2, 1}};
+        Rule r23 = {.raw = {3, 1, -1, -1, -1, -1, 3, 1}};
+
+
+        brain->rules[0] = r0;
+        brain->rules[1] = r1;
+        brain->rules[2] = r2;
+        brain->rules[3] = r3;
+        brain->rules[4] = r4;
+        brain->rules[5] = r5;
+        brain->rules[6] = r6;
+        brain->rules[7] = r7;
+        brain->rules[8] = r8;
+        brain->rules[9] = r9;
+        brain->rules[10] = r10;
+        brain->rules[11] = r11;
+        brain->rules[12] = r12;
+        brain->rules[13] = r13;
+        brain->rules[14] = r14;
+        brain->rules[15] = r15;
+        brain->rules[16] = r16;
+        brain->rules[17] = r17;
+        brain->rules[18] = r18;
+        brain->rules[19] = r19;
+        brain->rules[20] = r20;
+        brain->rules[21] = r21;
+        brain->rules[22] = r22;
+        brain->rules[23] = r23;
+    }
+    return brain;
+}
+
 /*
 #ifdef TESTING
 int main(){

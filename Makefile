@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -Wextra -g
+CFLAGS = -Wall -Wextra -Ofast
 RCFLAGS = -Wall -Wextra -Ofast
 LDFLAGS = $(sdl2-config --cflags --libs) -lSDL2_image -lSDL2_ttf -lSDL2_gfx -lm -lSDL2 -lpthread
 

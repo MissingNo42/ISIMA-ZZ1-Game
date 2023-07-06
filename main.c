@@ -10,6 +10,7 @@
 
 #include "field.h"
 #include "gfx.h"
+#include "nrand.h"
 
 #define FontSize 50
 
@@ -50,7 +51,7 @@ int main(int argc, char ** argv) {
 	(void) argv;
 
     int seed = time(NULL);
-    srand(seed);
+    snrand(seed);
     printf("seed = %d\n", seed);
 	
 	/* Initialisation de la SDL + gestion de l'échec possible */
