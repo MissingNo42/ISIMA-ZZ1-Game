@@ -417,14 +417,15 @@ void hybridization(Brain * parent1, Brain * parent2, Brain * child) {
  * @param [in] brain the brain to save
  * @param [in] level the level (= nb of evolution of the brain)
  * @param [in] species the species associate to the brain
+ * @param [in] type the type of the AI
  * @return 1 if saved, 0 otherwise
  * */
-int save_brain(Brain * brain, int level, Species species) {
+int save_brain(Brain * brain, int level, Species species, TypeAI type) {
 	char str[42];
 	int r = 1;
-	
+	char * prefix[] = {"??", "g1", "g2", "ag"};
 	mkdir("brains", 0744);
-	snprintf(str, 32, "brains/%06d.%s", level, (species == RED) ? "red" : ((species == BLUE) ? "blue" : "green"));
+	snprintf(str, 42, "brains/%s.%06d.%s", prefix[type], level, (species == RED) ? "red" : ((species == BLUE) ? "blue" : "green"));
 	
 	FILE * f = fopen(str, "wb");
 	if (f) {
@@ -437,32 +438,37 @@ int save_brain(Brain * brain, int level, Species species) {
 /**
  * @brief load the given brain from ./brains/<level>.<species>
  * @param [in] brain the brain to load
- * @param [in] level the level (= nb of evolution of the brain)
+ * @param [in] level the level (= nb of evolution of the brain) or -1 (last)
  * @param [in] species the species associate to the brain
- * @return 1 if loaded, 0 otherwise
+ * @param [in] type the type of the AI
+ * @return the loaded level if loaded, 0 otherwise
  * */
-int load_brain(Brain * brain, int level, Species species) {
+int load_brain(Brain * brain, int level, Species species, TypeAI type) {
+	if (level == -1) level = get_last_brain(species, type);
 	char str[42];
 	int r = 1;
+	char * prefix[] = {"??", "g1", "g2", "ag"};
 	
-	snprintf(str, 32, "brains/%06d.%s", level, (species == RED) ? "red" : ((species == BLUE) ? "blue" : "green"));
+	snprintf(str, 32, "brains/%s.%06d.%s", prefix[type], level, (species == RED) ? "red" : ((species == BLUE) ? "blue" : "green"));
 	
 	FILE * f = fopen(str, "rb");
 	if (f) {
 		r &= fread(brain, sizeof(Brain), 1, f) == sizeof(Brain);
 		fclose(f);
 	} else r = 0;
-	return r;
+	return r ? level: 0;
 }
 
 /**
  * @brief get the last level of the saved brains of the specified species
  * @param [in] species the species
+ * @param [in] type the type of the AI
  * @return the last level or -1
  * */
-int get_last_brain(Species species) {
+int get_last_brain(Species species, TypeAI type) {
 	char extw[10];
 	int lvl, lvl_max = -1;
+	char prefix[] = "?123";
 	
 	DIR * d = opendir("brains");
 	struct dirent * dir;
@@ -471,6 +477,7 @@ int get_last_brain(Species species) {
 		snprintf(extw, 10, ".%s", (species == RED) ? "red" : ((species == BLUE) ? "blue" : "green"));
 		while ((dir = readdir(d)) != NULL) {
 			char * ext;
+			if (dir->d_name[1] != prefix[type]) continue;
 			lvl = (int) strtol(dir->d_name, &ext, 10);
 			if (lvl > lvl_max && strcmp(ext, extw) == 0) lvl_max = lvl; //sscanf(dir->d_name, "%d.%*c", &lvl);
 		}
