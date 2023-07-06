@@ -29,7 +29,7 @@ Brains_gen * create_Brains_gen(Brains_gen * brains, Species species){
 }
 
 
-void tournament(Brains_gen  * brains){
+Brain * tournament(Brains_gen  * brains){
     change_brains_order(brains);
     rand_brain(&brains->prey);
     rand_brain(&brains->predator);
@@ -51,7 +51,7 @@ void tournament(Brains_gen  * brains){
                 free(pops);
             }
             brains->brain[num]->eval = eval_val / 9;
-            printf("\teval %d : %f\n", num,brains->brain[num]->eval);
+            //printf("\teval %d : %f\n", num,brains->brain[num]->eval);
         }
         select_best_gen(brains, k*NB_BRAINS_COMPETING);
     }
@@ -62,6 +62,15 @@ void tournament(Brains_gen  * brains){
         brains->brain[p + k] =  brains->brain[p + k + x];
         //brains->brain[p + k + x] = tmp;
     }
+    int j = 0;
+    float eval = brains->brain[0]->eval;
+    for (int k = 1; k<NB_BRAINS_CANDIDATE / NB_BRAINS_COMPETING + NB_BRAINS_RECOVERED; k++){
+        if (eval < brains->brain[k]->eval){
+            j = k;
+            eval = brains->brain[k]->eval;
+        }
+    }
+    return brains->brain[j];
 }
 
 void change_brains_order(Brains_gen * brains){
@@ -127,6 +136,7 @@ void mutate(Brains_gen * brains, float * proba, int nb_max){
         int k = 0;
         while (k < nb_max && p > proba[k]) {
             mutate1(brains->brain[n]);
+            k++;
         }
     }
 }
@@ -134,7 +144,6 @@ void mutate(Brains_gen * brains, float * proba, int nb_max){
 void mutate1(Brain * brain) {
     int ij = rand() % (P*8);
     int i = ij / 8, j = ij % 8;
-    printf("i = %d, j = %d\n", i, j);
     int k = rand();
     int d = 0;
     if (k > 0.1 * RAND_MAX) {
@@ -175,13 +184,30 @@ void mutate1(Brain * brain) {
     }
 }
 
+void genetic(int color, int level, int iter) {
+    Brains_gen brains;
+    create_Brains_gen(&brains, color);
+    float proba[3];
+    proba_calculate(proba, 300, 3);
+
+    for(int evo = 0; evo < iter; evo++){
+        printf("evo = %d\n", evo);
+
+        Brain * b = tournament(&brains);
+
+        save_brain(b, evo, color, AlgoG);
+
+        reproduction(&brains);
+
+        mutate(&brains, proba, 3);
+    }
+}
+
 #ifdef TESTING
 int main(){
     srand( time(NULL) );
 
-    float tab[3] = {0};
-    proba_calculate(tab, 100, 3);
-    printf("[%f,%f,%f]\n", tab[0],tab[1],tab[2]);
+    genetic(BLUE, 0, 100);
 
 
     return 0;

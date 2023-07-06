@@ -21,7 +21,7 @@ typedef struct {
 
 Brains_gen * create_Brains_gen(Brains_gen * brains, Species species);
 
-void tournament(Brains_gen  * brains);
+Brain * tournament(Brains_gen  * brains);
 
 void change_brains_order(Brains_gen * brains);
 
@@ -34,5 +34,7 @@ void proba_calculate(float * list, float prob, int nb_max);
 void mutate(Brains_gen * brains, float * proba, int nb_max);
 
 void mutate1(Brain * brain);
+
+void genetic(int color, int level, int iter);
 
 #endif //ZZ1GAME_GETETIC_H
