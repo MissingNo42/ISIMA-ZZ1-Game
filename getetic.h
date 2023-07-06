@@ -16,6 +16,6 @@ typedef struct {
     Species species;
 } Brains_gen;
 
-
+void change_brains_order(Brains_gen * brains);
 
 #endif //ZZ1GAME_GETETIC_H
