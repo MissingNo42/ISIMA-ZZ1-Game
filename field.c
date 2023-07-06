@@ -177,7 +177,7 @@ void printStatus(Populations * pops, Species color, int IndiceIndiv){
 /*
 #ifdef TESTING
 int main(){
-	srand(1688482972);
+	snrand(1688482972);
 	Field field = {.map = {{0}}};
     DISTMAXFIELD = sqrt(2) * SIZEMAP;
 	

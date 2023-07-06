@@ -11,8 +11,7 @@
 #include <time.h>
 #include <threads.h>
 
-#include "population.h"
-#include "rules.h"
+
 #include "field.h"
 #include "getetic.h"
 
@@ -32,10 +31,6 @@ Brains_gen * create_Brains_gen(Brains_gen * brains, Species species){
 
 void tournament(Brains_gen  * brains){
     change_brains_order(brains);
-    for(int i = 70; i < 80; i++){
-        printf("i = %d\n", i);
-        printBrain(brains->brain[i]);
-    }
     rand_brain(&brains->prey);
     rand_brain(&brains->predator);
     Species species = brains->species;
@@ -66,11 +61,6 @@ void tournament(Brains_gen  * brains){
         //Brain * tmp = brains->brain[p + k];
         brains->brain[p + k] =  brains->brain[p + k + x];
         //brains->brain[p + k + x] = tmp;
-    }
-    printf("\n\n\n----------------------------------------\n\n\n");
-    for(int i = 14; i < 15; i++){
-        printf("i = %d\n", i);
-        printBrain(brains->brain[i]);
     }
 }
 
@@ -117,6 +107,70 @@ void reproduction(Brains_gen * brains){
             currentBrains_gen ++;
             if(j < 3) alreadyChosen[j] = k;
         }
+    }
+}
+
+void proba_calculate(float * list, float prob, int nb_max){
+    float div = 0;
+    for (int k=0; k<nb_max; k++){
+        div += powf(prob,-k);
+    }
+    list[0] = 1/div;
+    for (int k=1; k<nb_max; k++){
+        list[k] = list[k-1] + powf(prob,-k);
+    }
+}
+
+void mutate(Brains_gen * brains, float * proba, int nb_max){
+    for (int n=0; n<NB_BRAINS_CANDIDATE;n++) {
+        float p = (float) rand() / RAND_MAX;
+        int k = 0
+        while (k < nb_max && p > proba[k]) {
+            mutate1(brains->brain[n]);
+        }
+    }
+}
+
+void mutate1(Brain * brain) {
+    int ij = rand() % (P*8);
+    int i = ij / 8, j = ij % 8;
+    int k = rand();
+    int d = 0;
+    if (k > 0.1 * RAND_MAX) {
+        if (k > 0.55 * RAND_MAX) d = 1;
+        else d = -1;
+    }
+    switch (j) {
+        case 0:
+            if (d == 0) brain->rules[i].prey.dir = -1;
+            else brain->rules[i].prey.dir = (brain->rules[i].prey.dir + d + 4) % 4;
+            break;
+        case 1:
+            if (d == 0) brain->rules[i].prey.dist = -1;
+            else brain->rules[i].prey.dist = (brain->rules[i].prey.dist + d + 3) % 3;
+            break;
+        case 2:
+            if (d == 0) brain->rules[i].predator.dir = -1;
+            else brain->rules[i].predator.dir = (brain->rules[i].predator.dir + d + 4) % 4;
+            break;
+        case 3:
+            if (d == 0) brain->rules[i].predator.dist = -1;
+            else brain->rules[i].predator.dist = (brain->rules[i].predator.dist + d + 3) % 3;
+            break;
+        case 4:
+            if (d == 0) brain->rules[i].ally.dir = -1;
+            else brain->rules[i].ally.dir = (brain->rules[i].ally.dir + d + 4) % 4;
+            break;
+        case 5:
+            if (d == 0) brain->rules[i].ally.dist = -1;
+            else brain->rules[i].ally.dist = (brain->rules[i].ally.dist + d + 3) % 3;
+            break;
+        case 6:
+            if (d == 0) brain->rules[i].action = -1;
+            else brain->rules[i].action = (brain->rules[i].action + d + 4) % 4;
+            break;
+        case 7:brain->rules[i].priority = (brain->rules[i].priority + d + MAX_PRIORITY) % MAX_PRIORITY;
+            break;
     }
 }
 

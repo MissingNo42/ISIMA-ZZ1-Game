@@ -14,6 +14,7 @@
 #include "population.h"
 #include "rules.h"
 #include "field.h"
+#include "nrand.h"
 
 /**
  * @brief prepare the action: check environment collision and pre-perform the move in id->nx/ny
@@ -23,7 +24,7 @@ void prepare_move(Individual * id) { // possible de rajouter si 2 ally vont au m
 	id->nx = id->x;
 	id->ny = id->y;
 	
-	if (id->action == JOKER) id->action = rand() % 4;
+	if (id->action == JOKER) id->action = nrand() % 4;
 	switch (id->action) {
 		case N: if (id->y - 1 >= 0) id->ny = id->y - 1;
 			break;
@@ -106,7 +107,7 @@ void eval(Populations * pops, int ind) {
 	Population * pop = &pops->pops[ind];
 	pop->brain->eval = (powf((float)pop->state.alives, 2) - powf((float)pop->state.targets, 2)
 	                   ) / sqrtf((float)pops->iteration)
-                       + (float)pop->state.end_state * IndividualPerPopulation * 2;
+                       + (float)pop->state.end_state * IndividualPerPopulation * 3;
 }
 
 /**
@@ -148,9 +149,9 @@ int simulate(Populations * pops) {
 }
 
 void mutation(Brain * brain) {
-	int i = rand() % P;
-	int j = rand() % 8;
-	int k = rand();
+	int i = nrand() % P;
+	int j = nrand() % 8;
+	int k = nrand();
 	int d = 0;
 	if (k > 0.1 * RAND_MAX) {
 		if (k > 0.55 * RAND_MAX) d = 1;
@@ -230,6 +231,37 @@ int mutation_one(Brains * brains, int L ) {
     return nb;
 }
 
+typedef struct{
+	Brains * brains;
+	Species species;
+	int num;
+} ThArgs;
+
+int simu_thread(void * args){
+	Brains * brains = ((ThArgs *)args)->brains;
+	Species species = ((ThArgs *)args)->species;
+	int num = ((ThArgs *)args)->num;
+
+	Brain *brain_list[3];
+    brain_list[species - 1] = brains->brain[num];
+    brain_list[species % 3] = &brains->prey;
+    brain_list[(species + 1) % 3] = &brains->predator;
+    float eval_val = 0;
+
+    for(int anti_rand = 0; anti_rand<9;anti_rand++) {
+        Populations *pops = create_pops(NULL, brain_list, anti_rand%3);
+        simulate(pops);
+        eval(pops, species - 1);
+		//printf("ite: %d, eval: %f, alives: %d,targets: %d\n", pops->iteration, pops->pops[species - 1].brain->eval, pops->pops[species - 1].state.alives, pops->pops[species - 1].state.targets);
+        eval_val += brains->brain[num]->eval;
+        free(pops);
+    }
+    brains->brain[num]->eval = eval_val / 9;
+    //printf("\teval : %f (%d)\n", brains->brain[num]->eval, num);
+
+	return 0;
+}
+
 void mutation_all (Brains * brains, int* list_ind, Species species){
     change_path_random(list_ind, 8*P);
     int nb = 0;
@@ -243,24 +275,23 @@ void mutation_all (Brains * brains, int* list_ind, Species species){
         nb = mutation_one(brains,list_ind[k]);
 
         //thread pour chaque brain
+		thrd_t handlers[nb];
+		ThArgs tha[nb];
+
         for (int num = 0; num< nb; num++) {
-            Brain *brain_list[3];
-            brain_list[species - 1] = brains->brain[num];
-            brain_list[species % 3] = &brains->prey;
-            brain_list[(species + 1) % 3] = &brains->predator;
-            float eval_val = 0;
-			
-            for(int anti_rand = 0; anti_rand<9;anti_rand++) {
-                Populations *pops = create_pops(NULL, brain_list, anti_rand%3);
-                simulate(pops);
-                eval(pops, species - 1);
-				//printf("ite: %d, eval: %f, alives: %d,targets: %d\n", pops->iteration, pops->pops[species - 1].brain->eval, pops->pops[species - 1].state.alives, pops->pops[species - 1].state.targets);
-                eval_val += brains->brain[num]->eval;
-                free(pops);
-            }
-            brains->brain[num]->eval = eval_val / 9;
-            //printf("\teval : %f\n", brains->brain[num]->eval);
+			tha[num].brains = brains;
+			tha[num].species = species;
+			tha[num].num = num;
+
+	        if (thrd_success != thrd_create(handlers + num, simu_thread, tha + num)){
+				printf("CRITICAL TH %d\n", num);
+				exit(0);
+			}
         }
+
+		for (int num = 0; num< nb; num++) {
+			thrd_join(handlers[num], NULL);
+		}
 
         //fin threads
         select_best(brains, nb);
@@ -271,7 +302,7 @@ void mutation_all (Brains * brains, int* list_ind, Species species){
 int mutation_two(Brains * brains, int  L) {
     int M = L;
     while(M==L) {
-        M = rand() % (8 * P);
+        M = nrand() % (8 * P);
     }
     int jL = L / 8, iL = L % 8;
     int jM = M / 8, iM = M % 8;
@@ -331,6 +362,27 @@ int mutation_two(Brains * brains, int  L) {
     return nbL*nbM;
 }
 
+int simu_thread2(void * args){
+	Brains * brains = ((ThArgs *)args)->brains;
+	int num = ((ThArgs *)args)->num;
+
+    Brain *brain_list[3];
+    Species species = brains->species;
+    brain_list[species - 1] = brains->brain[num];
+    brain_list[species % 3] = &brains->prey;
+    brain_list[(species + 1) % 3] = &brains->predator;
+    float eval_val = 0;
+    for (int anti_rand = 0; anti_rand < 9; anti_rand++) {
+        Populations *pops = create_pops(NULL, brain_list, anti_rand % 3);
+        simulate(pops);
+        eval(pops, species - 1);
+        eval_val += brains->brain[num]->eval;
+        free(pops);
+    }
+    brains->brain[num]->eval = eval_val / 9;
+    //printf("eval : %f\n", brains->brain[num]->eval);
+}
+
 void mutation_two_do (Brains * brains, int* list_ind){
     change_path_random(list_ind, 8*P);
     int nb = 0;
@@ -342,23 +394,22 @@ void mutation_two_do (Brains * brains, int* list_ind){
         }
 
         nb = mutation_two(brains, list_ind[k]);
+		ThArgs tha[nb];
+	    thrd_t handlers[nb];
         for (int num = 0; num < nb; num++) {
-            Brain *brain_list[3];
-            Species species = brains->species;
-            brain_list[species - 1] = brains->brain[num];
-            brain_list[species % 3] = &brains->prey;
-            brain_list[(species + 1) % 3] = &brains->predator;
-            float eval_val = 0;
-            for (int anti_rand = 0; anti_rand < 9; anti_rand++) {
-                Populations *pops = create_pops(NULL, brain_list, anti_rand % 3);
-                simulate(pops);
-                eval(pops, species - 1);
-                eval_val += brains->brain[num]->eval;
-                free(pops);
-            }
-            brains->brain[num]->eval = eval_val / 9;
-            //printf("eval : %f\n", brains->brain[num]->eval);
+			tha[num].brains = brains;
+			tha[num].num = num;
+
+	        if (thrd_success != thrd_create(handlers + num, simu_thread2, tha + num)){
+				printf("CRITICAL TH %d\n", num);
+				exit(0);
+			}
         }
+
+		for (int num = 0; num< nb; num++) {
+			thrd_join(handlers[num], NULL);
+		}
+
         select_best(brains, nb);
         printf("nb : %d\t",nb);
         printf("eval : %f\n", brains->brain[0]->eval);
@@ -383,7 +434,7 @@ void select_best(Brains * brains, int nb){
 
 void change_path_random(int * list, int size){
     for (int k = size ; k>0; k--){
-        int i = rand() % k;
+        int i = nrand() % k;
         int tmp = list[k-1];
         list[k-1] = list[i];
         list[i] = tmp;
@@ -392,9 +443,8 @@ void change_path_random(int * list, int size){
 
 
 void hybridization(Brain * parent1, Brain * parent2, Brain * child) {
-	int rul = rand() % P;
-	int arg = rand() % 8;
-    printf("rule = %d, arg = %d\n", rul, arg);
+	int rul = nrand() % P;
+	int arg = nrand() % 8;
 	for (int i = 0; i < rul; i++) {
 		for (int j = 0; j < 8; j++) {
 			child->rules[i].raw[j] = parent1->rules[i].raw[j];
@@ -487,13 +537,6 @@ int get_last_brain(Species species, TypeAI type) {
 	}
 	return lvl_max;
 }
-/*
-void rand_individual(Individual * ind, Locator loc) {
-	ind->alive = 1;
-	ind->x;
-	ind->y;
-}
-*/
 
 /**
  * @brief initialize individuals positions to be dispatched and alone in a 3x3 square
@@ -508,8 +551,8 @@ Populations * init_dispatched_pops(Populations * pops){
 		int x, y;
 		
 		do {
-			x = rand() % SIZEMAP;
-			y = rand() % SIZEMAP;
+			x = nrand() % SIZEMAP;
+			y = nrand() % SIZEMAP;
 		} while (field.map[x][y]);
 		
 		if (x > 0) {
@@ -599,7 +642,7 @@ int main(){
 #ifdef TESTING2
 int main(){
     /*
-    srand(time(NULL));
+    snrand(time(NULL));
     Brains * brains = malloc(sizeof(Brains)) ;
     brains->level = 0;
     brains->species = 1;
@@ -607,13 +650,13 @@ int main(){
     for (int k=1; k<BrainPool2 ;k++ ){
         brains->brain[k] = copy_brain(brains->brain[0],NULL);
     }
-    int x = mutation_two(brains, rand()%(8*P));
+    int x = mutation_two(brains, nrand()%(8*P));
     for (int k=0; k<x ;k++ ){
         printBrain(brains->brain[k]);
     }*/
 
     int seed = time(NULL);
-    srand(seed);
+    snrand(seed);
     Brains * brains = malloc(sizeof(Brains)) ;
     brains->level = 0;
     brains->species = 1;
@@ -632,7 +675,7 @@ int main(){
     for (int evo=0; evo<5; evo++){
         mutation_two_do(brains, list);
         //mutation_all(brains, list, 1);
-        if (evo>0) x = rand()%4;
+        if (evo>0) x = nrand()%4;
         if (x%2)  load_brain(&brains->prey, get_last_brain(RED)-1, RED );
         else rand_brain(&brains->prey);
         if (x/2)  load_brain(&brains->predator, get_last_brain(RED)-1, RED );

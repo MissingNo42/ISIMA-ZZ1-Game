@@ -9,6 +9,9 @@
 #define NB_BRAINS_COMPETING 5
 #define NB_BRAINS_RECOVERED 4
 
+#include "population.h"
+#include "rules.h"
+
 typedef struct {
     Brain *brain[NB_BRAINS_CANDIDATE];
     Brain prey, predator;
@@ -18,8 +21,6 @@ typedef struct {
 
 Brains_gen * create_Brains_gen(Brains_gen * brains, Species species);
 
-void change_brains_order(Brains_gen * brains);
-
 void tournament(Brains_gen  * brains);
 
 void change_brains_order(Brains_gen * brains);
@@ -27,5 +28,11 @@ void change_brains_order(Brains_gen * brains);
 void select_best_gen(Brains_gen * brains, int pos);
 
 void reproduction(Brains_gen * brains);
+
+void proba_calculate(float * list, float prob, int nb_max);
+
+void mutate(Brains_gen * brains, float * proba, int nb_max);
+
+void mutate1(Brain * brain);
 
 #endif //ZZ1GAME_GETETIC_H
