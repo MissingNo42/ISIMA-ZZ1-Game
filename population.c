@@ -619,9 +619,15 @@ int main(){
         brains->brain[k] = copy_brain(brains->brain[0],NULL);
     }
     brains->level = 0;
+    int x=0;
     for (int evo=0; evo<5; evo++){
         mutation_two_do(brains, list);
         //mutation_all(brains, list, 1);
+        if (evo>0) x = rand()%4;
+        if (x%2)  load_brain(&brains->prey, get_last_brain(RED)-1, RED );
+        else rand_brain(&brains->prey);
+        if (x/2)  load_brain(&brains->predator, get_last_brain(RED)-1, RED );
+        else rand_brain(&brains->predator);
         copy_brain(brains->brain[0], &brains->prey );
         copy_brain(brains->brain[0], &brains->predator );
         save_brain(brains->brain[0], evo, brains->species);
