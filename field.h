@@ -6,8 +6,8 @@
 #define SIZEMAP 30
 #define PERCENTNEAR 0.2
 #define PERCENTMEDIUM 0.5
-#define CELLNEAR 2
-#define CELLMEDIUM 5
+#define CELLNEAR 3
+#define CELLMEDIUM 10
 
 extern float DISTMAXFIELD;
 
