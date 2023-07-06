@@ -7,6 +7,7 @@
 #include <stdio.h>
 
 #include "rules.h"
+#include "nrand.h"
 
 
 /**
@@ -33,7 +34,7 @@ int choice_rule(Rule * status, Brain * brain){
 		matched[i] = match(status, brain->rules + i);
 		if (matched[i]) probaD += powf(brain->rules[i].priority + 1, ProbaExp);
 	}
-	int select = rand();
+	int select = nrand();
 	
 	int last = -1;
 	for (int i = 0; i < P; i++) {
@@ -51,14 +52,14 @@ int choice_rule(Rule * status, Brain * brain){
  * @param [in] rule a pointer to the rule
  * */
 void rand_rule(Rule * rule) {
-	rule->raw[0] = rand() % 5 - 1;
-	rule->raw[1] = rand() % 4 - 1;
-	rule->raw[2] = rand() % 5 - 1;
-	rule->raw[3] = rand() % 4 - 1;
-	rule->raw[4] = rand() % 5 - 1;
-	rule->raw[5] = rand() % 4 - 1;
-	rule->raw[6] = rand() % 4;
-	rule->raw[7] = rand() % (MAX_PRIORITY + 1);
+	rule->raw[0] = nrand() % 5 - 1;
+	rule->raw[1] = nrand() % 4 - 1;
+	rule->raw[2] = nrand() % 5 - 1;
+	rule->raw[3] = nrand() % 4 - 1;
+	rule->raw[4] = nrand() % 5 - 1;
+	rule->raw[5] = nrand() % 4 - 1;
+	rule->raw[6] = nrand() % 4;
+	rule->raw[7] = nrand() % (MAX_PRIORITY + 1);
 }
 
 /**

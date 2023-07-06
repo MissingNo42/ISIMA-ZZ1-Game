@@ -16,6 +16,12 @@ typedef enum {
 } Species;
 
 typedef enum {
+	Glouton1 = 1,
+	Glouton2 = 2,
+	AlgoG = 3,
+} TypeAI;
+
+typedef enum {
 	Grouped,
 	Dispatch,
 } Locator;
@@ -130,25 +136,28 @@ void hybridization3(Brain * parent1, Brain * parent2, Brain * parent3, Brain * c
  * @param [in] brain the brain to save
  * @param [in] level the level (= nb of evolution of the brain)
  * @param [in] species the species associate to the brain
+ * @param [in] type the type of the AI
  * @return 1 if saved, 0 otherwise
  * */
-int save_brain(Brain * brain, int level, Species species);
+int save_brain(Brain * brain, int level, Species species, TypeAI type);
 
 /**
  * @brief load the given brain from ./brains/<level>.<species>
  * @param [in] brain the brain to load
- * @param [in] level the level (= nb of evolution of the brain)
+ * @param [in] level the level (= nb of evolution of the brain) or -1 (last)
  * @param [in] species the species associate to the brain
- * @return 1 if loaded, 0 otherwise
+ * @param [in] type the type of the AI
+ * @return the loaded level if loaded, 0 otherwise
  * */
-int load_brain(Brain * brain, int level, Species species);
+int load_brain(Brain * brain, int level, Species species, TypeAI type);
 
 /**
  * @brief get the last level of the saved brains of the specified species
  * @param [in] species the species
+ * @param [in] type the type of the AI
  * @return the last level or -1
  * */
-int get_last_brain(Species species);
+int get_last_brain(Species species, TypeAI type);
 
 /**
  * @brief initialize individuals positions to be dispatched and alone in a 3x3 square

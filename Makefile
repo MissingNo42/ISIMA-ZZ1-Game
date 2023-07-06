@@ -22,7 +22,7 @@ debug: $(SRC)
 	$(CC) $(SRC) -o main -DTESTING=1 $(CFLAGS) $(LDFLAGS)
 
 trainer: $(SRC)
-	$(CC) $(SRC) -o trainer -DTRAINING=1 $(CFLAGS) $(LDFLAGS)
+	$(CC) $(SRC) -o trainer -DTRAINING=1 $(RCFLAGS) $(LDFLAGS)
 
 -include $(DEP)
 
