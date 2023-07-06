@@ -20,7 +20,7 @@
  * @brief prepare the action: check environment collision and pre-perform the move in id->nx/ny
  * @param [in,out] id the individual to prepare the action
  * */
-void prepare_move(Individual * id) { // possible de rajouter si 2 ally vont au meme endroit, le 2eme ne bouge pas
+void prepare_move(Individual * id, Field * field) { // possible de rajouter si 2 ally vont au meme endroit, le 2eme ne bouge pas
 	id->nx = id->x;
 	id->ny = id->y;
 	
@@ -36,6 +36,11 @@ void prepare_move(Individual * id) { // possible de rajouter si 2 ally vont au m
 			break;
 		default: break;
 	}
+	if (field->map[id->nx][id->ny] == -1){
+		id->nx = id->x;
+		id->ny = id->y;
+	}
+	
 }
 
 /**
@@ -53,7 +58,7 @@ void predict_move(Populations * pops) {
 			if (id->alive) {
 				int ch = choice_rule(&id->status, pop->brain);
 				id->action = (ch == -1) ? JOKER : pop->brain->rules[ch].action;
-				prepare_move(id);
+				prepare_move(id, &pops->field);
 			}
 		}
 	}
@@ -636,11 +641,65 @@ Populations * init_grouped_pops(Populations * pops, int offset){
 	return pops;
 }
 
+void comp_cache(Field * f){
+	for(int i = 0; i <SIZEMAP;i++)
+		for(int u = 0; u<SIZEMAP;u++)
+			for(int x = 0; x <SIZEMAP;x++)
+				for(int y = 0; y<SIZEMAP;y++) {
+					f->cache[i][u][x][y] = f->cache[x][y][i][u] = 1;
+				}
+	for(int i = 0; i <SIZEMAP;i++)
+		for(int u = 0; u<SIZEMAP;u++)
+			for(int x = 0; x <SIZEMAP;x++)
+				for(int y = 0; y<SIZEMAP;y++) {
+					float vx, vy;
+					float cx, cy;
+					
+					if (i < x) vx = 1;
+					else if (i == x) vx = 0;
+					else vx = -1;
+					
+					if (u < y) vy = 1;
+					else if (u == y) vy = 0;
+					else vy = -1;
+					
+					if (i == x) {
+						cy = 0;
+					} else {
+						cy = (float)(y - u) / (float)(x - i); // vector
+					}
+					
+					if (u == y) {
+						cx = 0;
+					} else {
+						cx = (float)(x - i) / (float)(y - u); // vector
+					}
+					
+					
+					for (int n = 1; i + (int)(vx * n) < x; n++){
+						if (f->map[i + (int)(cx * vx * n)][u + (int)(cy * vy * n)] == -1) {
+							f->cache[i][u][x][y] = f->cache[x][y][i][u] = 0;
+						}
+					}
+				}
+}
+
 Populations * create_pops(Populations * pops, Brain *brain[3], int decal){
 	(void) decal;
     if (!pops) pops = malloc(sizeof(Populations));
     if (pops) {
         pops->iteration = 0;
+		
+		for(int i = 0; i <SIZEMAP;i++) {
+			for(int u=0; u<SIZEMAP;u++) {
+				if (i == 0 || i == SIZEMAP-1 || u==0||u==SIZEMAP-1
+				|| (i % 2 && u % 2)) pops->field.map[i][u] = -1;
+				else pops->field.map[i][u] = 0;
+			}
+		}
+		printf("caching\n");
+	    comp_cache(&pops->field);
+		printf("cache ok\n");
 
         init_dispatched_pops(pops);
 

@@ -24,23 +24,23 @@ void printField(Field * field){
     printf("-\n");
 }
 
-void cleanMatrixFromPops(Field * field, Populations * pops){
+void cleanMatrixFromPops(Populations * pops){
     for(int k = 0; k < 3; k++){
         for(int i = 0; i < IndividualPerPopulation; i++){
             int x = pops->pops[k].individuals[i].x;
             int y = pops->pops[k].individuals[i].y;
-            field->map[x][y] = 0;
+            pops->field.map[x][y] = 0;
         }
     }
 }
 
-void fillMatrixFromPops(Field * field, Populations * pops){
+void fillMatrixFromPops(Populations * pops){
     for(int k = 0; k < 3; k++){
         for(int i = 0; i < IndividualPerPopulation; i++){
 			if (pops->pops[k].individuals[i].alive) {
 				int x = pops->pops[k].individuals[i].x;
 				int y = pops->pops[k].individuals[i].y;
-				field->map[x][y] = pops->pops[k].species;
+				pops->field.map[x][y] = pops->pops[k].species;
 			}
         }
     }
@@ -65,7 +65,8 @@ void update_status(Populations * pops){
 
 					Individual * alt = &pops->pops[q].individuals[u];
 					if (!alt->alive || (i == u && q == p)) continue;
-
+					if (!pops->field.cache[self->x][self->y][alt->x][alt->y]) continue;
+					
 					int dx = self->x - alt->x,
 					    dy = self->y - alt->y;
 					float dt = dx * dx + dy * dy;

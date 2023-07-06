@@ -61,6 +61,13 @@ typedef struct {
 	State state;
 } Population;
 
+#define SIZEMAP 30
+
+typedef struct {
+	int map[SIZEMAP][SIZEMAP];
+	int cache[SIZEMAP][SIZEMAP][SIZEMAP][SIZEMAP];
+} Field;
+
 typedef struct {
 	union {
 		struct {
@@ -68,6 +75,7 @@ typedef struct {
 		};
 		Population pops[3];
 	};
+	Field field;
 	int iteration;
 } Populations;
 
@@ -84,7 +92,7 @@ typedef struct {
  * @brief prepare the action: check environment collision and pre-perform the move in id->nx/ny
  * @param [in,out] id the individual to prepare the action
  * */
-void prepare_move(Individual * id);
+void prepare_move(Individual * id, Field * field);
 
 /**
  * @brief choose an action for all individuals and prepare its execution

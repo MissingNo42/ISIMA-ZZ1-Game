@@ -53,6 +53,16 @@ void drawGrid(SDL_Renderer * renderer){
 }
 
 void drawPops(SDL_Renderer * renderer, Populations * pops){
+	SDL_SetRenderDrawColor(renderer, 180+ iterAnim, 180+ iterAnim, 180+ iterAnim, 255);
+	for (int x = 0; x < SIZEMAP; x++){
+		for (int y = 0; y < SIZEMAP; y++){
+			if (pops->field.map[x][y] == -1){
+				SDL_Rect indiv = {originX + x * (sizeCaseGrid + 2), originY + y * (sizeCaseGrid + 2), sizeCaseGrid,
+                                  sizeCaseGrid};
+                SDL_RenderFillRect(renderer, &indiv);
+			}
+		}
+	}
     for(int k = 0; k < 3; k++) {
         if(pops->pops[k].species == RED) SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
         else if(pops->pops[k].species == GREEN) SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
@@ -71,6 +81,30 @@ void drawPops(SDL_Renderer * renderer, Populations * pops){
 }
 
 void drawMouv(SDL_Renderer * renderer, Populations * pops){
+	SDL_SetRenderDrawColor(renderer, 180+ iterAnim, 180+ iterAnim, 180+ iterAnim, 255);
+	for (int x = 0; x < SIZEMAP; x++){
+		for (int y = 0; y < SIZEMAP; y++){
+			if (pops->field.map[x][y] == -1){
+				SDL_Rect indiv = {originX + x * (sizeCaseGrid + 2), originY + y * (sizeCaseGrid + 2), sizeCaseGrid,
+                                  sizeCaseGrid};
+                SDL_RenderFillRect(renderer, &indiv);
+			}
+		}
+	}
+	
+	
+	SDL_SetRenderDrawColor(renderer, 50- iterAnim, 50- iterAnim, 50- iterAnim, 255);
+	for (int x = 0; x < SIZEMAP; x++){
+		for (int y = 0; y < SIZEMAP; y++){
+			if (pops->field.cache[pops->pops[0].individuals[0].x][pops->pops[0].individuals[0].y][x][y] == 1){
+				SDL_Rect indiv = {originX + x * (sizeCaseGrid + 2), originY + y * (sizeCaseGrid + 2), sizeCaseGrid,
+                                  sizeCaseGrid};
+                SDL_RenderFillRect(renderer, &indiv);
+			}
+		}
+	}
+	
+	
     for(int k = 0; k < 3; k++) {
         if(pops->pops[k].species == RED) SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
         else if(pops->pops[k].species == GREEN) SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
