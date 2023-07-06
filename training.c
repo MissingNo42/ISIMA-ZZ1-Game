@@ -211,7 +211,7 @@ int main(int argc, char ** argv){
 	int c = 0, a = 0;
 	long int seed = 0;
 	while (1) {
-		c = ask("Seed = %ld\n\nMENU\n0 - Exit\n1 - Training Glouton-1\n2 - Training Glouton-2\n9 - Set Seed\n\nSelect : ", 9, seed);
+		c = ask("Seed = %ld\n\nMENU\n0 - Exit\n1 - Training Glouton-1\n2 - Training Glouton-2\n3 - Training Genetic\n9 - Set Seed\n\nSelect : ", 9, seed);
 		
 		snrand(seed);
 		switch(c) {
@@ -236,7 +236,7 @@ int main(int argc, char ** argv){
 				glouton2(color + 1, level, iter, opp);
 				break;
 			}
-			case 4: {
+			case 3: {
 				int color = ask("\nSpecies\n0 - Red\n1 - Green\n2 - blue\n\nSelect : ", 2);
 				int iter = ask("\nItereration wanted\nN - 'n' iterations\n\nSelect : ", 9999999);
 				int opp = ask("\nOpponent Type\n0 - Random\nN - Both (N% agressive) \n100 - Full agressive\n\nSelect : ", 100);
