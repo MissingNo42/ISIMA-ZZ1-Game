@@ -241,13 +241,13 @@ int simu_thread(void * args){
 	Brains * brains = ((ThArgs *)args)->brains;
 	Species species = ((ThArgs *)args)->species;
 	int num = ((ThArgs *)args)->num;
-	
+
 	Brain *brain_list[3];
     brain_list[species - 1] = brains->brain[num];
     brain_list[species % 3] = &brains->prey;
     brain_list[(species + 1) % 3] = &brains->predator;
     float eval_val = 0;
-	
+
     for(int anti_rand = 0; anti_rand<9;anti_rand++) {
         Populations *pops = create_pops(NULL, brain_list, anti_rand%3);
         simulate(pops);
@@ -258,7 +258,7 @@ int simu_thread(void * args){
     }
     brains->brain[num]->eval = eval_val / 9;
     //printf("\teval : %f (%d)\n", brains->brain[num]->eval, num);
-	
+
 	return 0;
 }
 
@@ -277,18 +277,18 @@ void mutation_all (Brains * brains, int* list_ind, Species species){
         //thread pour chaque brain
 		thrd_t handlers[nb];
 		ThArgs tha[nb];
-		
+
         for (int num = 0; num< nb; num++) {
 			tha[num].brains = brains;
 			tha[num].species = species;
 			tha[num].num = num;
-			
+
 	        if (thrd_success != thrd_create(handlers + num, simu_thread, tha + num)){
 				printf("CRITICAL TH %d\n", num);
 				exit(0);
 			}
         }
-		
+
 		for (int num = 0; num< nb; num++) {
 			thrd_join(handlers[num], NULL);
 		}
@@ -365,7 +365,7 @@ int mutation_two(Brains * brains, int  L) {
 int simu_thread2(void * args){
 	Brains * brains = ((ThArgs *)args)->brains;
 	int num = ((ThArgs *)args)->num;
-	
+
     Brain *brain_list[3];
     Species species = brains->species;
     brain_list[species - 1] = brains->brain[num];
@@ -381,6 +381,7 @@ int simu_thread2(void * args){
     }
     brains->brain[num]->eval = eval_val / 9;
     //printf("eval : %f\n", brains->brain[num]->eval);
+    return 0;
 }
 
 void mutation_two_do (Brains * brains, int* list_ind){
@@ -399,17 +400,17 @@ void mutation_two_do (Brains * brains, int* list_ind){
         for (int num = 0; num < nb; num++) {
 			tha[num].brains = brains;
 			tha[num].num = num;
-			
+
 	        if (thrd_success != thrd_create(handlers + num, simu_thread2, tha + num)){
 				printf("CRITICAL TH %d\n", num);
 				exit(0);
 			}
         }
-		
+
 		for (int num = 0; num< nb; num++) {
 			thrd_join(handlers[num], NULL);
 		}
-			
+
         select_best(brains, nb);
         printf("nb : %d\t",nb);
         printf("eval : %f\n", brains->brain[0]->eval);
@@ -453,7 +454,7 @@ void hybridization(Brain * parent1, Brain * parent2, Brain * child) {
 	for (int j = 0; j < arg; j++) {
 		child->rules[rul].raw[j] = parent1->rules[rul].raw[j];
 	}
-	for (int j = arg + 1; j < 8; j++) {
+	for (int j = arg; j < 8; j++) {
 		child->rules[rul].raw[j] = parent2->rules[rul].raw[j];
 	}
 	for (int i = rul + 1; i < P; i++) {
@@ -673,7 +674,7 @@ int main(){
 */
 
 
-#ifdef TESTING
+#ifdef TESTING2
 int main(){
     /*
     snrand(time(NULL));
@@ -733,4 +734,3 @@ int main(){
 */
 }
 #endif
-
