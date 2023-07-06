@@ -6,6 +6,7 @@
 #define ZZ1GAME_GETETIC_H
 
 #define NB_BRAINS_CANDIDATE 80
+#define NB_BRAINS_COMPETING 5
 
 typedef struct {
     Brain *brain[NB_BRAINS_CANDIDATE];
@@ -14,6 +15,6 @@ typedef struct {
     Species species;
 } Brains_gen;
 
-
+void change_brains_order(Brains_gen * brains);
 
 #endif //ZZ1GAME_GETETIC_H
