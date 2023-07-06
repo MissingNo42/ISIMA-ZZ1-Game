@@ -5,6 +5,7 @@
 #include <time.h>
 #include <stdlib.h>
 #include <stdarg.h>
+#include "nrand.h"
 
 #include "population.h"
 
@@ -37,8 +38,8 @@ void glouton1(int color, int level, int iter, int opp){
 		int ch1, ch2;
 		if (opp) {
 			if (randm) {
-				ch1 = rand() % (evo < randm ? evo: randm),
-				ch2 = rand() % (evo < randm ? evo: randm);
+				ch1 = nrand() % (evo < randm ? evo: randm),
+				ch2 = nrand() % (evo < randm ? evo: randm);
 				
 				if (!ch1) rand_brain(&brains.prey);
 				else {
@@ -107,8 +108,8 @@ void glouton2(int color, int level, int iter, int opp){
 		int ch1, ch2;
 		if (opp) {
 			if (randm) {
-				ch1 = rand() % (evo < randm ? evo: randm),
-				ch2 = rand() % (evo < randm ? evo: randm);
+				ch1 = nrand() % (evo < randm ? evo: randm),
+				ch2 = nrand() % (evo < randm ? evo: randm);
 				
 				if (!ch1) rand_brain(&brains.prey);
 				else {
@@ -168,7 +169,7 @@ int main(int argc, char ** argv){
 	while (1) {
 		c = ask("Seed = %ld\n\nMENU\n0 - Exit\n1 - Training Glouton-1\n2 - Training Glouton-2\n9 - Set Seed\n\nSelect : ", 9, seed);
 		
-		srand(seed);
+		snrand(seed);
 		switch(c) {
 			case 0: exit(0);
 			case 1: {
