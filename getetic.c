@@ -42,6 +42,13 @@ void tournament(Brains_gen  * brains){
         }
         select_best_gen(brains, k*NB_BRAINS_COMPETING);
     }
+    for (int k=0; k < NB_BRAINS_RECOVERED; k++ ){
+        int p = NB_BRAINS_CANDIDATE/NB_BRAINS_COMPETING;
+        int x = rand() % (NB_BRAINS_CANDIDATE - p - k);
+        //Brain * tmp = brains->brain[p + k];
+        brains->brain[p + k] =  brains->brain[p + k + x];
+        //brains->brain[p + k + x] = tmp;
+    }
 }
 
 void change_brains_order(Brains_gen * brains){
