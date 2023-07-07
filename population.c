@@ -641,17 +641,33 @@ Populations * init_grouped_pops(Populations * pops, int offset){
 	return pops;
 }
 
-void comp_cache(Field * f){
+float function(x, x1, y1, x2, y2){
+    return y1 + ((y2 - y1) / (x2 - x1)) * (x - x1);
+}
+
+void comp_cache(Field * f) {
+    for (int i = 0; i < SIZEMAP; i++)
+        for (int u = 0; u < SIZEMAP; u++)
+            for (int x = 0; x < SIZEMAP; x++)
+                for (int y = 0; y < SIZEMAP; y++) {
+                    f->cache[i][u][x][y] = f->cache[x][y][i][u] = 1;
+                }
 	for(int i = 0; i <SIZEMAP;i++)
 		for(int u = 0; u<SIZEMAP;u++)
 			for(int x = 0; x <SIZEMAP;x++)
 				for(int y = 0; y<SIZEMAP;y++) {
-					f->cache[i][u][x][y] = f->cache[x][y][i][u] = 1;
-				}
-	for(int i = 0; i <SIZEMAP;i++)
-		for(int u = 0; u<SIZEMAP;u++)
-			for(int x = 0; x <SIZEMAP;x++)
-				for(int y = 0; y<SIZEMAP;y++) {
+                    for(int l = i ; l < x ; l++){
+                        for(int m = u; m < y; m++){
+                            int yMin = function(l, i, u, x, y);
+                            int yMax = 1 + function(l, i, u, x, y);
+                            for(int yTmp = yMin ; yTmp < yMax; yTmp++){
+
+                            }
+                        }
+                    }
+                    f->cache[]
+
+                    /*
 					float vx, vy;
 					float cx, cy;
 					
@@ -681,6 +697,7 @@ void comp_cache(Field * f){
 							f->cache[i][u][x][y] = f->cache[x][y][i][u] = 0;
 						}
 					}
+                     */
 				}
 }
 
