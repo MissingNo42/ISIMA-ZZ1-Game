@@ -8,7 +8,7 @@
 #include "nrand.h"
 
 #include "population.h"
-#include "getetic.h"
+#include "genetic.h"
 
 void glouton1(int color, int level, int iter, int opp){
 	Brains brains;

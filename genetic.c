@@ -13,7 +13,7 @@
 
 
 #include "field.h"
-#include "getetic.h"
+#include "genetic.h"
 #include "nrand.h"
 
 Brains_gen * create_Brains_gen(Brains_gen * brains, Species species){
