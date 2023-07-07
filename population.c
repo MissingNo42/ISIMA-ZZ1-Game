@@ -362,6 +362,99 @@ int mutation_two(Brains * brains, int  L) {
     return nbL*nbM;
 }
 
+int mutation_two(Brains * brains, int  L) {
+    int M = K = L;
+    while(M==L) {
+        M = nrand() % (8 * P);
+    }
+    while(K==L || K==M) {
+        K = nrand() % (8 * P);
+    }
+    int jL = L / 8, iL = L % 8;
+    int jM = M / 8, iM = M % 8;
+    int jK = K / 8, iK = K % 8;
+    printf("L : %d (%d|%d) |M : %d (%d|%d) |K : %d (%d|%d)\n",L,jL,iL,M,jM,iM,K,jK,iK);
+    int nbL = 0, decL = 0;
+    int nbM = 0, decM = 0;
+    int nbK = 0, decK = 0;
+    switch (iL) {
+        case 0:
+        case 2:
+        case 4:
+            nbL = 5;
+            decL = 1;
+            break;
+        case 6:
+            nbL = 4;
+            break;
+        case 1:
+        case 3:
+        case 5:
+            nbL = 4;
+            decL = 1;
+            break;
+        case 7:
+            nbL = MAX_PRIORITY + 1;
+            break;
+        default:
+            break;
+    }
+    switch (iM) {
+        case 0:
+        case 2:
+        case 4:
+            nbM = 5;
+            decM = 1;
+            break;
+        case 6:
+            nbM = 4;
+            break;
+        case 1:
+        case 3:
+        case 5:
+            nbM = 4;
+            decM = 1;
+            break;
+        case 7:
+            nbM = MAX_PRIORITY + 1;
+            break;
+        default:
+            break;
+    }
+    switch (iK) {
+        case 0:
+        case 2:
+        case 4:
+            nbK = 5;
+            decK = 1;
+            break;
+        case 6:
+            nbK = 4;
+            break;
+        case 1:
+        case 3:
+        case 5:
+            nbK = 4;
+            decK = 1;
+            break;
+        case 7:
+            nbK = MAX_PRIORITY + 1;
+            break;
+        default:
+            break;
+    }
+    for (int i = 0; i<nbM; i++){
+        for (int j=0; j<nbL; j++){
+            for (int k=0; k<nbK; k++) {
+                brains->brain[(i * nbL + j)*nbM + k]->rules[jL].raw[iL] = j - decL;
+                brains->brain[(i * nbL + j)*nbM + k]->rules[jM].raw[iM] = i - decM;
+                brains->brain[(i * nbL + j)*nbM + k]->rules[jK].raw[iK] = k - decK;
+            }
+        }
+    }
+    return nbL*nbM*nbK;
+}
+
 int simu_thread2(void * args){
 	Brains * brains = ((ThArgs *)args)->brains;
 	int num = ((ThArgs *)args)->num;
