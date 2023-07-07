@@ -20,6 +20,11 @@ extern int Padding;
 extern TTF_Font * font;
 
 extern int menu_color[3], menu_y;
+extern SDL_Texture * pkmn;
+extern SDL_Rect Sprites[3][4][3];
+extern int animSprite;
+
+extern int Bests[3][3];
 
 void setup(SDL_DisplayMode dmode);
 

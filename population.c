@@ -622,20 +622,22 @@ int save_brain(Brain * brain, int level, Species species, TypeAI type) {
 }
 
 /**
- * @brief load the given brain from ./brains/<level>.<species>
+ * @brief load the given brain from ./brains/<algo>.<level>.<species>
  * @param [in] brain the brain to load
- * @param [in] level the level (= nb of evolution of the brain) or -1 (last)
+ * @param [in] level the level (= nb of evolution of the brain) or -1 (last) or -2 (best)
  * @param [in] species the species associate to the brain
  * @param [in] type the type of the AI
  * @return the loaded level if loaded, 0 otherwise
  * */
 int load_brain(Brain * brain, int level, Species species, TypeAI type) {
 	if (level == -1) level = get_last_brain(species, type);
+	//if (level == -2) level = get_best_brain(species, type);
 	char str[42];
 	int r = 1;
 	char * prefix[] = {"xx", "g1", "g2", "ag"};
 	
-	snprintf(str, 32, "brains/%s.%06d.%s", prefix[type], level, (species == RED) ? "red" : ((species == BLUE) ? "blue" : "green"));
+	if (level == -2) snprintf(str, 42, "brains/%s.best.%s", prefix[type], (species == RED) ? "red" : ((species == BLUE) ? "blue" : "green"));
+	else snprintf(str, 42, "brains/%s.%06d.%s", prefix[type], level, (species == RED) ? "red" : ((species == BLUE) ? "blue" : "green"));
 	
 	FILE * f = fopen(str, "rb");
 	//printf("load>> %p : %s\n", f, str);
@@ -672,6 +674,106 @@ int get_last_brain(Species species, TypeAI type) {
 	}
 	return lvl_max;
 }
+
+/**
+ * @brief get the best level of the saved brains of the specified species
+ * */
+void get_all_best_brain(int Best[3][3]) {
+	int lvl;
+	float eval, eval_max[3][3] = {{-99999, -99999, -99999}, {-99999, -99999, -99999}, {-99999, -99999, -99999}};
+	
+	DIR * d = opendir("brains");
+	struct dirent * dir;
+	
+	if (d) {
+		//snprintf(extw, 10, ".%s", (species == RED) ? "red" : ((species == BLUE) ? "blue" : "green"));
+		while ((dir = readdir(d)) != NULL) {
+			int s, a;
+			switch (dir->d_name[1]) {
+				case '1':
+					a = 0;
+					break;
+				case '2':
+					a = 1;
+					break;
+				case 'g':
+					a = 2;
+					break;
+			}
+			switch (dir->d_name[10]) {
+				case 'r':
+					s = 0;
+					break;
+				case 'g':
+					s = 1;
+					break;
+				case 'b':
+					s = 2;
+					break;
+			}
+			char * ext;
+			lvl = (int) strtol(dir->d_name + 3, &ext, 10);
+			char fn[42] = "brains/";
+			strcat(fn, dir->d_name);
+			//snprintf(fn, 42, "brains/%s", dir->d_name);
+			FILE * f = fopen(fn, "rb");
+			if (f) {
+				fseek(f, sizeof (Brain) - sizeof(float), SEEK_CUR);
+				eval = -999999;
+				if (1 != fread(&eval, sizeof (float), 1, f)) printf("ERR Read %s", fn);
+				if (eval >= eval_max[s][a]){
+					eval_max[s][a] = eval;
+					Best[s][a] = lvl;
+				}
+				fclose(f);
+			} else printf("ERR %s", fn);
+		}
+		closedir(d);
+	}
+}
+
+/**
+ * @brief get the best level of the saved brains of the specified species
+ * @param [in] species the species
+ * @param [in] type the type of the AI
+ * @return the best level or -1
+ * */
+int get_best_brain(Species species, TypeAI type) {
+	char extw[10];
+	int lvl, lvl_target = -1;
+	float eval, eval_max = -9999999;
+	char prefix[] = "x12g";
+	
+	DIR * d = opendir("brains");
+	struct dirent * dir;
+	
+	if (d) {
+		snprintf(extw, 10, ".%s", (species == RED) ? "red" : ((species == BLUE) ? "blue" : "green"));
+		while ((dir = readdir(d)) != NULL) {
+			char * ext;
+			if (dir->d_name[1] != prefix[type]) continue;
+			lvl = (int) strtol(dir->d_name + 3, &ext, 10);
+			if (strcmp(ext, extw) == 0) {
+				char fn[42];
+				snprintf(fn, 42, "brains/%s", dir->d_name);
+				FILE * f = fopen(fn, "rb");
+				if (f) {
+					fseek(f, sizeof (Brain) - sizeof(float), SEEK_CUR);
+					eval = -999999;
+					if (1 != fread(&eval, sizeof (float), 1, f)) printf("ERR Read %s", fn);
+					if (eval >= eval_max){
+						eval_max = eval;
+						lvl_target = lvl;
+					}
+					fclose(f);
+				} else printf("ERR %s", fn);
+			}
+		}
+		closedir(d);
+	}
+	return lvl_target;
+}
+
 
 /**
  * @brief initialize individuals positions to be dispatched and alone in a 3x3 square

@@ -144,9 +144,9 @@ void hybridization3(Brain * parent1, Brain * parent2, Brain * parent3, Brain * c
 int save_brain(Brain * brain, int level, Species species, TypeAI type);
 
 /**
- * @brief load the given brain from ./brains/<level>.<species>
+ * @brief load the given brain from ./brains/<algo>.<level>.<species>
  * @param [in] brain the brain to load
- * @param [in] level the level (= nb of evolution of the brain) or -1 (last)
+ * @param [in] level the level (= nb of evolution of the brain) or -1 (last) or -2 (best)
  * @param [in] species the species associate to the brain
  * @param [in] type the type of the AI
  * @return the loaded level if loaded, 0 otherwise
@@ -160,6 +160,19 @@ int load_brain(Brain * brain, int level, Species species, TypeAI type);
  * @return the last level or -1
  * */
 int get_last_brain(Species species, TypeAI type);
+
+/**
+ * @brief get the best level of the saved brains of the specified species
+ * @param [in] species the species
+ * @param [in] type the type of the AI
+ * @return the best level or -1
+ * */
+int get_best_brain(Species species, TypeAI type);
+
+/**
+ * @brief get the best level of the saved brains of the specified species
+ * */
+void get_all_best_brain(int Best[3][3]);
 
 /**
  * @brief initialize individuals positions to be dispatched and alone in a 3x3 square

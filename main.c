@@ -12,7 +12,7 @@
 #include "gfx.h"
 #include "nrand.h"
 
-#define FontSize 50
+#define FontSize 40
 
 SDL_Window * window;
 SDL_Renderer * renderer;
@@ -34,7 +34,7 @@ SDL_Window * new_window(char * title, int x, int y, int w, int h, Uint32 flags) 
 void sdl_exit(char n){
 	if (font) TTF_CloseFont(font);
 	
-    //if (texture) SDL_DestroyTexture(texture);
+    if (pkmn) SDL_DestroyTexture(pkmn);
     if (renderer) SDL_DestroyRenderer(renderer);
     if (window) SDL_DestroyWindow(window);
 	if (n > 1) TTF_Quit();
@@ -94,14 +94,12 @@ int main(int argc, char ** argv) {
         SDL_Log("Error : SDL create renderer - %s\n", SDL_GetError()); // renderer de la SDL a échoué
         sdl_exit(2);
     }
-
-    /*
-    texture = IMG_LoadTexture(renderer,"./assets/balls.png");
-    map = IMG_LoadTexture(renderer,"./assets/map.png");
-    if (!texture || !map) {
+	
+    pkmn = IMG_LoadTexture(renderer,"./assets/pkmn.png");
+    if (!pkmn) {
         SDL_Log("Echec du chargement de l'image dans la texture: %s\n", SDL_GetError()); // texture de la SDL a échoué
         sdl_exit(2);
-    }*/
+    }
 
     Brain b[3] = {{.eval = 0}, {.eval = 0}, {.eval = 0}};
 
@@ -116,6 +114,14 @@ int main(int argc, char ** argv) {
 	event_utile = SDL_FALSE, // Booléen pour savoir si on a trouvé un event traité
     end = SDL_FALSE;         // Booléen pour savoir si une équipe a gagné
 	SDL_Event event;         // Evènement à traiter
+	
+	//printf("Load best...\n");
+	//get_all_best_brain(Bests);
+	/*for (int i = 0; i < 3; i++) {
+		for (int u = 0; u < 3; u++) {
+			Bests[i][u] =
+		}
+	}*/
 
 	while (run) {
 		event_utile = SDL_FALSE;
@@ -213,9 +219,9 @@ int main(int argc, char ** argv) {
 
                 for(int i = 0; i < 3; i++){
                     if(menu_color[i] == 0) rand_brain(b + i);
-                    else if(menu_color[i] == 1) load_brain(b + i, -1, i + 1, Glouton1);
-                    else if(menu_color[i] == 2) load_brain(b + i, -1, i + 1, Glouton2);
-                    else if(menu_color[i] == 3) load_brain(b + i, 73, i + 1, AlgoG);
+                    else if(menu_color[i] == 1) load_brain(b + i, -2, i + 1, Glouton1);
+                    else if(menu_color[i] == 2) load_brain(b + i, -2, i + 1, Glouton2);
+                    else if(menu_color[i] == 3) load_brain(b + i, -2, i + 1, AlgoG);
 
                     printf("Cerveau %s :\n", (!i) ? "rouge" : ((i == 1) ? "vert" : "bleu") );
                     printBrain(b+i);

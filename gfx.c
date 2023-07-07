@@ -18,6 +18,13 @@ int Padding;
 TTF_Font * font = NULL;
 
 int menu_color[3], menu_y;
+SDL_Texture * pkmn;
+SDL_Rect Sprites[3][4][3];
+
+int Bests[3][3];
+int animSprite = 0;
+
+#define FramePerSprite 18
 
 void setup(SDL_DisplayMode dmode){
     WIDTH = dmode.w;
@@ -36,6 +43,9 @@ void setup(SDL_DisplayMode dmode){
     menu_color[1] = 0;
     menu_color[2] = 0;
     menu_y = 0;
+	
+	for (int s = 0; s < 3; s++) for(int d = 0; d < 4; d++) for (int f = 0; f < 3; f++)
+		Sprites[s][d][f] = (SDL_Rect){.x = 66 * s + 22 * f, .y = 22 * d, .w = 22, .h = 22};
 }
 
 void drawGrid(SDL_Renderer * renderer){
@@ -64,10 +74,13 @@ void drawPops(SDL_Renderer * renderer, Populations * pops){
 
                 SDL_Rect indiv = {originX + x * (sizeCaseGrid + 2), originY + y * (sizeCaseGrid + 2), sizeCaseGrid,
                                   sizeCaseGrid};
-                SDL_RenderFillRect(renderer, &indiv);
+	            SDL_RenderCopy(renderer, pkmn, &Sprites[pops->pops[k].species - 1][pops->pops[k].individuals[i].action][animSprite / FramePerSprite], &indiv);
+                //SDL_RenderFillRect(renderer, &indiv);
             }
         }
     }
+	animSprite++;
+	if (animSprite >= FramePerSprite * 3) animSprite = 0;
 }
 
 void drawMouv(SDL_Renderer * renderer, Populations * pops){
@@ -85,10 +98,13 @@ void drawMouv(SDL_Renderer * renderer, Populations * pops){
                 SDL_Rect indiv = {originX + pops->pops[k].individuals[i].x * (sizeCaseGrid + 2) + iterAnim * xDiff,
                                   originY + pops->pops[k].individuals[i].y * (sizeCaseGrid + 2) + iterAnim * yDiff,
                                   sizeCaseGrid, sizeCaseGrid};
-                SDL_RenderFillRect(renderer, &indiv);
+                SDL_RenderCopy(renderer, pkmn, &Sprites[pops->pops[k].species - 1][pops->pops[k].individuals[i].action][animSprite / FramePerSprite], &indiv);
+				//SDL_RenderFillRect(renderer, &indiv);
             }
         }
     }
+	animSprite++;
+	if (animSprite >= FramePerSprite * 3) animSprite = 0;
 }
 
 //CC romain
@@ -116,7 +132,7 @@ void drawInfos(SDL_Renderer * renderer, Populations * pops, SDL_bool end){
     SDL_Color color = {255, 255, 255, 255};
 
     SDL_Rect dst = {Padding, Padding * 2, 0, 0};
-    drawText(renderer, &dst, &color, "Iteration");
+    drawText(renderer, &dst, &color, "Iterations");
 
     dst.y += FontSize + Padding;
     drawText(renderer, &dst, &color, "%d", pops->iteration);
@@ -167,7 +183,7 @@ void drawInfosMenu(SDL_Renderer * renderer){
     SDL_Rect dst = {Padding * 2, Padding * 2, 0, 0};
     drawText(renderer, &dst, &color, "Selection des Populations");
 
-    char * tabText[] = {"Aleatoire", "Glouton Mut 1", "Glouton Mut 2 ", "Genetique"};
+    char * tabText[] = {"Aleatoire", "Glouton 1", "Glouton 2", "Genetique"};
     dst.y += FontSize + Padding;
 
     for(int i = 0; i < 3; i++){
@@ -185,7 +201,8 @@ void drawInfosMenu(SDL_Renderer * renderer){
             else if(j > 1) dst.x += Padding * 8;
             color = (SDL_Color) {255, 255, 255, 255};
             if(menu_color[i] == j) color = (SDL_Color) {255 * (i == 0), 255 * (i == 1), 255 * (i == 2), 255};
-            drawText(renderer, &dst, &color, "%s", tabText[j]);
+            if (j==0) drawText(renderer, &dst, &color, "%s", tabText[j]);
+			else drawText(renderer, &dst, &color, "%s : %d", tabText[j], Bests[i][j-1]);
         }
     }
 }

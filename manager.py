@@ -35,4 +35,8 @@ while 1:
                             m = q
                             mf = i
                 print(f"\t{a}: Best = {Mf}\t ({M:.3f})\t\t Worst = {mf}\t ({m:.3f})")
+                if '.' in Mf:
+                    n = Mf.split('.')
+                    n[1] = 'best'
+                    open('.'.join(n), 'wb').write(open(Mf, 'rb').read())
                 
