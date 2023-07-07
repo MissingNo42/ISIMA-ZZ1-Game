@@ -12,6 +12,11 @@
 #include "gfx.h"
 #include "nrand.h"
 
+#include<unistd.h>
+#ifdef __SWITCH__
+#include <switch.h>
+#endif
+
 SDL_Window * window;
 SDL_Renderer * renderer;
 
@@ -47,6 +52,13 @@ void sdl_exit(char n){
 int main(int argc, char ** argv) {
 	(void) argc;
 	(void) argv;
+	
+	#ifdef __SWITCH__
+    romfsInit();
+    chdir("romfs:/");
+	#else
+	(void)chdir("assets");
+	#endif
 
     int seed = time(NULL);
     snrand(seed);
@@ -67,7 +79,7 @@ int main(int argc, char ** argv) {
 		SDL_Log("Couldn't initialize SDL TTF - %s\n", SDL_GetError());
 		sdl_exit(1);
 	}
-	font = TTF_OpenFont("./assets/font.ttf", FontSize);
+	font = TTF_OpenFont("./font.ttf", FontSize);
 	if (!font) {
 		SDL_Log("Couldn't load font - %s\n", SDL_GetError());
 		sdl_exit(2);
@@ -93,7 +105,7 @@ int main(int argc, char ** argv) {
         sdl_exit(2);
     }
 	
-    pkmn = IMG_LoadTexture(renderer,"./assets/pkmn.png");
+    pkmn = IMG_LoadTexture(renderer,"./pkmn.png");
     if (!pkmn) {
         SDL_Log("Echec du chargement de l'image dans la texture: %s\n", SDL_GetError()); // texture de la SDL a échoué
         sdl_exit(2);

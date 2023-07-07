@@ -42,7 +42,7 @@ BUILD		:=	build
 SOURCES		:=	.
 DATA		:=	data
 INCLUDES	:=	include
-#ROMFS		:=	romfs
+ROMFS		:=	assets
 
 PC_LIBS     := SDL2_image SDL2_mixer SDL2_ttf sdl2
 

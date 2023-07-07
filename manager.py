@@ -13,9 +13,9 @@ while 1:
 
     if c == '0':
         s = input("Select species ( = R, G, B) :")
-        a = input("Select algo ( = 1, 2, G) :")
+        a = input("Select algo ( = G, A) :")
         ext = {'R':"red", 'G':"green", 'B':"blue"}[s]
-        prf = {'1':"g1", '2':"g2", 'G':"ag"}[a]
+        prf = {'G':"gl", 'A':"ag"}[a]
         
         for i in os.listdir():
             if i.startswith(('0')) and i.endswith(ext):
@@ -25,7 +25,7 @@ while 1:
     elif c == '1':
         for s in ["red", "green", "blue"]:
             print(f"\n{s.title()}\n")
-            for a in ["g1", "g2", "ag"]:
+            for a in ["gl", "ag"]:
                 M = float("-inf")
                 Mf = "?" * 14
                 m = float("inf")

@@ -185,7 +185,7 @@ int main(){
 			case 0: exit(0);
 			case 1: {
 				int color = ask("\nSpecies\n0 - Red\n1 - Green\n2 - blue\n\nSelect : ", 2);
-				int max = get_last_brain(color + 1, Glouton1);
+				int max = get_last_brain(color + 1, Glouton);
 				int level = ask("\nStarting Level\n0 - New\n1 - Last = %d\nN - existing level 'n'\n\nSelect : ", (max < 0) ? 0: max, max);
 				int iter = ask("\nItereration wanted\nN - 'n' iterations\n\nSelect : ", 999999);
 				int opp = ask("\nOpponent Level\n0 - Random\n1 - Both: ...\nN - Use the current training AI : 'level - n'\n\nSelect : ", 999999);

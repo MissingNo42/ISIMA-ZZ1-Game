@@ -362,8 +362,8 @@ int mutation_two(Brains * brains, int  L) {
     return nbL*nbM;
 }
 
-int mutation_two(Brains * brains, int  L) {
-    int M = K = L;
+int mutation_three(Brains * brains, int  L) {
+    int M = L, K = L;
     while(M==L) {
         M = nrand() % (8 * P);
     }
