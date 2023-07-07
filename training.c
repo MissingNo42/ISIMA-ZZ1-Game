@@ -12,6 +12,7 @@
 
 void glouton1(int color, int level, int iter, int opp){
 	Brains brains;
+	Brain best = {.eval = -9999999};
     brains.level = 0;
     brains.species = color;
 	
@@ -69,10 +70,12 @@ void glouton1(int color, int level, int iter, int opp){
 			rand_brain(&brains.predator);
 		}
 		
-		printf("iter %d (gen %d) : prey = %d | predator = %d\n", evo - level, evo, ch1, ch2);
-        mutation_all(&brains, list, 1);
+		printf("iter %d (gen %d -> %f) : prey = %d | predator = %d\n", evo - level, evo, best.eval, ch1, ch2);
+        mutation_all(&brains, list, color);
+		if (brains.brain[0]->eval > best.eval) copy_brain(brains.brain[0], &best);
+		else copy_brain(&best, brains.brain[0]);
 		
-        save_brain(brains.brain[0], evo, brains.species, Glouton1);
+        save_brain(&best, evo, brains.species, Glouton1);
     }
 	printf("end\n");
     for (int m=0; m< BrainPool2; m++){
@@ -82,6 +85,7 @@ void glouton1(int color, int level, int iter, int opp){
 
 void glouton2(int color, int level, int iter, int opp){
 	Brains brains;
+	Brain best = {.eval = -9999999};
     brains.level = 0;
     brains.species = color;
 	
@@ -140,8 +144,10 @@ void glouton2(int color, int level, int iter, int opp){
 			rand_brain(&brains.predator);
 		}
 		
-		printf("iter %d (gen %d) : prey = %d | predator = %d\n", evo - level, evo, ch1, ch2);
+		printf("iter %d (gen %d -> %f) : prey = %d | predator = %d\n", evo - level, evo, best.eval, ch1, ch2);
         mutation_two_do(&brains, list);
+		if (brains.brain[0]->eval > best.eval) copy_brain(brains.brain[0], &best);
+		else copy_brain(&best, brains.brain[0]);
 		
         save_brain(brains.brain[0], evo, brains.species, Glouton2);
     }
@@ -167,14 +173,17 @@ void algoG(int color, int iter, int opp){
     Brains_gen brains;
     create_Brains_gen(&brains, color);
     float proba[3];
-    proba_calculate(proba, 100, 3);
+    proba_calculate(proba, 10, 3);
 	
-	Brain Att, Def;
-	printf("Load Att AI : %d", load_brain(&Att, 10000, RED, 0));
-	printf("Load Def AI : %d", load_brain(&Def, 10000, BLUE, 0));
+	Brain Att, Def, Previous;
+	Brain * b = NULL;
+	int diff = 0;
+	printf("Load Att AI : %d\n", load_brain(&Att, 10000, RED, 0));
+	printf("Load Def AI : %d\n\n", load_brain(&Def, 10000, BLUE, 0));
 
+	loop:
     for(int evo = 1; evo <= iter; evo++){
-		printf("iter %d\n", evo);
+		printf("iter %d : %d changes\n", evo, diff);
 		
 		if (opp > nrand() % 101) {
 			copy_brain(&Att, &brains.prey);
@@ -183,8 +192,12 @@ void algoG(int color, int iter, int opp){
 		    rand_brain(&brains.prey);
 		    rand_brain(&brains.predator);
 		}
-
-        Brain * b = tournament(&brains);
+	    
+	    if (b) copy_brain(b, &Previous);
+        b = tournament(&brains);
+		
+		diff = 0;
+		for (int i = 0; i < P; i++) for (int u = 0; u < 8; u++) if (b->rules[i].raw[u] != Previous.rules[i].raw[u]) diff++;
 
         save_brain(b, evo, color, AlgoG);
 
@@ -194,8 +207,8 @@ void algoG(int color, int iter, int opp){
     }
 	printf("end\n");
 	
-	ask("\nItereration wanted\nN - 'n' iterations\n\nSelect : ", 9999999);
-	
+	iter = ask("\nNew itereration wanted\n0 - Exit\nN - 'n' iterations\n\nSelect : ", 9999999);
+	if (iter) goto loop;
 	
     for (int m=0; m< NB_BRAINS_CANDIDATE; m++){
         free(brains.brain[m]);
@@ -210,7 +223,7 @@ int main(int argc, char ** argv){
 	int c = 0, a = 0;
 	long int seed = 0;
 	while (1) {
-		c = ask("Seed = %ld\n\nMENU\n0 - Exit\n1 - Training Glouton-1\n2 - Training Glouton-2\n9 - Set Seed\n\nSelect : ", 9, seed);
+		c = ask("Seed = %ld\n\nMENU\n0 - Exit\n1 - Training Glouton-1\n2 - Training Glouton-2\n3 - Training Genetic\n9 - Set Seed\n\nSelect : ", 9, seed);
 		
 		snrand(seed);
 		switch(c) {
@@ -235,10 +248,10 @@ int main(int argc, char ** argv){
 				glouton2(color + 1, level, iter, opp);
 				break;
 			}
-			case 4: {
+			case 3: {
 				int color = ask("\nSpecies\n0 - Red\n1 - Green\n2 - blue\n\nSelect : ", 2);
 				int iter = ask("\nItereration wanted\nN - 'n' iterations\n\nSelect : ", 9999999);
-				int opp = ask("\nOpponent Type\n0 - Random\nN - Both (N% agressive) \n100 - Full agressive\n\nSelect : ", 100);
+				int opp = ask("\nOpponent Type\n0 - Random\nN - Both (N%% agressive) \n100 - Full agressive\n\nSelect : ", 100);
 				algoG(color + 1, iter, opp);
 				break;
 			}
