@@ -88,18 +88,18 @@ Brain * tournament(Brains_gen  * brains, int ite){
         for (int k=1; k < NB_BRAINS_RECOVERED; k++ ) {
             int p = NB_BRAINS_CANDIDATE / NB_BRAINS_COMPETING;
             int x = nrand() % (NB_BRAINS_CANDIDATE - p - k);
-            //Brain * tmp = brains->brain[p + k];
+            Brain * tmp = brains->brain[p + k];
             brains->brain[p + k] = brains->brain[p + k + x];
-            //brains->brain[p + k + x] = tmp;
+            brains->brain[p + k + x] = tmp;
         }
     }
     else{
         for (int k=0; k < NB_BRAINS_RECOVERED; k++ ) {
             int p = NB_BRAINS_CANDIDATE / NB_BRAINS_COMPETING;
             int x = nrand() % (NB_BRAINS_CANDIDATE - p - k);
-            //Brain * tmp = brains->brain[p + k];
+            Brain * tmp = brains->brain[p + k];
             brains->brain[p + k] = brains->brain[p + k + x];
-            //brains->brain[p + k + x] = tmp;
+            brains->brain[p + k + x] = tmp;
         }
     }
     int j = 0;

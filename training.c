@@ -31,6 +31,7 @@ void glouton1(int color, int level, int iter, int opp){
 		brains.brain[0] = malloc(sizeof(Brain));
 		if (level == 1) level = get_last_brain(color, Glouton1);
 		load_brain(brains.brain[0], level, color, Glouton1);
+		copy_brain(brains.brain[0], &best);
 	}
     for (int k=1; k<BrainPool2 ;k++){
         brains.brain[k] = copy_brain(brains.brain[0],NULL);
@@ -104,6 +105,7 @@ void glouton2(int color, int level, int iter, int opp){
 		brains.brain[0] = malloc(sizeof(Brain));
 		if (level == 1) level = get_last_brain(color, Glouton2);
 		load_brain(brains.brain[0], level, color, Glouton2);
+		copy_brain(brains.brain[0], &best);
 	}
     for (int k=1; k<BrainPool2 ;k++ ){
         brains.brain[k] = copy_brain(brains.brain[0],NULL);
@@ -193,11 +195,11 @@ void algoG(int color, int iter, int opp){
 		    rand_brain(&brains.predator);
 		}
 	    
-	    if (b) copy_brain(b, &Previous);
+	    if (b && evo > 1) copy_brain(b, &Previous);
         b = tournament(&brains, evo);
 		
 		diff = 0;
-		for (int i = 0; i < P; i++) for (int u = 0; u < 8; u++) if (b->rules[i].raw[u] != Previous.rules[i].raw[u]) diff++;
+		if (evo > 1) for (int i = 0; i < P; i++) for (int u = 0; u < 8; u++) if (b->rules[i].raw[u] != Previous.rules[i].raw[u]) diff++;
 
         save_brain(b, evo, color, AlgoG);
 
