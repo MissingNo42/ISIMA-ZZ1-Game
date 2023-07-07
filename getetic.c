@@ -141,7 +141,7 @@ void reproduction(Brains_gen * brains){
             while((j > 0 && k == alreadyChosen[0]) || (j > 1 && k == alreadyChosen[1]) || (j > 2 && k == alreadyChosen[2])) {
                 k = nrand() % nbSelected;
             }
-            hybridization(&tabParents[i], &tabParents[k], brains->brain[currentBrains_gen]);
+            hybridization2(&tabParents[i], &tabParents[k], brains->brain[currentBrains_gen]);
             currentBrains_gen++;
             if(j < 3) alreadyChosen[j] = k;
         }

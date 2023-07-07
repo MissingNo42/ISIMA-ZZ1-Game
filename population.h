@@ -129,6 +129,8 @@ void select_best(Brains * brains, int nb);
 
 void hybridization(Brain * parent1, Brain * parent2, Brain * child);
 
+void hybridization2(Brain * parent1, Brain * parent2, Brain * child);
+
 void hybridization3(Brain * parent1, Brain * parent2, Brain * parent3, Brain * child);
 
 /**

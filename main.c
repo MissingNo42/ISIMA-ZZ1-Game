@@ -215,7 +215,7 @@ int main(int argc, char ** argv) {
                     if(menu_color[i] == 0) rand_brain(b + i);
                     else if(menu_color[i] == 1) load_brain(b + i, -1, i + 1, Glouton1);
                     else if(menu_color[i] == 2) load_brain(b + i, -1, i + 1, Glouton2);
-                    else if(menu_color[i] == 3) load_brain(b + i, -1, i + 1, AlgoG);
+                    else if(menu_color[i] == 3) load_brain(b + i, 73, i + 1, AlgoG);
 
                     printf("Cerveau %s :\n", (!i) ? "rouge" : ((i == 1) ? "vert" : "bleu") );
                     printBrain(b+i);
