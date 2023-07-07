@@ -35,6 +35,6 @@ void mutate(Brains_gen * brains, float * proba, int nb_max);
 
 void mutate1(Brain * brain);
 
-void genetic(int color, int level, int iter);
+void genetic(int color, int iter);
 
 #endif //ZZ1GAME_GETETIC_H

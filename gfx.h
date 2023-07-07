@@ -7,7 +7,7 @@
 
 #include "field.h"
 
-#define FontSize 50
+#define FontSize 40
 
 extern int WIDTH, HEIGHT;
 extern int originX, originY;

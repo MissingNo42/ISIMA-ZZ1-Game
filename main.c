@@ -12,8 +12,6 @@
 #include "gfx.h"
 #include "nrand.h"
 
-#define FontSize 40
-
 SDL_Window * window;
 SDL_Renderer * renderer;
 

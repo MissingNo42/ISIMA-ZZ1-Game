@@ -202,7 +202,7 @@ void drawInfosMenu(SDL_Renderer * renderer){
             color = (SDL_Color) {255, 255, 255, 255};
             if(menu_color[i] == j) color = (SDL_Color) {255 * (i == 0), 255 * (i == 1), 255 * (i == 2), 255};
             if (j==0) drawText(renderer, &dst, &color, "%s", tabText[j]);
-			else drawText(renderer, &dst, &color, "%s : %d", tabText[j], Bests[i][j-1]);
+			else drawText(renderer, &dst, &color, "%s", tabText[j]);//, Bests[i][j-1]);
         }
     }
 }

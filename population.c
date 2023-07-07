@@ -688,7 +688,7 @@ void get_all_best_brain(int Best[3][3]) {
 	if (d) {
 		//snprintf(extw, 10, ".%s", (species == RED) ? "red" : ((species == BLUE) ? "blue" : "green"));
 		while ((dir = readdir(d)) != NULL) {
-			int s, a;
+			int s=0, a=0;
 			switch (dir->d_name[1]) {
 				case '1':
 					a = 0;
@@ -739,7 +739,7 @@ void get_all_best_brain(int Best[3][3]) {
  * @return the best level or -1
  * */
 int get_best_brain(Species species, TypeAI type) {
-	char extw[10];
+	char extw[10] = "";
 	int lvl, lvl_target = -1;
 	float eval, eval_max = -9999999;
 	char prefix[] = "x12g";
@@ -754,8 +754,8 @@ int get_best_brain(Species species, TypeAI type) {
 			if (dir->d_name[1] != prefix[type]) continue;
 			lvl = (int) strtol(dir->d_name + 3, &ext, 10);
 			if (strcmp(ext, extw) == 0) {
-				char fn[42];
-				snprintf(fn, 42, "brains/%s", dir->d_name);
+				char fn[500];
+				snprintf(fn, 500, "brains/%s", dir->d_name);
 				FILE * f = fopen(fn, "rb");
 				if (f) {
 					fseek(f, sizeof (Brain) - sizeof(float), SEEK_CUR);

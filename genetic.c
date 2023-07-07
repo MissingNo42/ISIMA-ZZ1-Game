@@ -224,7 +224,7 @@ void mutate1(Brain * brain) {
     }
 }
 
-void genetic(int color, int level, int iter) {
+void genetic(int color, int iter) {
     Brains_gen brains;
     create_Brains_gen(&brains, color);
     float proba[3];

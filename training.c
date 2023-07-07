@@ -220,10 +220,10 @@ void algoG(int color, int iter, int opp){
 
 
 #ifdef TRAINING
-int main(int argc, char ** argv){
+int main(){
 	
 	int c = 0, a = 0;
-	long int seed = 0;
+	long int seed = time(NULL);
 	while (1) {
 		c = ask("Seed = %ld\n\nMENU\n0 - Exit\n1 - Training Glouton-1\n2 - Training Glouton-2\n3 - Training Genetic\n9 - Set Seed\n\nSelect : ", 9, seed);
 		
