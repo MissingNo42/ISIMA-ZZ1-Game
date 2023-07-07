@@ -25,6 +25,7 @@ extern SDL_Rect Sprites[3][4][3];
 extern int animSprite;
 
 extern int Bests[3][3];
+extern SDL_Rect BG[9];
 
 void setup(SDL_DisplayMode dmode);
 

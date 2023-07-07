@@ -20,12 +20,15 @@ TTF_Font * font = NULL;
 int menu_color[3], menu_y;
 SDL_Texture * pkmn;
 SDL_Rect Sprites[3][4][3];
+SDL_Rect BG[9];
 
 int Bests[3][3];
 int animSprite = 0;
+int WS = 0;
 
 #define FramePerSprite 18
-
+#undef SIZEMAP
+#define SIZEMAP 32
 void setup(SDL_DisplayMode dmode){
     WIDTH = dmode.w;
     HEIGHT = dmode.h;
@@ -35,6 +38,8 @@ void setup(SDL_DisplayMode dmode){
     DISTMAXFIELD = sqrt(2) * SIZEMAP;
 
     sizeCaseGrid = (HEIGHT - (SIZEMAP - 1) * 2) / SIZEMAP;
+	WS = sizeCaseGrid * SIZEMAP + 2 * (SIZEMAP-1);
+	originY = (HEIGHT - WS) / 2;
 
     iterAnim = 0;
     Padding = HEIGHT / 20;
@@ -46,20 +51,43 @@ void setup(SDL_DisplayMode dmode){
 	
 	for (int s = 0; s < 3; s++) for(int d = 0; d < 4; d++) for (int f = 0; f < 3; f++)
 		Sprites[s][d][f] = (SDL_Rect){.x = 66 * s + 22 * f, .y = 22 * d, .w = 22, .h = 22};
+	for (int x = 0; x < 9; x++) BG[x] = (SDL_Rect){.x = 22 * x, .y = 88, .w = 22, .h = 22};
 }
 
 void drawGrid(SDL_Renderer * renderer){
     SDL_SetRenderDrawColor(renderer, 60, 60, 60, 255);
-    SDL_Rect terrain = {originX, originY, HEIGHT, HEIGHT};
+    SDL_Rect terrain = {originX, originY, WS, WS};
     SDL_RenderFillRect(renderer, &terrain);
 
     SDL_SetRenderDrawColor(renderer, 100, 100, 100, 255);
     for (int i = 0; i < SIZEMAP - 1; i++) {
-        SDL_Rect gridV = {originX + sizeCaseGrid + i * (sizeCaseGrid + 2), originY, 2, HEIGHT};
+        SDL_Rect gridV = {originX + sizeCaseGrid + i * (sizeCaseGrid + 2), originY, 2, WS};
         SDL_RenderFillRect(renderer, &gridV);
-        SDL_Rect gridH = {originX, originY + sizeCaseGrid + i * (sizeCaseGrid + 2), HEIGHT, 2};
+        SDL_Rect gridH = {originX, originY + sizeCaseGrid + i * (sizeCaseGrid + 2), WS, 2};
         SDL_RenderFillRect(renderer, &gridH);
     }
+	for (int i = 0; i < SIZEMAP; i++){
+		for (int u = 0; u < SIZEMAP; u++){
+			SDL_Rect r = {originX + i * (sizeCaseGrid + 2), originY + u * (sizeCaseGrid + 2), sizeCaseGrid,
+                              sizeCaseGrid};
+			int d;
+			if (i == 0) {
+				if (u == 0) d = 0;
+				else if (u == SIZEMAP-1) d = 6;
+				else d = 3;
+			} else if (i == SIZEMAP-1){
+				if (u == 0) d = 2;
+				else if (u == SIZEMAP-1) d = 8;
+				else d = 5;
+			} else {
+				if (u == 0) d = 1;
+				else if (u == SIZEMAP-1) d = 7;
+				else d = 4;
+			}
+            SDL_RenderCopy(renderer, pkmn, &BG[d], &r);
+            //SDL_RenderFillRect(renderer, &indiv);
+		}
+	}
 }
 
 void drawPops(SDL_Renderer * renderer, Populations * pops){
@@ -69,8 +97,8 @@ void drawPops(SDL_Renderer * renderer, Populations * pops){
         else SDL_SetRenderDrawColor(renderer, 0, 0, 255, 255);
         for (int i = 0; i < IndividualPerPopulation; i++) {
             if(pops->pops[k].individuals[i].alive) {
-                int x = pops->pops[k].individuals[i].x;
-                int y = pops->pops[k].individuals[i].y;
+                int x = pops->pops[k].individuals[i].x + 1;
+                int y = pops->pops[k].individuals[i].y + 1;
 
                 SDL_Rect indiv = {originX + x * (sizeCaseGrid + 2), originY + y * (sizeCaseGrid + 2), sizeCaseGrid,
                                   sizeCaseGrid};
@@ -95,8 +123,8 @@ void drawMouv(SDL_Renderer * renderer, Populations * pops){
                 int yDiff = (pops->pops[k].individuals[i].ny - pops->pops[k].individuals[i].y) * (sizeCaseGrid + 2) /
                             vitesse;
 
-                SDL_Rect indiv = {originX + pops->pops[k].individuals[i].x * (sizeCaseGrid + 2) + iterAnim * xDiff,
-                                  originY + pops->pops[k].individuals[i].y * (sizeCaseGrid + 2) + iterAnim * yDiff,
+                SDL_Rect indiv = {originX + (pops->pops[k].individuals[i].x+1) * (sizeCaseGrid + 2) + iterAnim * xDiff,
+                                  originY + (pops->pops[k].individuals[i].y+1) * (sizeCaseGrid + 2) + iterAnim * yDiff,
                                   sizeCaseGrid, sizeCaseGrid};
                 SDL_RenderCopy(renderer, pkmn, &Sprites[pops->pops[k].species - 1][pops->pops[k].individuals[i].action][animSprite / FramePerSprite], &indiv);
 				//SDL_RenderFillRect(renderer, &indiv);
