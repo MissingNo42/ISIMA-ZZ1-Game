@@ -10,11 +10,14 @@
 #include "population.h"
 #include "genetic.h"
 
-void glouton1(int color, int level, int iter, int opp){
+
+void gloutonAll(int color, int level, int iter, int opp){
 	Brains brains;
 	Brain best = {.eval = -9999999};
     brains.level = 0;
     brains.species = color;
+	int stuck = 0;
+	int algo = 1;
 	
 	int randm = 0;
 	
@@ -29,8 +32,8 @@ void glouton1(int color, int level, int iter, int opp){
 	if (level == 0) brains.brain[0] = rand_brain( NULL);
 	else {
 		brains.brain[0] = malloc(sizeof(Brain));
-		if (level == 1) level = get_last_brain(color, Glouton1);
-		load_brain(brains.brain[0], level, color, Glouton1);
+		if (level == 1) level = get_last_brain(color, Glouton);
+		load_brain(brains.brain[0], level, color, Glouton);
 		copy_brain(brains.brain[0], &best);
 	}
     for (int k=1; k<BrainPool2 ;k++){
@@ -46,7 +49,7 @@ void glouton1(int color, int level, int iter, int opp){
 				
 				if (!ch1) rand_brain(&brains.prey);
 				else {
-					if (!load_brain(&brains.prey, evo - ch1, brains.species, Glouton1)){
+					if (!load_brain(&brains.prey, evo - ch1, brains.species, Glouton)){
 						printf("ERROR load prey : %d %d\n", ch1, evo - ch1);
 					}
 					ch1 = evo - ch1;
@@ -54,14 +57,15 @@ void glouton1(int color, int level, int iter, int opp){
 
 				if (!ch2) rand_brain(&brains.predator);
 				else {
-					if (!load_brain(&brains.predator, evo - ch2, brains.species, Glouton1)){
+					if (!load_brain(&brains.predator, evo - ch2, brains.species, Glouton)){
 						printf("ERROR load predator : %d %d\n", ch2, evo - ch2);
 					}
 					ch2 = evo - ch2;
 				}
+				
 			} else if (evo - opp >= 1) {
 				ch1 = ch2 = evo - opp;
-				load_brain(&brains.prey, ch1, brains.species, Glouton1);
+				load_brain(&brains.prey, ch1, brains.species, Glouton);
 	            copy_brain(&brains.prey, &brains.predator);
 			} else goto randai;
 		} else {
@@ -71,93 +75,42 @@ void glouton1(int color, int level, int iter, int opp){
 			rand_brain(&brains.predator);
 		}
 		
-		printf("iter %d (gen %d -> %f) : prey = %d | predator = %d\n", evo - level, evo, best.eval, ch1, ch2);
-        mutation_all(&brains, list, color);
-		if (brains.brain[0]->eval > best.eval) copy_brain(brains.brain[0], &best);
-		else copy_brain(&best, brains.brain[0]);
+		printf("iter %d (gen %d -> %f : algo = glouton %d) : prey = %d | predator = %d\n", evo - level, evo, best.eval, algo, ch1, ch2);
 		
-        save_brain(&best, evo, brains.species, Glouton1);
-    }
-	printf("end\n");
-    for (int m=0; m< BrainPool2; m++){
-        free(brains.brain[m]);
-    }
-}
-
-void glouton2(int color, int level, int iter, int opp){
-	Brains brains;
-	Brain best = {.eval = -9999999};
-    brains.level = 0;
-    brains.species = color;
-	
-	int randm = 0;
-	
-	if (opp < 0) {
-		opp = -opp;
-		randm = opp + 1;
-	}
-	
-	int list[8*P];
-    for (int i=0; i<8*P; i++) list[i] = i;
-	
-	if (level == 0) brains.brain[0] = rand_brain( NULL);
-	else {
-		brains.brain[0] = malloc(sizeof(Brain));
-		if (level == 1) level = get_last_brain(color, Glouton2);
-		load_brain(brains.brain[0], level, color, Glouton2);
-		copy_brain(brains.brain[0], &best);
-	}
-    for (int k=1; k<BrainPool2 ;k++ ){
-        brains.brain[k] = copy_brain(brains.brain[0],NULL);
-    }
-		
-	for (int evo = 1 + level; evo <= iter + level; evo++){
-		int ch1, ch2;
-		if (opp) {
-			if (randm) {
-				ch1 = nrand() % (evo < randm ? evo: randm),
-				ch2 = nrand() % (evo < randm ? evo: randm);
-				
-				if (!ch1) rand_brain(&brains.prey);
-				else {
-					if (!load_brain(&brains.prey, evo - ch1, brains.species, Glouton2)){
-						printf("ERROR load prey : %d %d\n", ch1, evo - ch1);
-					}
-					ch1 = evo - ch1;
-				}
-
-				if (!ch2) rand_brain(&brains.predator);
-				else {
-					if (!load_brain(&brains.predator, evo - ch2, brains.species, Glouton2)){
-						printf("ERROR load predator : %d %d\n", ch2, evo - ch2);
-					}
-					ch2 = evo - ch2;
-				}
-				
-			} else if (evo - opp >= 1) {
-				ch1 = ch2 = evo - opp;
-				load_brain(&brains.prey, ch1, brains.species, Glouton2);
-	            copy_brain(&brains.prey, &brains.predator);
-			} else goto randai;
-		} else {
-			randai:
-			ch1 = ch2 = 0;
-			rand_brain( &brains.prey);
-			rand_brain(&brains.predator);
+		switch (algo) {
+			case 1:
+				mutation_all(&brains, list, color);
+				break;
+			case 2:
+				mutation_two_do(&brains, list);
+				break;
+			case 3:
+				mutation_two_do(&brains, list);
+				break;
 		}
 		
-		printf("iter %d (gen %d -> %f) : prey = %d | predator = %d\n", evo - level, evo, best.eval, ch1, ch2);
-        mutation_two_do(&brains, list);
-		if (brains.brain[0]->eval > best.eval) copy_brain(brains.brain[0], &best);
-		else copy_brain(&best, brains.brain[0]);
+		if (brains.brain[0]->eval > best.eval) {
+			copy_brain(brains.brain[0], &best);
+			algo = 1;
+			stuck = 0;
+		}
+		else {
+			copy_brain(&best, brains.brain[0]);
+			stuck++;
+			if (stuck > 5 && algo < 3) {
+				algo++;
+				stuck = 0;
+			}
+		}
 		
-        save_brain(brains.brain[0], evo, brains.species, Glouton2);
+        save_brain(brains.brain[0], evo, brains.species, Glouton);
     }
 	printf("end\n");
     for (int m=0; m< BrainPool2; m++){
         free(brains.brain[m]);
     }
 }
+
 
 
 int ask(char * str, int limit, ...) {
@@ -225,7 +178,7 @@ int main(){
 	int c = 0, a = 0;
 	long int seed = time(NULL);
 	while (1) {
-		c = ask("Seed = %ld\n\nMENU\n0 - Exit\n1 - Training Glouton-1\n2 - Training Glouton-2\n3 - Training Genetic\n9 - Set Seed\n\nSelect : ", 9, seed);
+		c = ask("Seed = %ld\n\nMENU\n0 - Exit\n1 - Training Glouton\n2 - Training Genetic\n9 - Set Seed\n\nSelect : ", 9, seed);
 		
 		snrand(seed);
 		switch(c) {
@@ -234,23 +187,13 @@ int main(){
 				int color = ask("\nSpecies\n0 - Red\n1 - Green\n2 - blue\n\nSelect : ", 2);
 				int max = get_last_brain(color + 1, Glouton1);
 				int level = ask("\nStarting Level\n0 - New\n1 - Last = %d\nN - existing level 'n'\n\nSelect : ", (max < 0) ? 0: max, max);
-				int iter = ask("\nItereration wanted\nN - 'n' iterations\n\nSelect : ", 9999);
-				int opp = ask("\nOpponent Level\n0 - Random\n1 - Both: ...\nN - Use the current training AI : 'level - n'\n\nSelect : ", 9999);
-				if (opp == 1) opp = -ask("\nOpponent random alea Level\nN - Use the current training AI : 'level - n'\n\nSelect : ", 9999);
-				glouton1(color + 1, level, iter, opp);
+				int iter = ask("\nItereration wanted\nN - 'n' iterations\n\nSelect : ", 999999);
+				int opp = ask("\nOpponent Level\n0 - Random\n1 - Both: ...\nN - Use the current training AI : 'level - n'\n\nSelect : ", 999999);
+				if (opp == 1) opp = -ask("\nOpponent random alea Level\nN - Use the current training AI : 'level - n'\n\nSelect : ", 999999);
+				gloutonAll(color + 1, level, iter, opp);
 				break;
 			}
 			case 2: {
-				int color = ask("\nSpecies\n0 - Red\n1 - Green\n2 - blue\n\nSelect : ", 2);
-				int max = get_last_brain(color + 1, Glouton2);
-				int level = ask("\nStarting Level\n0 - New\n1 - Last = %d\nN - existing level 'n'\n\nSelect : ", (max < 0) ? 0: max, max);
-				int iter = ask("\nItereration wanted\nN - 'n' iterations\n\nSelect : ", 9999);
-				int opp = ask("\nOpponent Level\n0 - Random\n1 - Both ...\nN - Use the current training AI : 'level - n'\n\nSelect : ", 9999);
-				if (opp == 1) opp = -ask("\nOpponent random alea Level\nN - Use the current training AI : 'level - n'\n\nSelect : ", 9999);
-				glouton2(color + 1, level, iter, opp);
-				break;
-			}
-			case 3: {
 				int color = ask("\nSpecies\n0 - Red\n1 - Green\n2 - blue\n\nSelect : ", 2);
 				int iter = ask("\nItereration wanted\nN - 'n' iterations\n\nSelect : ", 9999999);
 				int opp = ask("\nOpponent Type\n0 - Random\nN - Both (N%% agressive) \n100 - Full agressive\n\nSelect : ", 100);
