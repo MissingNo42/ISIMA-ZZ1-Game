@@ -125,6 +125,8 @@ void change_path_random(int * list, int size);
 
 void mutation_two_do (Brains * brains, int* list_ind);
 
+void mutation_do (Brains * brains, int* list_ind, int mut);
+
 void select_best(Brains * brains, int nb);
 
 void hybridization(Brain * parent1, Brain * parent2, Brain * child);

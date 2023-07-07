@@ -362,7 +362,7 @@ int mutation_two(Brains * brains, int  L) {
     return nbL*nbM;
 }
 
-int mutation_two(Brains * brains, int  L) {
+int mutation_three(Brains * brains, int  L) {
     int M = K = L;
     while(M==L) {
         M = nrand() % (8 * P);
@@ -503,6 +503,62 @@ void mutation_two_do (Brains * brains, int* list_ind){
 		for (int num = 0; num< nb; num++) {
 			thrd_join(handlers[num], NULL);
 		}
+
+        select_best(brains, nb);
+        printf("nb : %d\t",nb);
+        printf("eval : %f\n", brains->brain[0]->eval);
+    }
+}
+
+void mutation_do (Brains * brains, int* list_ind, int mut){
+    change_path_random(list_ind, 8*P);
+    int nb = 0;
+    for (int k=0; k<P*8; k++) {
+        int mut_pool = 0;
+        switch (mut) {
+            case 1:
+                mut_pool = BrainPool1;
+                break;
+            case 2:
+                mut_pool = BrainPool2;
+                break;
+            case 3:
+                mut_pool = BrainPool3;
+                break;
+            default:
+                break;
+        }
+        for (int m = 1; m < mut_pool; m++) {
+            copy_brain(brains->brain[0], brains->brain[m]);
+        }
+        switch (mut) {
+            case 1:
+                nb = mutation_one(brains, list_ind[k]);
+                break;
+            case 2:
+                nb = mutation_two(brains, list_ind[k]);
+                break;
+            case 3:
+                nb = mutation_three(brains, list_ind[k]);
+                break;
+            default:
+                break;
+        }
+        ThArgs tha[nb];
+        thrd_t handlers[nb];
+        for (int num = 0; num < nb; num++) {
+            tha[num].brains = brains;
+            tha[num].num = num;
+
+            if (thrd_success != thrd_create(handlers + num, simu_thread2, tha + num)){
+                printf("CRITICAL TH %d\n", num);
+                exit(0);
+            }
+        }
+
+        for (int num = 0; num< nb; num++) {
+            thrd_join(handlers[num], NULL);
+        }
 
         select_best(brains, nb);
         printf("nb : %d\t",nb);
