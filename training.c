@@ -36,7 +36,7 @@ void gloutonAll(int color, int level, int iter, int opp){
 		load_brain(brains.brain[0], level, color, Glouton);
 		copy_brain(brains.brain[0], &best);
 	}
-    for (int k=1; k<BrainPool2 ;k++){
+    for (int k=1; k<BrainPool3 ;k++){
         brains.brain[k] = copy_brain(brains.brain[0],NULL);
     }
 		

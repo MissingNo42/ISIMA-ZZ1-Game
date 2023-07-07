@@ -363,7 +363,7 @@ int mutation_two(Brains * brains, int  L) {
 }
 
 int mutation_three(Brains * brains, int  L) {
-    int M = K = L;
+    int M = L, K = L;
     while(M==L) {
         M = nrand() % (8 * P);
     }
@@ -760,7 +760,7 @@ int save_brain(Brain * brain, int level, Species species, TypeAI type) {
 	int r = 1;
 	char * prefix[] = {"xx", "gl", "ag"};
 	mkdir("brains", 0744);
-	snprintf(str, 42, "brains/%s.%06d.%s", prefix[type], level, (species == RED) ? "red" : ((species == BLUE) ? "blue" : "green"));
+	snprintf(str, 42, "../brains/%s.%06d.%s", prefix[type], level, (species == RED) ? "red" : ((species == BLUE) ? "blue" : "green"));
 	
 	FILE * f = fopen(str, "wb");
 	if (f) {
@@ -785,8 +785,8 @@ int load_brain(Brain * brain, int level, Species species, TypeAI type) {
 	int r = 1;
 	char * prefix[] = {"xx", "gl", "ag"};
 	
-	if (level == -2) snprintf(str, 42, "brains/%s.best.%s", prefix[type], (species == RED) ? "red" : ((species == BLUE) ? "blue" : "green"));
-	else snprintf(str, 42, "brains/%s.%06d.%s", prefix[type], level, (species == RED) ? "red" : ((species == BLUE) ? "blue" : "green"));
+	if (level == -2) snprintf(str, 42, "../brains/%s.best.%s", prefix[type], (species == RED) ? "red" : ((species == BLUE) ? "blue" : "green"));
+	else snprintf(str, 42, "../brains/%s.%06d.%s", prefix[type], level, (species == RED) ? "red" : ((species == BLUE) ? "blue" : "green"));
 	
 	FILE * f = fopen(str, "rb");
 	//printf("load>> %p : %s\n", f, str);
@@ -859,7 +859,7 @@ void get_all_best_brain(int Best[3][2]) {
 			}
 			char * ext;
 			lvl = (int) strtol(dir->d_name + 3, &ext, 10);
-			char fn[42] = "brains/";
+			char fn[42] = "../brains/";
 			strcat(fn, dir->d_name);
 			//snprintf(fn, 42, "brains/%s", dir->d_name);
 			FILE * f = fopen(fn, "rb");
@@ -888,7 +888,7 @@ int get_best_brain(Species species, TypeAI type) {
 	char extw[10] = "";
 	int lvl, lvl_target = -1;
 	float eval, eval_max = -9999999;
-	char prefix[] = "xkg";
+	char prefix[] = "xlg";
 	
 	DIR * d = opendir("brains");
 	struct dirent * dir;
@@ -901,7 +901,7 @@ int get_best_brain(Species species, TypeAI type) {
 			lvl = (int) strtol(dir->d_name + 3, &ext, 10);
 			if (strcmp(ext, extw) == 0) {
 				char fn[500];
-				snprintf(fn, 500, "brains/%s", dir->d_name);
+				snprintf(fn, 500, "../brains/%s", dir->d_name);
 				FILE * f = fopen(fn, "rb");
 				if (f) {
 					fseek(f, sizeof (Brain) - sizeof(float), SEEK_CUR);

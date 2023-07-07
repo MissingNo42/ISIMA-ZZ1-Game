@@ -72,7 +72,7 @@ typedef struct {
 
 
 typedef struct {
-	Brain *brain[BrainPool2];
+	Brain *brain[BrainPool3];
 	Brain prey, predator;
 	int level; // generation
 	Species species;
