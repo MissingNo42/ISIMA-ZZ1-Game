@@ -38,5 +38,10 @@ while 1:
                 if '.' in Mf:
                     n = Mf.split('.')
                     n[1] = 'best'
-                    open('.'.join(n), 'wb').write(open(Mf, 'rb').read())
+                    r = open(Mf, 'rb')
+                    dt = r.read()
+                    r.close()
+                    w = open('.'.join(n), 'wb')
+                    w.write(dt)
+                    w.close()
                 
