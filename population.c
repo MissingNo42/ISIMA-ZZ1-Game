@@ -464,6 +464,106 @@ void hybridization(Brain * parent1, Brain * parent2, Brain * child) {
 	}
 }
 
+void hybridization2(Brain * parent1, Brain * parent2, Brain * child) {
+    int rularg1 = nrand() % (P*8);
+    int rul1 = rularg1 / 8, arg1 = rularg1 % 8;
+    int rularg2 = nrand() % (P*8-1);
+    int rul2,arg2;
+    //printf("%d,%d\n",rularg1,rularg2);
+    if (rularg2 >= rularg1) {
+        rularg2++;
+        //printf("%d,%d\n",rularg1,rularg2);
+        rul2 = rularg2 / 8; arg2 = rularg2 % 8;
+        for (int i = 0; i < rul1; i++) {
+            for (int j = 0; j < 8; j++) {
+                child->rules[i].raw[j] = parent1->rules[i].raw[j];
+            }
+        }
+        if (rul1!=rul2) {
+            for (int j = 0; j < arg1; j++) {
+                child->rules[rul1].raw[j] = parent1->rules[rul1].raw[j];
+            }
+            for (int j = arg1; j < 8; j++) {
+                child->rules[rul1].raw[j] = parent2->rules[rul1].raw[j];
+            }
+            for (int i = rul1 + 1; i < rul2; i++) {
+                for (int j = 0; j < 8; j++) {
+                    child->rules[i].raw[j] = parent2->rules[i].raw[j];
+                }
+            }
+            for (int j = 0; j < arg2; j++) {
+                child->rules[rul2].raw[j] = parent2->rules[rul2].raw[j];
+            }
+            for (int j = arg2; j < 8; j++) {
+                child->rules[rul2].raw[j] = parent1->rules[rul2].raw[j];
+            }
+        }
+        else{
+            for (int j = 0; j < arg1; j++) {
+                child->rules[rul1].raw[j] = parent1->rules[rul1].raw[j];
+            }
+            for (int j = arg1; j < arg2; j++) {
+                child->rules[rul2].raw[j] = parent2->rules[rul2].raw[j];
+            }
+            for (int j = arg2; j < 8; j++) {
+                child->rules[rul1].raw[j] = parent1->rules[rul1].raw[j];
+            }
+        }
+        for (int i = rul2 + 1; i < P; i++) {
+            for (int j = 0; j < 8; j++) {
+                child->rules[i].raw[j] = parent1->rules[i].raw[j];
+            }
+        }
+    }
+    else {
+        rul2 = rularg2 / 8; arg2 = rularg2 % 8;
+        for (int i = 0; i < rul2; i++) {
+            for (int j = 0; j < 8; j++) {
+                child->rules[i].raw[j] = parent2->rules[i].raw[j];
+            }
+        }
+        if (rul1!=rul2) {
+            for (int j = 0; j < arg2; j++) {
+                child->rules[rul2].raw[j] = parent2->rules[rul2].raw[j];
+            }
+            for (int j = arg2; j < 8; j++) {
+                child->rules[rul2].raw[j] = parent1->rules[rul2].raw[j];
+            }
+            for (int i = rul2 + 1; i < rul1; i++) {
+                for (int j = 0; j < 8; j++) {
+                    child->rules[i].raw[j] = parent1->rules[i].raw[j];
+                }
+            }
+            for (int j = 0; j < arg1; j++) {
+                child->rules[rul1].raw[j] = parent1->rules[rul1].raw[j];
+            }
+            for (int j = arg1; j < 8; j++) {
+                child->rules[rul1].raw[j] = parent2->rules[rul1].raw[j];
+            }
+        }
+        else{
+            for (int j = 0; j < arg2; j++) {
+                child->rules[rul2].raw[j] = parent2->rules[rul2].raw[j];
+            }
+            for (int j = arg2; j < arg1; j++) {
+                child->rules[rul1].raw[j] = parent1->rules[rul1].raw[j];
+            }
+            for (int j = arg1; j < 8; j++) {
+                child->rules[rul2].raw[j] = parent2->rules[rul2].raw[j];
+            }
+        }
+        for (int i = rul1 + 1; i < P; i++) {
+            for (int j = 0; j < 8; j++) {
+                child->rules[i].raw[j] = parent2->rules[i].raw[j];
+            }
+        }
+    }
+    //printf("rul1 : %d | arg1 : %d | rul2 : %d | arg2 : %d\n",rul1,arg1,rul2,arg2);
+    //printBrain(parent1);
+    //printBrain(parent2);
+    //printBrain(child);
+}
+
 void hybridization3(Brain * parent1, Brain * parent2, Brain * parent3, Brain * child) {
     int rul1 = nrand() % (P - 1);
     int rul2 = rul1 + (nrand() % (P - rul1));
