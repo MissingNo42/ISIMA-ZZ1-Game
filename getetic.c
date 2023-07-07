@@ -59,7 +59,7 @@ int simu_thread_tr(void * args){
 	return 0;
 }
 
-Brain * tournament(Brains_gen  * brains){
+Brain * tournament(Brains_gen  * brains, int ite){
     change_brains_order(brains);
     Species species = brains->species;
 
@@ -83,13 +83,24 @@ Brain * tournament(Brains_gen  * brains){
 
         select_best_gen(brains, k*NB_BRAINS_COMPETING);
     }
-    rand_brain(brains->brain[NB_BRAINS_CANDIDATE/NB_BRAINS_COMPETING]);
-    for (int k=1; k < NB_BRAINS_RECOVERED; k++ ){
-        int p = NB_BRAINS_CANDIDATE/NB_BRAINS_COMPETING;
-        int x = nrand() % (NB_BRAINS_CANDIDATE - p - k);
-        //Brain * tmp = brains->brain[p + k];
-        brains->brain[p + k] =  brains->brain[p + k + x];
-        //brains->brain[p + k + x] = tmp;
+    if (ite%5) {
+        rand_brain(brains->brain[NB_BRAINS_CANDIDATE/NB_BRAINS_COMPETING]);
+        for (int k=1; k < NB_BRAINS_RECOVERED; k++ ) {
+            int p = NB_BRAINS_CANDIDATE / NB_BRAINS_COMPETING;
+            int x = nrand() % (NB_BRAINS_CANDIDATE - p - k);
+            //Brain * tmp = brains->brain[p + k];
+            brains->brain[p + k] = brains->brain[p + k + x];
+            //brains->brain[p + k + x] = tmp;
+        }
+    }
+    else{
+        for (int k=0; k < NB_BRAINS_RECOVERED; k++ ) {
+            int p = NB_BRAINS_CANDIDATE / NB_BRAINS_COMPETING;
+            int x = nrand() % (NB_BRAINS_CANDIDATE - p - k);
+            //Brain * tmp = brains->brain[p + k];
+            brains->brain[p + k] = brains->brain[p + k + x];
+            //brains->brain[p + k + x] = tmp;
+        }
     }
     int j = 0;
     float eval = brains->brain[0]->eval;
@@ -222,7 +233,7 @@ void genetic(int color, int level, int iter) {
     for(int evo = 0; evo < iter; evo++){
         printf("evo = %d\n", evo);
 
-        Brain * b = tournament(&brains);
+        Brain * b = tournament(&brains, evo);
 
         save_brain(b, evo, color, AlgoG);
 

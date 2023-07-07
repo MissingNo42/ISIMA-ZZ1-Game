@@ -194,7 +194,7 @@ void algoG(int color, int iter, int opp){
 		}
 	    
 	    if (b) copy_brain(b, &Previous);
-        b = tournament(&brains);
+        b = tournament(&brains, evo);
 		
 		diff = 0;
 		for (int i = 0; i < P; i++) for (int u = 0; u < 8; u++) if (b->rules[i].raw[u] != Previous.rules[i].raw[u]) diff++;

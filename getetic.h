@@ -21,7 +21,7 @@ typedef struct {
 
 Brains_gen * create_Brains_gen(Brains_gen * brains, Species species);
 
-Brain * tournament(Brains_gen  * brains);
+Brain * tournament(Brains_gen  * brains, int ite);
 
 void change_brains_order(Brains_gen * brains);
 
