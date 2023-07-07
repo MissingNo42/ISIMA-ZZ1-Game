@@ -53,7 +53,7 @@ int simu_thread_tr(void * args){
         eval_val += brains->brain[num]->eval;
         free(pops);
     }
-    brains->brain[num]->eval = eval_val / 40;
+    brains->brain[num]->eval = eval_val / 100;
     //printf("\teval %d : %f\n", num,brains->brain[num]->eval);
 	
 	return 0;

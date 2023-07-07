@@ -28,10 +28,10 @@ while 1:
                 for i in os.listdir():
                     if i.startswith(a) and i.endswith(s):
                         q = struct.unpack('f', open(i, 'rb').read()[-4:])[0]
-                        if q > M:
+                        if q >= M:
                             M = q
                             Mf = i
-                        if q < m:
+                        if q <= m:
                             m = q
                             mf = i
                 print(f"\t{a}: Best = {Mf}\t ({M:.3f})\t\t Worst = {mf}\t ({m:.3f})")
