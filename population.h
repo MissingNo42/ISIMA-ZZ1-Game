@@ -16,9 +16,8 @@ typedef enum {
 } Species;
 
 typedef enum {
-	Glouton1 = 1,
-	Glouton2 = 2,
-	AlgoG = 3,
+	Glouton = 1,
+	AlgoG = 2,
 } TypeAI;
 
 typedef enum {
@@ -174,7 +173,7 @@ int get_best_brain(Species species, TypeAI type);
 /**
  * @brief get the best level of the saved brains of the specified species
  * */
-void get_all_best_brain(int Best[3][3]);
+void get_all_best_brain(int Best[3][2]);
 
 /**
  * @brief initialize individuals positions to be dispatched and alone in a 3x3 square

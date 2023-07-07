@@ -211,7 +211,7 @@ void drawInfosMenu(SDL_Renderer * renderer){
     SDL_Rect dst = {Padding * 2, Padding * 2, 0, 0};
     drawText(renderer, &dst, &color, "Selection des Populations");
 
-    char * tabText[] = {"Aleatoire", "Glouton 1", "Glouton 2", "Genetique"};
+    char * tabText[] = {"Aleatoire", "Glouton", "Genetique"};
     dst.y += FontSize + Padding;
 
     for(int i = 0; i < 3; i++){
@@ -224,7 +224,7 @@ void drawInfosMenu(SDL_Renderer * renderer){
         }
         dst.x = Padding * 4;
 
-        for(int j = 0; j < 4; j++){
+        for(int j = 0; j < 3; j++){
             if(j == 1) dst.x += Padding * 6;
             else if(j > 1) dst.x += Padding * 8;
             color = (SDL_Color) {255, 255, 255, 255};

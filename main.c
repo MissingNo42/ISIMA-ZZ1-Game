@@ -161,7 +161,7 @@ int main(int argc, char ** argv) {
                                 else if (vitesse == 5) vitesse = 3;
                                 else if (vitesse == 3) vitesse = 1;
                             } else if(gameState == 1){
-                                if(menu_color[menu_y] < 3) menu_color[menu_y] ++;
+                                if(menu_color[menu_y] < 2) menu_color[menu_y] ++;
                             }
 							break;
 						case SDLK_UP:break;
@@ -169,6 +169,11 @@ int main(int argc, char ** argv) {
                         case SDLK_RETURN :
                             if(gameState == 1){
                                 menu_y ++;
+                            }
+                            break;
+                        case SDLK_BACKSPACE :
+                            if(gameState == 1){
+                                menu_y --;
                             }
                             break;
 						default: break;
@@ -217,9 +222,8 @@ int main(int argc, char ** argv) {
 
                 for(int i = 0; i < 3; i++){
                     if(menu_color[i] == 0) rand_brain(b + i);
-                    else if(menu_color[i] == 1) load_brain(b + i, -2, i + 1, Glouton1);
-                    else if(menu_color[i] == 2) load_brain(b + i, -2, i + 1, Glouton2);
-                    else if(menu_color[i] == 3) load_brain(b + i, -2, i + 1, AlgoG);
+                    else if(menu_color[i] == 1) load_brain(b + i, -2, i + 1, Glouton);
+                    else if(menu_color[i] == 2) load_brain(b + i, -2, i + 1, AlgoG);
 
                     printf("Cerveau %s :\n", (!i) ? "rouge" : ((i == 1) ? "vert" : "bleu") );
                     printBrain(b+i);

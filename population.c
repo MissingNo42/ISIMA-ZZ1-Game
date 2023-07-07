@@ -758,7 +758,7 @@ void hybridization3(Brain * parent1, Brain * parent2, Brain * parent3, Brain * c
 int save_brain(Brain * brain, int level, Species species, TypeAI type) {
 	char str[42];
 	int r = 1;
-	char * prefix[] = {"xx", "g1", "g2", "ag"};
+	char * prefix[] = {"xx", "gl", "ag"};
 	mkdir("brains", 0744);
 	snprintf(str, 42, "brains/%s.%06d.%s", prefix[type], level, (species == RED) ? "red" : ((species == BLUE) ? "blue" : "green"));
 	
@@ -783,7 +783,7 @@ int load_brain(Brain * brain, int level, Species species, TypeAI type) {
 	//if (level == -2) level = get_best_brain(species, type);
 	char str[42];
 	int r = 1;
-	char * prefix[] = {"xx", "g1", "g2", "ag"};
+	char * prefix[] = {"xx", "gl", "ag"};
 	
 	if (level == -2) snprintf(str, 42, "brains/%s.best.%s", prefix[type], (species == RED) ? "red" : ((species == BLUE) ? "blue" : "green"));
 	else snprintf(str, 42, "brains/%s.%06d.%s", prefix[type], level, (species == RED) ? "red" : ((species == BLUE) ? "blue" : "green"));
@@ -806,7 +806,7 @@ int load_brain(Brain * brain, int level, Species species, TypeAI type) {
 int get_last_brain(Species species, TypeAI type) {
 	char extw[10];
 	int lvl, lvl_max = -1;
-	char prefix[] = "x12g";
+	char prefix[] = "xlg";
 	
 	DIR * d = opendir("brains");
 	struct dirent * dir;
@@ -827,7 +827,7 @@ int get_last_brain(Species species, TypeAI type) {
 /**
  * @brief get the best level of the saved brains of the specified species
  * */
-void get_all_best_brain(int Best[3][3]) {
+void get_all_best_brain(int Best[3][2]) {
 	int lvl;
 	float eval, eval_max[3][3] = {{-99999, -99999, -99999}, {-99999, -99999, -99999}, {-99999, -99999, -99999}};
 	
@@ -839,14 +839,11 @@ void get_all_best_brain(int Best[3][3]) {
 		while ((dir = readdir(d)) != NULL) {
 			int s=0, a=0;
 			switch (dir->d_name[1]) {
-				case '1':
+				case 'l':
 					a = 0;
 					break;
-				case '2':
-					a = 1;
-					break;
 				case 'g':
-					a = 2;
+					a = 1;
 					break;
 			}
 			switch (dir->d_name[10]) {
@@ -891,7 +888,7 @@ int get_best_brain(Species species, TypeAI type) {
 	char extw[10] = "";
 	int lvl, lvl_target = -1;
 	float eval, eval_max = -9999999;
-	char prefix[] = "x12g";
+	char prefix[] = "xkg";
 	
 	DIR * d = opendir("brains");
 	struct dirent * dir;
