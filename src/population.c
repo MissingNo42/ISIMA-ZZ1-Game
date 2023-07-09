@@ -8,7 +8,6 @@
 #include <dirent.h>
 #include <string.h>
 #include <math.h>
-#include <time.h>
 #include <threads.h>
 
 #include "population.h"
@@ -306,7 +305,7 @@ int mutation_two(Brains * brains, int  L) {
     }
     int jL = L / 8, iL = L % 8;
     int jM = M / 8, iM = M % 8;
-    printf("L : %d (%d|%d) |M : %d (%d|%d)\n",L,jL,iL,M,jM,iM);
+    //printf("L : %d (%d|%d) |M : %d (%d|%d)\n",L,jL,iL,M,jM,iM);
     int nbL = 0, decL = 0;
     int nbM = 0, decM = 0;
     switch (iL) {
@@ -373,7 +372,7 @@ int mutation_three(Brains * brains, int  L) {
     int jL = L / 8, iL = L % 8;
     int jM = M / 8, iM = M % 8;
     int jK = K / 8, iK = K % 8;
-    printf("L : %d (%d|%d) |M : %d (%d|%d) |K : %d (%d|%d)\n",L,jL,iL,M,jM,iM,K,jK,iK);
+    //printf("L : %d (%d|%d) |M : %d (%d|%d) |K : %d (%d|%d)\n",L,jL,iL,M,jM,iM,K,jK,iK);
     int nbL = 0, decL = 0;
     int nbM = 0, decM = 0;
     int nbK = 0, decK = 0;
@@ -505,8 +504,8 @@ void mutation_two_do (Brains * brains, int* list_ind){
 		}
 
         select_best(brains, nb);
-        printf("nb : %d\t",nb);
-        printf("eval : %f\n", brains->brain[0]->eval);
+        //printf("nb : %d\t",nb);
+        //printf("eval : %f\n", brains->brain[0]->eval);
     }
 }
 
@@ -561,8 +560,8 @@ void mutation_do (Brains * brains, int* list_ind, int mut){
         }
 
         select_best(brains, nb);
-        printf("nb : %d\t",nb);
-        printf("eval : %f\n", brains->brain[0]->eval);
+        //printf("nb : %d\t",nb);
+        //printf("eval : %f\n", brains->brain[0]->eval);
     }
 }
 
@@ -760,7 +759,7 @@ int save_brain(Brain * brain, int level, Species species, TypeAI type) {
 	int r = 1;
 	char * prefix[] = {"xx", "gl", "ag"};
 	mkdir("brains", 0744);
-	snprintf(str, 42, "../brains/%s.%06d.%s", prefix[type], level, (species == RED) ? "red" : ((species == BLUE) ? "blue" : "green"));
+	snprintf(str, 42, "brains/%s.%06d.%s", prefix[type], level, (species == RED) ? "red" : ((species == BLUE) ? "blue" : "green"));
 	
 	FILE * f = fopen(str, "wb");
 	if (f) {
@@ -785,8 +784,8 @@ int load_brain(Brain * brain, int level, Species species, TypeAI type) {
 	int r = 1;
 	char * prefix[] = {"xx", "gl", "ag"};
 	
-	if (level == -2) snprintf(str, 42, "../brains/%s.best.%s", prefix[type], (species == RED) ? "red" : ((species == BLUE) ? "blue" : "green"));
-	else snprintf(str, 42, "../brains/%s.%06d.%s", prefix[type], level, (species == RED) ? "red" : ((species == BLUE) ? "blue" : "green"));
+	if (level == -2) snprintf(str, 42, "brains/%s.best.%s", prefix[type], (species == RED) ? "red" : ((species == BLUE) ? "blue" : "green"));
+	else snprintf(str, 42, "brains/%s.%06d.%s", prefix[type], level, (species == RED) ? "red" : ((species == BLUE) ? "blue" : "green"));
 	
 	FILE * f = fopen(str, "rb");
 	//printf("load>> %p : %s\n", f, str);
@@ -859,7 +858,7 @@ void get_all_best_brain(int Best[3][2]) {
 			}
 			char * ext;
 			lvl = (int) strtol(dir->d_name + 3, &ext, 10);
-			char fn[42] = "../brains/";
+			char fn[42] = "brains/";
 			strcat(fn, dir->d_name);
 			//snprintf(fn, 42, "brains/%s", dir->d_name);
 			FILE * f = fopen(fn, "rb");
@@ -901,7 +900,7 @@ int get_best_brain(Species species, TypeAI type) {
 			lvl = (int) strtol(dir->d_name + 3, &ext, 10);
 			if (strcmp(ext, extw) == 0) {
 				char fn[500];
-				snprintf(fn, 500, "../brains/%s", dir->d_name);
+				snprintf(fn, 500, "brains/%s", dir->d_name);
 				FILE * f = fopen(fn, "rb");
 				if (f) {
 					fseek(f, sizeof (Brain) - sizeof(float), SEEK_CUR);

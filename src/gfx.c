@@ -1,8 +1,6 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include <time.h>
 #include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
 
 #include "gfx.h"
@@ -26,9 +24,7 @@ int Bests[3][3];
 int animSprite = 0;
 int WS = 0;
 
-#define FramePerSprite 18
-#undef SIZEMAP
-#define SIZEMAP 32
+
 void setup(SDL_DisplayMode dmode){
     WIDTH = dmode.w;
     HEIGHT = dmode.h;
@@ -37,8 +33,8 @@ void setup(SDL_DisplayMode dmode){
 
     DISTMAXFIELD = sqrt(2) * SIZEMAP;
 
-    sizeCaseGrid = (HEIGHT - (SIZEMAP - 1) * 2) / SIZEMAP;
-	WS = sizeCaseGrid * SIZEMAP + 2 * (SIZEMAP-1);
+    sizeCaseGrid = (HEIGHT - (SIZEMAP + 1) * 2) / (SIZEMAP + 2);
+	WS = sizeCaseGrid * (SIZEMAP + 2) + 2 * (SIZEMAP + 1);
 	originY = (HEIGHT - WS) / 2;
 
     iterAnim = 0;
@@ -60,28 +56,28 @@ void drawGrid(SDL_Renderer * renderer){
     SDL_RenderFillRect(renderer, &terrain);
 
     SDL_SetRenderDrawColor(renderer, 100, 100, 100, 255);
-    for (int i = 0; i < SIZEMAP - 1; i++) {
+    for (int i = 0; i < SIZEMAP + 1; i++) {
         SDL_Rect gridV = {originX + sizeCaseGrid + i * (sizeCaseGrid + 2), originY, 2, WS};
         SDL_RenderFillRect(renderer, &gridV);
         SDL_Rect gridH = {originX, originY + sizeCaseGrid + i * (sizeCaseGrid + 2), WS, 2};
         SDL_RenderFillRect(renderer, &gridH);
     }
-	for (int i = 0; i < SIZEMAP; i++){
-		for (int u = 0; u < SIZEMAP; u++){
+	for (int i = 0; i < SIZEMAP + 2; i++){
+		for (int u = 0; u < SIZEMAP + 2; u++){
 			SDL_Rect r = {originX + i * (sizeCaseGrid + 2), originY + u * (sizeCaseGrid + 2), sizeCaseGrid,
                               sizeCaseGrid};
 			int d;
 			if (i == 0) {
 				if (u == 0) d = 0;
-				else if (u == SIZEMAP-1) d = 6;
+				else if (u == SIZEMAP+1) d = 6;
 				else d = 3;
-			} else if (i == SIZEMAP-1){
+			} else if (i == SIZEMAP+1){
 				if (u == 0) d = 2;
-				else if (u == SIZEMAP-1) d = 8;
+				else if (u == SIZEMAP+1) d = 8;
 				else d = 5;
 			} else {
 				if (u == 0) d = 1;
-				else if (u == SIZEMAP-1) d = 7;
+				else if (u == SIZEMAP+1) d = 7;
 				else d = 4;
 			}
             SDL_RenderCopy(renderer, pkmn, &BG[d], &r);
@@ -107,8 +103,6 @@ void drawPops(SDL_Renderer * renderer, Populations * pops){
             }
         }
     }
-	animSprite++;
-	if (animSprite >= FramePerSprite * 3) animSprite = 0;
 }
 
 void drawMouv(SDL_Renderer * renderer, Populations * pops){
@@ -131,8 +125,6 @@ void drawMouv(SDL_Renderer * renderer, Populations * pops){
             }
         }
     }
-	animSprite++;
-	if (animSprite >= FramePerSprite * 3) animSprite = 0;
 }
 
 //CC romain
@@ -226,18 +218,22 @@ void drawInfosMenu(SDL_Renderer * renderer){
 
         for(int j = 0; j < 3; j++){
             if(j == 1) dst.x += Padding * 6;
-            else if(j > 1) dst.x += Padding * 8;
+            else if(j > 1) dst.x += Padding * 6;
             color = (SDL_Color) {255, 255, 255, 255};
             if(menu_color[i] == j) color = (SDL_Color) {255 * (i == 0), 255 * (i == 1), 255 * (i == 2), 255};
-            if (j==0) drawText(renderer, &dst, &color, "%s", tabText[j]);
-			else drawText(renderer, &dst, &color, "%s", tabText[j]);//, Bests[i][j-1]);
+            drawText(renderer, &dst, &color, "%s", tabText[j]);
         }
     }
 }
 
 void drawMenu(SDL_Renderer * renderer){
-    SDL_SetRenderDrawColor(renderer, 100, 100, 100, 255);
+    SDL_SetRenderDrawColor(renderer, 51, 51, 51, 255);
     SDL_RenderClear(renderer);
-
-    drawInfosMenu(renderer);
+	
+	if (menu_y < 4) {
+		SDL_Rect r = {WIDTH - HEIGHT / 5, 0, HEIGHT / 5, HEIGHT / 5};
+		SDL_RenderCopy(renderer, pkmn, &Sprites[menu_y][2][animSprite / FramePerSprite], &r);
+	}
+ 
+	drawInfosMenu(renderer);
 }

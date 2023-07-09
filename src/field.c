@@ -1,13 +1,11 @@
 #include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
-#include <time.h>
+
 #include <float.h>
 
 #include "field.h"
 #include "population.h"
 
-float DISTMAXFIELD = 1.4142 * SIZEMAP;
+float DISTMAXFIELD = 1.4142f * SIZEMAP;
 
 
 void printField(Field * field){
@@ -47,7 +45,7 @@ void fillMatrixFromPops(Field * field, Populations * pops){
 }
 
 void update_status(Populations * pops){
-    int nearest = 0;
+    int nearest;
     float dm = FLT_MAX;
 	int Dx, Dy;
 
@@ -98,67 +96,6 @@ void update_status(Populations * pops){
 	}
 }
 
-// param select : 0 = prey, 1 = predator, 2 = ally
-void nearestPPA(int indexIndiv, Populations * pops, int k, int select){
-    int iMin = 0;
-    float distMin = DISTMAXFIELD;
-    Individual * indiv = &pops->pops[k].individuals[indexIndiv];
-    Population * popPPA = &pops->pops[(k + select + 1)%3];
-
-    for(int i = 0; i < IndividualPerPopulation; i++){
-		if (popPPA->individuals[i].alive) {
-			if (select != 2 || i != indexIndiv) {
-				float distTmp = sqrt(
-						pow(indiv->x - popPPA->individuals[i].x, 2) + pow(indiv->y - popPPA->individuals[i].y, 2));
-				if (distTmp < distMin) {
-					iMin = i;
-					distMin = distTmp;
-				}
-			}
-		}
-    }
-
-    int xDiff = indiv->x - popPPA->individuals[iMin].x,
-    yDiff = indiv->y - popPPA->individuals[iMin].y;
-
-    int DiffPlus = xDiff + yDiff,
-    DiffMinus = xDiff - yDiff;
-
-    if (DiffPlus > 0) {
-
-        if (DiffMinus >= 0) indiv->status.infos[select].dir = W;
-        else indiv->status.infos[select].dir = N;
-
-    } else if (DiffPlus < 0) {
-
-        if (DiffMinus > 0) indiv->status.infos[select].dir = S;
-        else indiv->status.infos[select].dir = E;
-
-    } else {
-
-        if (DiffMinus > 0) indiv->status.infos[select].dir = S;
-        else if (DiffMinus < 0) indiv->status.infos[select].dir = N;
-        else indiv->status.infos[select].dir = JOKER;
-    }
-
-    if(distMin < PERCENTNEAR * DISTMAXFIELD) indiv->status.infos[select].dist = NEAR;
-    else if(distMin < PERCENTMEDIUM * DISTMAXFIELD) indiv->status.infos[select].dist = MEDIUM;
-    else indiv->status.infos[select].dist = AWAY;
-
-	//indiv->status.raw[select*2] = iMin;
-	//indiv->status.raw[select*2+1] = (k + select + 1)%3;
-}
-
-void fillStatusPops(Populations * pops){
-    for(int k = 0; k < 3; k++){
-        for(int i = 0; i < IndividualPerPopulation; i++){
-			if (!pops->pops[k].individuals[i].alive) continue;
-            nearestPPA(i, pops, k, 0);
-            nearestPPA(i, pops, k, 1);
-            nearestPPA(i, pops, k, 2);
-        }
-    }
-}
 
 //Ne pas regardez, c'est une horreur
 void printStatus(Populations * pops, Species color, int IndiceIndiv){

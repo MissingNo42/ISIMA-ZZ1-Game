@@ -1,6 +1,10 @@
 //
 // Created by Romain on 06/07/2023.
 //
+/**
+ * @file nrand.c
+ * @brief mutex-less reimplementation of rand
+ * */
 
 #include "nrand.h"
 
@@ -13,6 +17,6 @@ void snrand (unsigned int seed)
 
 int nrand (void)
 {
-    return(((holdrand = holdrand * 214013L + 2531011L) >> 16) & 0x7fff);
+    return(int)(((holdrand = holdrand * 214013L + 2531011L) >> 16) & 0x7fff);
 }
 

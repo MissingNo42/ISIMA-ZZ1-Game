@@ -1,21 +1,32 @@
 #include <stdlib.h>
 #include <stdio.h>
-#include <sys/stat.h>
-#include <dirent.h>
 #include <string.h>
 #include <time.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
 
-#include "field.h"
-#include "gfx.h"
-#include "nrand.h"
+#include "src/field.h"
+#include "src/gfx.h"
+#include "src/nrand.h"
 
 #include<unistd.h>
+
 #ifdef __SWITCH__
 #include <switch.h>
 #endif
+
+// switch buttons
+#define JOY_A     0
+#define JOY_B     1
+#define JOY_X     2
+#define JOY_Y     3
+#define JOY_PLUS  10
+#define JOY_MINUS 11
+#define JOY_LEFT  12
+#define JOY_UP    13
+#define JOY_RIGHT 14
+#define JOY_DOWN  15
 
 SDL_Window * window;
 SDL_Renderer * renderer;
@@ -46,9 +57,6 @@ void sdl_exit(char n){
 	exit(n < 3);
 }
 
-
-#ifndef TESTING
-#ifndef TRAINING
 int main(int argc, char ** argv) {
 	(void) argc;
 	(void) argv;
@@ -56,11 +64,9 @@ int main(int argc, char ** argv) {
 	#ifdef __SWITCH__
     romfsInit();
     chdir("romfs:/");
-	#else
-	(void)chdir("assets");
 	#endif
 
-    int seed = time(NULL);
+    int seed = (argc > 1) ? atoi(argv[1]) : time(NULL);
     snrand(seed);
     printf("seed = %d\n", seed);
 	
@@ -79,7 +85,7 @@ int main(int argc, char ** argv) {
 		SDL_Log("Couldn't initialize SDL TTF - %s\n", SDL_GetError());
 		sdl_exit(1);
 	}
-	font = TTF_OpenFont("./font.ttf", FontSize);
+	font = TTF_OpenFont("assets/font.ttf", FontSize);
 	if (!font) {
 		SDL_Log("Couldn't load font - %s\n", SDL_GetError());
 		sdl_exit(2);
@@ -105,7 +111,7 @@ int main(int argc, char ** argv) {
         sdl_exit(2);
     }
 	
-    pkmn = IMG_LoadTexture(renderer,"./pkmn.png");
+    pkmn = IMG_LoadTexture(renderer,"assets/pkmn.png");
     if (!pkmn) {
         SDL_Log("Echec du chargement de l'image dans la texture: %s\n", SDL_GetError()); // texture de la SDL a échoué
         sdl_exit(2);
@@ -121,7 +127,7 @@ int main(int argc, char ** argv) {
 
 	SDL_bool run = SDL_TRUE, // Booléen pour dire que le programme doit continuer
 	paused = SDL_FALSE,      // Booléen pour dire que le programme est en pause
-	event_utile = SDL_FALSE, // Booléen pour savoir si on a trouvé un event traité
+	event_utile,             // Booléen pour savoir si on a trouvé un event traité
     end = SDL_FALSE;         // Booléen pour savoir si une équipe a gagné
 	SDL_Event event;         // Evènement à traiter
 	
@@ -132,6 +138,12 @@ int main(int argc, char ** argv) {
 			Bests[i][u] =
 		}
 	}*/
+	
+	#ifdef __SWITCH__
+    SDL_InitSubSystem(SDL_INIT_JOYSTICK);
+    SDL_JoystickEventState(SDL_ENABLE);
+    SDL_JoystickOpen(0);
+	#endif
 
 	while (run) {
 		event_utile = SDL_FALSE;
@@ -140,64 +152,80 @@ int main(int argc, char ** argv) {
 			
 			switch (event.type) {
 				case SDL_QUIT: {
+					EXIT:
 					run=SDL_FALSE;
 					event_utile=SDL_TRUE;
 					break;
 				}
+				case SDL_JOYBUTTONDOWN:
+					switch(event.jbutton.button){
+						case JOY_PLUS:
+							goto EXIT;
+						case JOY_MINUS:
+							goto PAUSE;
+						case JOY_UP:
+						case JOY_B:
+							goto UP;
+						case JOY_DOWN:
+						case JOY_A:
+							goto DOWN;
+						case JOY_LEFT:
+							goto LEFT;
+						case JOY_RIGHT:
+							goto RIGHT;
+						default: break;
+					}
+					break;
 				case SDL_KEYDOWN:
 					switch(event.key.keysym.sym){
 						case SDLK_p:
 						case SDLK_SPACE:
+							PAUSE:
 							paused = paused ? SDL_FALSE : SDL_TRUE;
 							event_utile = SDL_TRUE;
 							break;
 							case SDLK_ESCAPE:
 						case SDLK_q:
-								run = SDL_FALSE;
-								event_utile = SDL_TRUE;
-								break;
+							run = SDL_FALSE;
+							event_utile = SDL_TRUE;
+							break;
 						case SDLK_LEFT:
+							LEFT:
                             if(!gameState) {
                                 if (vitesse == 10) vitesse = 20;
                                 else if (vitesse == 5) vitesse = 10;
                                 else if (vitesse == 3) vitesse = 5;
                                 else if (vitesse == 1) vitesse = 3;
-                            } else if(gameState == 1){
+                            } else{
                                 if(menu_color[menu_y] > 0) menu_color[menu_y] --;
                             }
 							break;
 						case SDLK_RIGHT:
+							RIGHT:
                             if(!gameState) {
                                 if (vitesse == 20) vitesse = 10;
                                 else if (vitesse == 10) vitesse = 5;
                                 else if (vitesse == 5) vitesse = 3;
                                 else if (vitesse == 3) vitesse = 1;
-                            } else if(gameState == 1){
+                            } else{
                                 if(menu_color[menu_y] < 2) menu_color[menu_y] ++;
                             }
 							break;
-						case SDLK_UP:break;
-						case SDLK_DOWN:break;
+						case SDLK_DOWN:
                         case SDLK_RETURN :
+							DOWN:
                             if(gameState == 1){
                                 menu_y ++;
                             }
                             break;
+						case SDLK_UP:
                         case SDLK_BACKSPACE :
+							UP:
                             if(gameState == 1){
-                                menu_y --;
+                                if (menu_y) menu_y --;
                             }
                             break;
 						default: break;
-					}
-					break;
-				case SDL_KEYUP:
-					switch(event.key.keysym.sym){
-						case SDLK_LEFT: break;
-						case SDLK_RIGHT: break;
-						case SDLK_UP: break;
-						case SDLK_DOWN:break;
-						default:break;
 					}
 					break;
 			}
@@ -223,7 +251,7 @@ int main(int argc, char ** argv) {
                 SDL_RenderPresent(renderer);
                 //SDL_FlushEvents(SDL_KEYDOWN, SDL_KEYUP - 1);
             }
-        } else if(gameState == 1){
+        } else{
 
             drawMenu(renderer);
             SDL_RenderPresent(renderer);
@@ -247,15 +275,19 @@ int main(int argc, char ** argv) {
 
                 update_status(&pops);
                 predict_move(&pops);
+				SDL_Delay(5);
             }
         }
-
+		
+		animSprite++;
+		if (animSprite >= FramePerSprite * 3) animSprite = 0;
 		//SDL_Delay(10);
 	}
 
     printf("Nombre itérations : %d\n", pops.iteration);
+	#ifdef __SWITCH__
+    romfsExit();
+	#endif
 	sdl_exit(3);
 	return 0;
 }
-#endif
-#endif

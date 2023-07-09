@@ -8,10 +8,10 @@ def rename(a,b):
     os.rename(a,b)
 
 while 1:
-    print("Menu:\n0 - Update format\n1 - Get best & worst\n2 - Merge Glouton\n")
+    print("Menu:\n0 - Get best / worst AIs & Copy best as xx.best.xx\n1 - Delete all AI except xx.best.xx\n2 - Update old format to new\n3 - Merge old Glouton to new glouton format\n")
     c = input("Select : ")
 
-    if c == '0':
+    if c == '2':
         s = input("Select species ( = R, G, B) :")
         a = input("Select algo ( = G, A) :")
         ext = {'R':"red", 'G':"green", 'B':"blue"}[s]
@@ -23,6 +23,12 @@ while 1:
                 os.rename(i, prf + '.' + i)
 
     elif c == '1':
+        for i in os.listdir():
+            if "best" not in i and 'xx' not in i:
+                print("remove",i,"...")
+                os.remove(i)
+
+    elif c == '0':
         for s in ["red", "green", "blue"]:
             print(f"\n{s.title()}\n")
             for a in ["gl", "ag"]:
@@ -34,8 +40,8 @@ while 1:
                     if i.startswith(a) and i.endswith(s):
                         q = struct.unpack('f', open(i, 'rb').read()[-4:])[0]
                         if q >= M:
+                            if "best" in i and q > M or "best" not in i: Mf = i
                             M = q
-                            Mf = i
                         if q <= m:
                             m = q
                             mf = i
@@ -49,7 +55,7 @@ while 1:
                     w = open('.'.join(n), 'wb')
                     w.write(dt)
                     w.close()
-    elif c == '2':
+    elif c == '3':
         for i in os.listdir():
             if i.startswith("g1"):
                 u = i.replace("g1", "g2")

@@ -4,11 +4,8 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include <sys/stat.h>
-#include <dirent.h>
 #include <string.h>
 #include <math.h>
-#include <time.h>
 #include <threads.h>
 
 
@@ -172,7 +169,7 @@ void proba_calculate(float * list, float prob, int nb_max){
 
 void mutate(Brains_gen * brains, float * proba, int nb_max){
     for (int n=0; n<NB_BRAINS_CANDIDATE;n++) {
-        float p = (float) nrand() / RAND_MAX;
+        float p = (float) nrand() / (float)RAND_MAX;
         int k = 0;
         while (k < nb_max && p > proba[k]) {
             mutate1(brains->brain[n]);

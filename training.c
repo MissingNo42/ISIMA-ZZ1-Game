@@ -5,10 +5,10 @@
 #include <time.h>
 #include <stdlib.h>
 #include <stdarg.h>
-#include "nrand.h"
+#include "src/nrand.h"
 
-#include "population.h"
-#include "genetic.h"
+#include "src/population.h"
+#include "src/genetic.h"
 
 
 void gloutonAll(int color, int level, int iter, int opp){
@@ -77,17 +77,7 @@ void gloutonAll(int color, int level, int iter, int opp){
 		
 		printf("iter %d (gen %d -> %f : algo = glouton %d) : prey = %d | predator = %d\n", evo - level, evo, best.eval, algo, ch1, ch2);
 		
-		switch (algo) {
-			case 1:
-				mutation_all(&brains, list, color);
-				break;
-			case 2:
-				mutation_two_do(&brains, list);
-				break;
-			case 3:
-				mutation_two_do(&brains, list);
-				break;
-		}
+		mutation_do(&brains, list, algo);
 		
 		if (brains.brain[0]->eval > best.eval) {
 			copy_brain(brains.brain[0], &best);
@@ -172,10 +162,10 @@ void algoG(int color, int iter, int opp){
 
 
 
-#ifdef TRAINING
+
 int main(){
 	
-	int c = 0, a = 0;
+	int c, a = 0;
 	long int seed = time(NULL);
 	while (1) {
 		c = ask("Seed = %ld\n\nMENU\n0 - Exit\n1 - Training Glouton\n2 - Training Genetic\n9 - Set Seed\n\nSelect : ", 9, seed);
@@ -221,5 +211,3 @@ int main(){
 		}
 	}
 }
-
-#endif

@@ -7,6 +7,7 @@
 
 #include "field.h"
 
+#define FramePerSprite 12
 #define FontSize 40
 
 extern int WIDTH, HEIGHT;
